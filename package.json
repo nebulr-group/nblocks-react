@@ -1,8 +1,22 @@
 {
-  "name": "nblocks-react",
+  "name": "@nebulr-group/nblocks-react",
   "version": "0.1.0",
-  "private": true,
-  "dependencies": {
+  "main": "lib/commonjs/index",
+  "module": "lib/module/index",
+  "types": "lib/typescript/index.d.ts",
+  "source": "src/index.tsx",
+  "files": [
+    "src",
+    "lib",
+    "!lib/typescript/example",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__"
+  ],
+  "devDependencies": {
+    "@babel/cli": "^7.19.3",
+    "@babel/core": "^7.19.3",
+    "@babel/preset-react": "^7.18.6",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -16,12 +30,33 @@
     "typescript": "^4.8.4",
     "web-vitals": "^2.1.4"
   },
+  "peerDependencies": {
+    "@testing-library/jest-dom": "^5",
+    "@testing-library/react": "^13",
+    "@testing-library/user-event": "^13",
+    "@types/jest": "^27",
+    "@types/node": "^16",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-scripts": "5",
+    "typescript": "^4",
+    "web-vitals": "^2"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "example": "yarn --cwd example",
+    "bootstrap": "yarn example && yarn"
   },
+  "keywords": [
+    "react",
+    "nblocks",
+    "nebulr",
+    "nebulrgroup"
+  ],
+  "author": "Oscar Söderlund <oscar@nebulr.group> (https://nebulr.group/nblocks/)",
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -39,5 +74,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "dependencies": {
+    "@babel/preset-typescript": "^7.18.6"
   }
 }
