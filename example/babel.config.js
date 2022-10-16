@@ -6,10 +6,15 @@ const pak = require("../package.json");
 module.exports = function (api) {
   // Babel caching API, Doc reference: https://babeljs.io/docs/en/config-files#apicache
   // Permacache the computed config and never call the function again.
-  api.cache(true);
+  api.cache(false);
 
   // Configuration
   return {
+    presets: [
+      "@babel/preset-env",
+      "@babel/preset-react",
+      "@babel/preset-typescript",
+    ],
     plugins: [
       [
         "module-resolver",
