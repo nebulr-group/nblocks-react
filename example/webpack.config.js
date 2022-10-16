@@ -2,8 +2,6 @@ const path = require("path");
 const root = path.resolve(__dirname, "..");
 const pak = require("../package.json");
 
-console.log(path.join(__dirname, "..", pak.source));
-console.log([pak.name.replace(/^(@nebulr-group\/)/, "")]);
 const config = {
   mode: "development",
   resolve: {
