@@ -20,5 +20,6 @@
   "mounts": [
     "target=${containerWorkspaceFolder}/node_modules,type=volume",
     "target=${containerWorkspaceFolder}/example/node_modules,type=volume"
-  ]
+  ],
+  "postCreateCommand": "bash .devcontainer/init.sh ${containerWorkspaceFolder}"
 }
