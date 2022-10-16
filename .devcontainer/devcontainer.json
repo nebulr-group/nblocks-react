@@ -1,0 +1,24 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.245.2/containers/typescript-node
+{
+  "name": "Nblocks React Plugin",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "target": "dev",
+    "context": ".."
+  },
+  // Configure tool-specific properties.
+  "customizations": {
+    // Configure properties specific to VS Code.
+    "vscode": {
+      "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+    }
+  },
+  "workspaceMount": "source=${localWorkspaceFolder},target=/nblocks-react,type=bind",
+  "workspaceFolder": "/nblocks-react",
+  // Volume mounts from local machine to container, for better performance during dev
+  "mounts": [
+    "target=${containerWorkspaceFolder}/node_modules,type=volume",
+    "target=${containerWorkspaceFolder}/example/node_modules,type=volume"
+  ]
+}
