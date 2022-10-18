@@ -14,13 +14,13 @@ function App() {
     return (
       <div className="App">
         <NblocksProvider config={{ debug: true }}>
-          {/* <AppRoutes/> */}
+          <AppRoutes/>
         </NblocksProvider>
       </div>
     )
   }
   
-  const AppRoutes: FunctionComponent<{}> = ({}) => {
+  function AppRoutes() {
       const {currentUser} = useAuth();
   
       if (currentUser.authenticated)
