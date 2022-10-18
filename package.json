@@ -29,7 +29,14 @@
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
     "typescript": "^4.8.4",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "react-router-dom": "^6",
+    "@apollo/client": "3",
+    "@apollo/react-hooks": "4",
+    "apollo-client": "2",
+    "axios": "^1",
+    "graphql": "^16",
+    "@react-native-async-storage/async-storage": "^1"
   },
   "peerDependencies": {
     "@testing-library/jest-dom": "^5",
@@ -43,11 +50,16 @@
     "react-dom": "^18",
     "react-scripts": "5",
     "typescript": "^4",
-    "web-vitals": "^2"
+    "web-vitals": "^2",
+    "react-router-dom": "^6",
+    "@apollo/client": "3",
+    "@apollo/react-hooks": "4",
+    "apollo-client": "2",
+    "axios": "^1",
+    "graphql": "^16",
+    "@react-native-async-storage/async-storage": "^1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
     "example": "yarn --cwd example",
     "bootstrap": "yarn example && yarn"
   },
