@@ -11,7 +11,11 @@
   "customizations": {
     // Configure properties specific to VS Code.
     "vscode": {
-      "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+      "extensions": [
+		"dbaeumer.vscode-eslint",
+		"esbenp.prettier-vscode",
+		"bradlc.vscode-tailwindcss"
+	]
     }
   },
   "workspaceMount": "source=${localWorkspaceFolder},target=/nblocks-react,type=bind",
