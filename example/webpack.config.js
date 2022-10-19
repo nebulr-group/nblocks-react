@@ -1,9 +1,17 @@
 const path = require("path");
 const root = path.resolve(__dirname, "..");
 const pak = require("../package.json");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const config = {
   mode: "development",
+  cache: false,
+  entry: "./src/index.tsx",
+  output: {
+    path: path.resolve(__dirname, "./dist"),
+    filename: "[name].[contenthash].bundle.js",
+    clean: true,
+  },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
     alias: {
@@ -14,11 +22,15 @@ const config = {
       ),
     },
   },
-  mode: "development",
-  entry: "./src/index.tsx",
   devServer: {
-    static: "./public",
+    host: "localhost",
+    static: "public/",
+    liveReload: true,
+    open: false,
+    hot: true,
   },
+  target: "web",
+  devtool: "source-map",
   module: {
     rules: [
       {
@@ -34,17 +46,28 @@ const config = {
                 "@babel/preset-react",
                 "@babel/preset-typescript",
               ],
-              plugins: ["module-resolver"],
             },
           },
         ],
       },
       {
         test: /\.([cm]?ts|tsx)$/,
+        exclude: /(node_modules|bower_components)/,
         loader: "ts-loader",
+      },
+      {
+        test: /\.css$/i,
+        include: [path.resolve(__dirname, "src"), path.resolve(root, "src")],
+        use: ["style-loader", "css-loader", "postcss-loader"],
       },
     ],
   },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, "public", "index.html"),
+      inject: "body",
+    }),
+  ],
 };
 
 module.exports = config;
