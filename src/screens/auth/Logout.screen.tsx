@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
-import { useAuth } from "../hooks/auth-context";
+
 import {
   Navigate
 } from "react-router-dom";
+import { useAuth } from "../../hooks/auth-context";
 
 export function LogoutScreen() {
   const {logout } = useAuth();

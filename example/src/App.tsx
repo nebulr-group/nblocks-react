@@ -1,16 +1,15 @@
-import {AuthRoutes, useAuth, NblocksProvider} from 'nblocks-react';
-import React, { FunctionComponent, useState } from 'react';
+import {AuthRoutes, SetupRoutes, useAuth, NblocksProvider} from 'nblocks-react';
+import React from 'react';
 import {
   Routes,
   Route,
   Navigate,
   BrowserRouter
 } from "react-router-dom";
-import {HomeScreen} from './screens/HomeScreen';
-import {BrandExpoScreen} from './screens/BrandExpoScreen';
+import {HomeScreen} from './screens/Home.screen';
+import {BrandExpoScreen} from './screens/BrandExpo.screen';
 
 function App() {
-    const [state, setState] = useState("hello");
     return (
       <div className="App">
         <NblocksProvider config={{ debug: true }}>
@@ -30,6 +29,7 @@ function App() {
                   <Route path="/home" element={<HomeScreen />} />
                   <Route path="/brandExpo" element={<BrandExpoScreen />} />
                   <Route path="*" element={<Navigate to="/home" replace />} />
+                  {/* <SetupRoutes /> */}
                 </Routes>
               </BrowserRouter>
           );
