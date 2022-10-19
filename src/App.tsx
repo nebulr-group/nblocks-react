@@ -1,13 +1,10 @@
 import React from "react";
-
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Hello World!</h1>
-      </header>
+    <div className="container mx-auto bg-red-600 w-2/12">
+      <h1 className=" text-gray-700 font-bold mt-5 underline">Hello World!</h1>
     </div>
   );
 }
 
-export { App };
+export default App;

@@ -1,0 +1,6 @@
+/*- Main Style Folder -*/
+
+/*-- Tailwind --*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
