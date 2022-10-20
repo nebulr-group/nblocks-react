@@ -1,10 +1,10 @@
-import {AuthRoutes, SetupRoutes, AuthBrowser, useAuth, NblocksProvider} from 'nblocks-react';
-import React, { useState } from 'react';
+import {AuthRoutes, SetupRoutes, UserRoutes, NblocksProvider, AuthGuard} from 'nblocks-react';
+import React from 'react';
 import {
   Routes,
   Route,
   Navigate,
-  BrowserRouter
+  BrowserRouter,
 } from "react-router-dom";
 import {HomeScreen} from './screens/Home.screen';
 import {BrandExpoScreen} from './screens/BrandExpo.screen';
@@ -18,53 +18,24 @@ function App() {
       </div>
     )
   }
-
-  // function AppRoutes() {
-  //       return (
-  //           <BrowserRouter>
-  //             <Routes>
-  //               <Route path="/home" element={<HomeScreen />} />
-  //               <Route path="/brandExpo" element={<BrandExpoScreen />} />
-  //               <Route path="*" element={<Navigate to="/home" replace />} />
-  //             </Routes>
-  //           </BrowserRouter>
-  //       );
-  // }
   
   function AppRoutes() {
-      //const {currentUser} = useAuth();
-  
-      const [currentUser] = useState({authenticated: true});
-
-      if (currentUser.authenticated)
-          return (
-              <BrowserRouter>
-                {/* <OtherNestedRoutes/> */}
-                <NestedRoutes/>
-              </BrowserRouter>
-          );
-      else
-          return (
-              <AuthBrowser></AuthBrowser>
-          );
+    return (
+        <BrowserRouter>
+          <NestedRoutes/>
+        </BrowserRouter>
+    );
   }
 
   function NestedRoutes() {
     return (
       <Routes>
-        <Route path="/home" element={<HomeScreen />} />
-        <Route path="/brandExpo" element={<BrandExpoScreen />} />
-        <Route path="setup" element={<OtherNestedRoutes />} />
-        {/* <OtherNestedRoutes/> */}
-        {/* <Route path="*" element={<Navigate to="/home" replace />} /> */}
-      </Routes>
-    )  
-  }
-
-  function OtherNestedRoutes() {
-    return (
-      <Routes>
-        <Route path="" element={<BrandExpoScreen />} />
+        <Route path="/home" element={<AuthGuard><HomeScreen /></AuthGuard>} />
+        <Route path="/brandExpo" element={<AuthGuard><BrandExpoScreen /></AuthGuard>} />
+        <Route path="/auth/*" element={<AuthRoutes/>} />
+        <Route path="/setup/*" element={<SetupRoutes/>} />
+        <Route path="/user/*" element={<AuthGuard><UserRoutes/></AuthGuard>} />
+        <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
     )  
   }

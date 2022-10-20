@@ -3,8 +3,9 @@ import { useAuth } from "./hooks/auth-context";
 import { NblocksProvider } from "./providers/NblocksProvider/NblocksProvider";
 import { useApp } from "./hooks/app-context";
 import { SetupRoutes } from "./routes/SetupRoutes";
-import { AuthBrowser } from './routes/AuthBrowser'
+import { UserRoutes } from "./routes/UserRoutes";
+import { AuthGuard } from "./routes/AuthGuard";
 
 export {
-    AuthRoutes, SetupRoutes, AuthBrowser, useAuth, useApp, NblocksProvider
+    AuthGuard, AuthRoutes, SetupRoutes, UserRoutes, useAuth, useApp, NblocksProvider
 }

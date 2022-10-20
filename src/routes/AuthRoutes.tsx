@@ -17,20 +17,17 @@ const AuthRoutes = () => {
 
   return (
     <Routes>
-      <Route path="auth">
-        <Route path="login" element={<LoginScreen />}></Route>
-        <Route path="logout" element={<LogoutScreen />}></Route>
-        <Route path="resetPassword" element={<ResetPasswordScreen />}></Route>
-        <Route path="setPassword" element={<SetPasswordScreen />}></Route>
-        <Route path="mfa">
-          <Route path="required" element={<RequireMfaScreen />}></Route>
-          <Route path="recover" element={<ResetMfaScreen />}></Route>
-          <Route path="setup" element={<SetupMfaScreen />}></Route>
-        </Route>
-        <Route path="chooseWorkspace" element={<ChooseWorkspaceScreen />}></Route>
-        <Route path="" element={<Navigate to="/auth/login" replace />} />
+      <Route path="login" element={<LoginScreen />}></Route>
+      <Route path="logout" element={<LogoutScreen />}></Route>
+      <Route path="resetPassword" element={<ResetPasswordScreen />}></Route>
+      <Route path="setPassword" element={<SetPasswordScreen />}></Route>
+      <Route path="mfa">
+        <Route path="required" element={<RequireMfaScreen />}></Route>
+        <Route path="recover" element={<ResetMfaScreen />}></Route>
+        <Route path="setup" element={<SetupMfaScreen />}></Route>
       </Route>
-      <Route path="*" element={<Navigate to="/auth" replace />} />
+      <Route path="chooseWorkspace" element={<ChooseWorkspaceScreen />}></Route>
+      <Route path="*" element={<Navigate to="/auth/login" replace />} />
     </Routes>
   );
 };
