@@ -18,25 +18,37 @@ function App() {
       </div>
     )
   }
-  
+
   function AppRoutes() {
-      const {currentUser} = useAuth();
-  
-      if (currentUser.authenticated)
-          return (
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/home" element={<HomeScreen />} />
-                  <Route path="/brandExpo" element={<BrandExpoScreen />} />
-                  <Route path="*" element={<Navigate to="/home" replace />} />
-                  {/* <SetupRoutes /> */}
-                </Routes>
-              </BrowserRouter>
-          );
-      else
-          return (
-              <AuthRoutes></AuthRoutes>
-          );
+        return (
+            <BrowserRouter>
+              <Routes>
+                <Route path="/home" element={<HomeScreen />} />
+                <Route path="/brandExpo" element={<BrandExpoScreen />} />
+                <Route path="*" element={<Navigate to="/home" replace />} />
+              </Routes>
+            </BrowserRouter>
+        );
   }
+  
+  // function AppRoutes() {
+  //     const {currentUser} = useAuth();
+  
+  //     if (currentUser.authenticated)
+  //         return (
+  //             <BrowserRouter>
+  //               <Routes>
+  //                 <Route path="/home" element={<HomeScreen />} />
+  //                 <Route path="/brandExpo" element={<BrandExpoScreen />} />
+  //                 <Route path="*" element={<Navigate to="/home" replace />} />
+  //                 {/* <SetupRoutes /> */}
+  //               </Routes>
+  //             </BrowserRouter>
+  //         );
+  //     else
+  //         return (
+  //             <AuthRoutes></AuthRoutes>
+  //         );
+  // }
   
   export default App;

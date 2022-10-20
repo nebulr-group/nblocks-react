@@ -28,6 +28,7 @@ const config = {
     liveReload: true,
     open: false,
     hot: true,
+    historyApiFallback: true,
   },
   target: "web",
   devtool: "source-map",
