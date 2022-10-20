@@ -8,7 +8,8 @@ const config = {
   cache: false,
   entry: "./src/index.tsx",
   output: {
-    path: path.resolve(__dirname, "./dist"),
+    path: path.resolve(__dirname, "dist"),
+    publicPath: "/",
     filename: "[name].[contenthash].bundle.js",
     clean: true,
   },
@@ -25,6 +26,7 @@ const config = {
   devServer: {
     host: "localhost",
     static: "public/",
+    historyApiFallback: true,
     liveReload: true,
     open: false,
     hot: true,
@@ -58,7 +60,11 @@ const config = {
       },
       {
         test: /\.css$/i,
-        include: [path.resolve(__dirname, "src"), path.resolve(root, "src")],
+        include: [
+          path.resolve(__dirname, "src"),
+          path.resolve(__dirname, "public"),
+          path.resolve(root, "src"),
+        ],
         use: ["style-loader", "css-loader", "postcss-loader"],
       },
     ],
