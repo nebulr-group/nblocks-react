@@ -1,5 +1,5 @@
-import {AuthRoutes, SetupRoutes, useAuth, NblocksProvider} from 'nblocks-react';
-import React from 'react';
+import {AuthRoutes, SetupRoutes, AuthBrowser, useAuth, NblocksProvider} from 'nblocks-react';
+import React, { useState } from 'react';
 import {
   Routes,
   Route,
@@ -19,36 +19,52 @@ function App() {
     )
   }
 
-  function AppRoutes() {
-        return (
-            <BrowserRouter>
-              <Routes>
-                <Route path="/home" element={<HomeScreen />} />
-                <Route path="/brandExpo" element={<BrandExpoScreen />} />
-                <Route path="*" element={<Navigate to="/home" replace />} />
-              </Routes>
-            </BrowserRouter>
-        );
-  }
-  
   // function AppRoutes() {
-  //     const {currentUser} = useAuth();
-  
-  //     if (currentUser.authenticated)
-  //         return (
-  //             <BrowserRouter>
-  //               <Routes>
-  //                 <Route path="/home" element={<HomeScreen />} />
-  //                 <Route path="/brandExpo" element={<BrandExpoScreen />} />
-  //                 <Route path="*" element={<Navigate to="/home" replace />} />
-  //                 {/* <SetupRoutes /> */}
-  //               </Routes>
-  //             </BrowserRouter>
-  //         );
-  //     else
-  //         return (
-  //             <AuthRoutes></AuthRoutes>
-  //         );
+  //       return (
+  //           <BrowserRouter>
+  //             <Routes>
+  //               <Route path="/home" element={<HomeScreen />} />
+  //               <Route path="/brandExpo" element={<BrandExpoScreen />} />
+  //               <Route path="*" element={<Navigate to="/home" replace />} />
+  //             </Routes>
+  //           </BrowserRouter>
+  //       );
   // }
+  
+  function AppRoutes() {
+      //const {currentUser} = useAuth();
+  
+      const [currentUser] = useState({authenticated: true});
+
+      if (currentUser.authenticated)
+          return (
+              <BrowserRouter>
+                <OtherNestedRoutes/>
+                <NestedRoutes/>
+              </BrowserRouter>
+          );
+      else
+          return (
+              <AuthBrowser></AuthBrowser>
+          );
+  }
+
+  function NestedRoutes() {
+    return (
+      <Routes>
+        <Route path="/home" element={<HomeScreen />} />
+        <Route path="/brandExpo" element={<BrandExpoScreen />} />
+        {/* <Route path="*" element={<Navigate to="/home" replace />} /> */}
+      </Routes>
+    )  
+  }
+
+  function OtherNestedRoutes() {
+    return (
+      <Routes>
+        <Route path="setup" element={<BrandExpoScreen />} />
+      </Routes>
+    )  
+  }
   
   export default App;
