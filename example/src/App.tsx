@@ -39,7 +39,7 @@ function App() {
       if (currentUser.authenticated)
           return (
               <BrowserRouter>
-                <OtherNestedRoutes/>
+                {/* <OtherNestedRoutes/> */}
                 <NestedRoutes/>
               </BrowserRouter>
           );
@@ -54,6 +54,8 @@ function App() {
       <Routes>
         <Route path="/home" element={<HomeScreen />} />
         <Route path="/brandExpo" element={<BrandExpoScreen />} />
+        <Route path="setup" element={<OtherNestedRoutes />} />
+        {/* <OtherNestedRoutes/> */}
         {/* <Route path="*" element={<Navigate to="/home" replace />} /> */}
       </Routes>
     )  
@@ -62,7 +64,7 @@ function App() {
   function OtherNestedRoutes() {
     return (
       <Routes>
-        <Route path="setup" element={<BrandExpoScreen />} />
+        <Route path="" element={<BrandExpoScreen />} />
       </Routes>
     )  
   }
