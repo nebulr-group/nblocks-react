@@ -67,6 +67,10 @@ const config = {
         ],
         use: ["style-loader", "css-loader", "postcss-loader"],
       },
+      {
+        test: /\.svg$/,
+        type: "asset/inline",
+      },
     ],
   },
   plugins: [
