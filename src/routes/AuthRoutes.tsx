@@ -1,40 +1,34 @@
 import React from "react";
-import { LoginScreen } from "../screens/auth/Login.screen";
+import { LoginScreen } from "../screens/auth/login/Login.screen";
 import {
   Routes,
   Route,
   Navigate,
-  BrowserRouter
 } from "react-router-dom";
-import { LogoutScreen } from "../screens/auth/Logout.screen";
-import { ChooseWorkspaceScreen } from "../screens/auth/ChooseWorkspace.screen";
-import { ResetPasswordScreen } from "../screens/auth/password/ResetPasswordScreen";
-import { SetPasswordScreen } from "../screens/auth/password/SetPasswordScreen";
-import { RequireMfaScreen } from "../screens/auth/mfa/RequireMfaScreen";
-import { ResetMfaScreen } from "../screens/auth/mfa/ResetMfaScreen";
-import { SetupMfaScreen } from "../screens/auth/mfa/SetupMfaScreen";
+import { LogoutScreen } from "../screens/auth/login/Logout.screen";
+import { ChooseWorkspaceScreen } from "../screens/auth/login/ChooseWorkspace.screen";
+import { ResetPasswordScreen } from "../screens/auth/password/ResetPassword.screen";
+import { SetPasswordScreen } from "../screens/auth/password/SetPassword.screen";
+import { RequireMfaScreen } from "../screens/auth/mfa/RequireMfa.screen";
+import { ResetMfaScreen } from "../screens/auth/mfa/ResetMfa.screen";
+import { SetupMfaScreen } from "../screens/auth/mfa/SetupMfa.screen";
 
 const AuthRoutes = () => {
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="auth">
-          <Route path="login" element={<LoginScreen />}></Route>
-          <Route path="logout" element={<LogoutScreen />}></Route>
-          <Route path="resetPassword" element={<ResetPasswordScreen />}></Route>
-          <Route path="setPassword" element={<SetPasswordScreen />}></Route>
-          <Route path="mfa">
-            <Route path="required" element={<RequireMfaScreen />}></Route>
-            <Route path="recover" element={<ResetMfaScreen />}></Route>
-            <Route path="setup" element={<SetupMfaScreen />}></Route>
-          </Route>
-          <Route path="chooseWorkspace" element={<ChooseWorkspaceScreen />}></Route>
-          <Route path="" element={<Navigate to="/auth/login" replace />} />
-        </Route>
-        <Route path="*" element={<Navigate to="/auth" replace />} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route path="login" element={<LoginScreen />}></Route>
+      <Route path="logout" element={<LogoutScreen />}></Route>
+      <Route path="reset-password" element={<ResetPasswordScreen />}></Route>
+      <Route path="set-password/:token" element={<SetPasswordScreen />}></Route>
+      <Route path="mfa">
+        <Route path="required" element={<RequireMfaScreen />}></Route>
+        <Route path="recover" element={<ResetMfaScreen />}></Route>
+        <Route path="setup" element={<SetupMfaScreen />}></Route>
+      </Route>
+      <Route path="choose-workspace" element={<ChooseWorkspaceScreen />}></Route>
+      <Route path="*" element={<Navigate to="/auth/login" replace />} />
+    </Routes>
   );
 };
 
