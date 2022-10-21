@@ -5,7 +5,8 @@ import { useApp } from "./hooks/app-context";
 import { SetupRoutes } from "./routes/SetupRoutes";
 import { UserRoutes } from "./routes/UserRoutes";
 import { AuthGuard } from "./routes/AuthGuard";
+import { AccessControllComponent } from "./components/helpers/AccessControllComponent";
 
 export {
-    AuthGuard, AuthRoutes, SetupRoutes, UserRoutes, useAuth, useApp, NblocksProvider
+    AuthGuard, AuthRoutes, SetupRoutes, UserRoutes, useAuth, useApp, NblocksProvider, AccessControllComponent
 }

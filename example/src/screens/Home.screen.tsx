@@ -1,3 +1,4 @@
+import React from 'react'
 import {useAuth, useApp} from 'nblocks-react';
 import {
   Link
@@ -8,9 +9,15 @@ export function HomeScreen() {
   const {currentUser, logout } = useAuth();
   const app = useApp();
 
+  document.title = "Home";
+
   return (
     <div>
       <div>
+        <div>
+          <Link className="text-blue-600" to="/setup">Goto setup</Link>
+        </div>
+        
         <Link className="text-blue-600" to="/brandExpo" state={{ testVariable: true }}>Goto Brand Expo</Link>
       </div>
       <h1><pre>User: {JSON.stringify(currentUser, null, '\t')}</pre></h1>

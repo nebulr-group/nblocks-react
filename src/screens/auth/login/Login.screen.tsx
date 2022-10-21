@@ -1,8 +1,8 @@
-import { useSecureContext } from "../../hooks/secure-http-context";
 import React, { useEffect, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/auth-context";
-import { useApp } from "../../hooks/app-context";
+import { useAuth } from "../../../hooks/auth-context";
+import { useApp } from "../../../hooks/app-context";
+import { LoginComponent } from "../../../components/auth/login/LoginComponent";
 
 export function LoginScreen() {
 
@@ -12,7 +12,6 @@ export function LoginScreen() {
   const location = useLocation();
   const navigate = useNavigate();
   const {currentUser} = useAuth();
-  const {authService} = useSecureContext();
   const [loggedIn, setLoggedIn] = useState(false);
 
   // Target url when authentication finished
@@ -28,16 +27,14 @@ export function LoginScreen() {
     }
   }, [currentUser]);
 
-  const login = async () => {
-    await authService.authenticate("oscar@nebulr.group", "helloworld");
+  // Callback when the LoginComponent completed login
+  const onDidLogin = () => {
     setLoggedIn(true);
   }
 
   if (!loggedIn)
     return (
-      <div>
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => login()}>Login</button>
-      </div>
+      <LoginComponent didLogin={() => onDidLogin()}/>
     )
   else
       return (<Navigate to="/auth/chooseWorkspace" state={targetUrl}/>)
