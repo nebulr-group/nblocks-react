@@ -5,6 +5,7 @@ import { useApp } from "./hooks/app-context";
 import { SetupRoutes } from "./routes/SetupRoutes";
 import { NblocksButton } from "./components/shared/NblocksButton";
 import { InputComponent } from "./components/shared/InputComponent";
+import { LinkComponent } from "./components/shared/LinkComponent";
 import "./index.css";
 
 export {
@@ -15,4 +16,5 @@ export {
   NblocksProvider,
   NblocksButton,
   InputComponent,
+  LinkComponent,
 };
