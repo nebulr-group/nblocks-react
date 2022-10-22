@@ -3,7 +3,8 @@ import { FunctionComponent } from "react";
 import { Link } from "react-router-dom";
 
 /**
- * Defines current supported link types by LinkComponent.
+ * Defines the type of configuration object
+ * that can be passed to LinkComponent.
  */
 type ConfigObject = {
   children?: React.ReactNode;
