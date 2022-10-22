@@ -1,5 +1,5 @@
 import React from "react";
-import { NblocksButton, InputComponent } from "nblocks-react";
+import { NblocksButton, InputComponent, LinkComponent } from "nblocks-react";
 import icon from "../../assets/input-icon.svg";
 import iconWarning from "../../assets/input-warning-icon.svg";
 
@@ -89,6 +89,29 @@ export function BrandExpoScreen() {
             alt: "Tool tip icon.",
           }}
         />
+      </div>
+      <div className="grid">
+        <h1 className="mt-5 text-3xl">Links</h1>
+        <LinkComponent to={"/"} type={"primary"} size={"sm"} className={"mt-5"}>
+          Back to home
+        </LinkComponent>
+        <LinkComponent
+          to={"/"}
+          type={"primary"}
+          size={"md"}
+          className={"mt-5"}
+          disabled={true}
+        >
+          Back to home
+        </LinkComponent>
+        <LinkComponent
+          to={"/home"}
+          type={"secondary"}
+          className={"mt-5"}
+          size={"lg"}
+        >
+          Back to home
+        </LinkComponent>
       </div>
     </div>
   );
