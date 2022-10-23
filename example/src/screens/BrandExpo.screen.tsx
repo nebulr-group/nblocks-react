@@ -1,5 +1,10 @@
 import React from "react";
-import { NblocksButton, InputComponent, LinkComponent } from "nblocks-react";
+import {
+  NblocksButton,
+  InputComponent,
+  LinkComponent,
+  HeadingComponent,
+} from "nblocks-react";
 import icon from "../../assets/input-icon.svg";
 import iconWarning from "../../assets/input-warning-icon.svg";
 
@@ -26,7 +31,7 @@ export function BrandExpoScreen() {
           placeholder="olivia@untitledui.com"
           name="test"
           infoLabel={{
-            position: "right",
+            position: "left",
             src: `${icon}`,
             alt: "Tool tip icon.",
           }}
@@ -112,6 +117,27 @@ export function BrandExpoScreen() {
         >
           Back to home
         </LinkComponent>
+      </div>
+      <div className="grid">
+        <h1 className="mt-5 text-3xl">Headings</h1>
+        <HeadingComponent type={"h1"} size={"8xl"} className={"mt-5"}>
+          Hello World
+        </HeadingComponent>
+        <HeadingComponent type={"h2"} size={"7xl"} className={"mt-5"}>
+          Hello World
+        </HeadingComponent>
+        <HeadingComponent type={"h3"} size={"6xl"} className={"mt-5"}>
+          Hello World
+        </HeadingComponent>
+        <HeadingComponent type={"h4"} size={"5xl"} className={"mt-5"}>
+          Hello World
+        </HeadingComponent>
+        <HeadingComponent type={"h5"} size={"4xl"} className={"mt-5"}>
+          Hello World
+        </HeadingComponent>
+        <HeadingComponent type={"h6"} size={"3xl"} className={"mt-5"}>
+          Hello World
+        </HeadingComponent>
       </div>
     </div>
   );
