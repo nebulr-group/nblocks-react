@@ -21,7 +21,7 @@ type ConfigObject = {
  * import React from "react";
  * import { SubHeadingComponent } from "@nebulr-group/nblocks-react";
  *
- * const SubHeadingComponent = () => {
+ * const MyComponent = () => {
  *  return (
  *    <SubHeadingComponent type={"primary"} size={"6xl"}>
  *      Hello World
