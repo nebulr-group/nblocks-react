@@ -4,12 +4,13 @@ type HeadingType = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 
 /**
  * Defines the type of configuration object
- * that can be passed to TitleComponent.
+ * that can be passed to HeadingComponent.
  */
 type ConfigObject = {
   children?: React.ReactNode;
   type: HeadingType;
   className?: string;
+  style?: React.CSSProperties;
   size?:
     | "lg"
     | "xl"
@@ -48,37 +49,38 @@ const HeadingComponent: FunctionComponent<ConfigObject> = ({
   children,
   className,
   size,
+  style,
 }) => {
   className = className ? className : "";
   return (
     <>
       {type === "h1" && (
-        <h1 className={`${className}${getHeadingBaseSize(size)}`}>
+        <h1 className={`${className}${getHeadingBaseSize(size)}`} style={style}>
           {children}
         </h1>
       )}
       {type === "h2" && (
-        <h2 className={`${className}${getHeadingBaseSize(size)}`}>
+        <h2 className={`${className}${getHeadingBaseSize(size)}`} style={style}>
           {children}
         </h2>
       )}
       {type === "h3" && (
-        <h3 className={`${className}${getHeadingBaseSize(size)}`}>
+        <h3 className={`${className}${getHeadingBaseSize(size)}`} style={style}>
           {children}
         </h3>
       )}
       {type === "h4" && (
-        <h4 className={`${className}${getHeadingBaseSize(size)}`}>
+        <h4 className={`${className}${getHeadingBaseSize(size)}`} style={style}>
           {children}
         </h4>
       )}
       {type === "h5" && (
-        <h5 className={`${className}${getHeadingBaseSize(size)}`}>
+        <h5 className={`${className}${getHeadingBaseSize(size)}`} style={style}>
           {children}
         </h5>
       )}
       {type === "h6" && (
-        <h6 className={`${className}${getHeadingBaseSize(size)}`}>
+        <h6 className={`${className}${getHeadingBaseSize(size)}`} style={style}>
           {children}
         </h6>
       )}
