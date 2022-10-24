@@ -7,6 +7,7 @@ import { NblocksButton } from "./components/shared/NblocksButton";
 import { InputComponent } from "./components/shared/InputComponent";
 import { LinkComponent } from "./components/shared/LinkComponent";
 import { HeadingComponent } from "./components/shared/HeadingComponent";
+import { SubHeadingComponent } from "./components/shared/SubHeadingComponent";
 import "./index.css";
 
 export {
@@ -19,4 +20,5 @@ export {
   InputComponent,
   LinkComponent,
   HeadingComponent,
+  SubHeadingComponent,
 };
