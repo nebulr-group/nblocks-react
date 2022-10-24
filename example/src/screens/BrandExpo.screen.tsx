@@ -4,6 +4,7 @@ import {
   InputComponent,
   LinkComponent,
   HeadingComponent,
+  SubHeadingComponent,
 } from "nblocks-react";
 import icon from "../../assets/input-icon.svg";
 import iconWarning from "../../assets/input-warning-icon.svg";
@@ -138,6 +139,36 @@ export function BrandExpoScreen() {
         <HeadingComponent type={"h6"} size={"3xl"} className={"mt-5"}>
           Hello World
         </HeadingComponent>
+      </div>
+      <div className="grid">
+        <h1 className="mt-5 text-3xl">Subheadings</h1>
+        <SubHeadingComponent type={"primary"} size={"6xl"}>
+          Hello World
+        </SubHeadingComponent>
+        <SubHeadingComponent type={"primary"} size={"5xl"}>
+          Hello World
+        </SubHeadingComponent>
+        <SubHeadingComponent type={"primary"} size={"4xl"}>
+          Hello World
+        </SubHeadingComponent>
+        <SubHeadingComponent type={"primary"} size={"3xl"}>
+          Hello World
+        </SubHeadingComponent>
+        <SubHeadingComponent type={"primary"} size={"2xl"}>
+          Hello World
+        </SubHeadingComponent>
+        <SubHeadingComponent type={"primary"} size={"xl"}>
+          Hello World
+        </SubHeadingComponent>
+        <SubHeadingComponent type={"primary"} size={"lg"}>
+          Hello World
+        </SubHeadingComponent>
+        <SubHeadingComponent type={"primary"} size={"base"}>
+          Hello World
+        </SubHeadingComponent>
+        <SubHeadingComponent type={"primary"} size={"sm"}>
+          Hello World
+        </SubHeadingComponent>
       </div>
     </div>
   );
