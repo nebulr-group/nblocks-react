@@ -5,9 +5,11 @@ import {
   LinkComponent,
   HeadingComponent,
   SubHeadingComponent,
+  ImageComponent,
 } from "nblocks-react";
 import icon from "../../assets/input-icon.svg";
 import iconWarning from "../../assets/input-warning-icon.svg";
+import image from "../../assets/demo-image.jpg";
 
 export function BrandExpoScreen() {
   return (
@@ -169,6 +171,42 @@ export function BrandExpoScreen() {
         <SubHeadingComponent type={"primary"} size={"sm"}>
           Hello World
         </SubHeadingComponent>
+      </div>
+      <div className="grid">
+        <h1 className="mt-5 text-3xl">Image Component</h1>
+        <div className="flex flex-column items-baseline mt-5">
+          <div style={{ width: 32, height: 32 }}>
+            <ImageComponent src={image}></ImageComponent>
+          </div>
+          <div style={{ width: 64, height: 64 }} className="ml-5">
+            <ImageComponent src={image}></ImageComponent>
+          </div>
+          <div style={{ width: 124, height: 124 }} className="ml-5">
+            <ImageComponent src={image}></ImageComponent>
+          </div>
+        </div>
+        <div className="flex flex-column items-baseline mt-5">
+          <div style={{ width: 32, height: 32 }}>
+            <ImageComponent src={image} type={"rounded"}></ImageComponent>
+          </div>
+          <div style={{ width: 64, height: 64 }} className="ml-5">
+            <ImageComponent src={image} type={"rounded"}></ImageComponent>
+          </div>
+          <div style={{ width: 124, height: 124 }} className="ml-5">
+            <ImageComponent src={image} type={"rounded"}></ImageComponent>
+          </div>
+        </div>
+        <div className="flex flex-column items-baseline mt-5">
+          <div style={{ width: 32, height: 32 }}>
+            <ImageComponent src={image} type={"circle"}></ImageComponent>
+          </div>
+          <div style={{ width: 64, height: 64 }} className="ml-5">
+            <ImageComponent src={image} type={"circle"}></ImageComponent>
+          </div>
+          <div style={{ width: 124, height: 124 }} className="ml-5">
+            <ImageComponent src={image} type={"circle"}></ImageComponent>
+          </div>
+        </div>
       </div>
     </div>
   );
