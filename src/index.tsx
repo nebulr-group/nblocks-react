@@ -8,6 +8,7 @@ import { InputComponent } from "./components/shared/InputComponent";
 import { LinkComponent } from "./components/shared/LinkComponent";
 import { HeadingComponent } from "./components/shared/HeadingComponent";
 import { SubHeadingComponent } from "./components/shared/SubHeadingComponent";
+import { ImageComponent } from "./components/shared/ImageComponent";
 import "./index.css";
 
 export {
@@ -21,4 +22,5 @@ export {
   LinkComponent,
   HeadingComponent,
   SubHeadingComponent,
+  ImageComponent,
 };
