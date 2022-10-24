@@ -32,10 +32,11 @@ export function LoginScreen() {
     setLoggedIn(true);
   }
 
-  if (!loggedIn)
+  if (!loggedIn) {
     return (
       <LoginComponent didLogin={() => onDidLogin()}/>
     )
-  else
-      return (<Navigate to="/auth/chooseWorkspace" state={targetUrl}/>)
+  } else {
+    return (<Navigate to="/auth/choose-workspace" state={targetUrl}/>)
+  }
 }

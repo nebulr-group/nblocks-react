@@ -4,7 +4,7 @@ import { ResetPasswordComponent } from "../../../components/auth/password/ResetP
 const ResetPasswordScreen: FunctionComponent<{}> = () => {
 
   const onDidSendResetPasswordLink = () => {
-    alert("A password link has been sent")
+    alert("A password link has been sent, check your inbox")
   }
 
   return (
