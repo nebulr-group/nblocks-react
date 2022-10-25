@@ -7,6 +7,7 @@ import {
   SubHeadingComponent,
   ImageComponent,
   FormComponent,
+  TextComponent,
 } from "nblocks-react";
 import icon from "../../assets/input-icon.svg";
 import iconWarning from "../../assets/input-warning-icon.svg";
@@ -17,7 +18,7 @@ export function BrandExpoScreen() {
   const [email, setEmail] = useState("");
 
   return (
-    <div className="columns-1">
+    <div className="columns-1 py-8">
       <h1 className="mt-5 text-3xl">Brand Expo</h1>
       <div>
         <NblocksButton
@@ -212,6 +213,9 @@ export function BrandExpoScreen() {
           </div>
         </div>
       </div>
+      <div>
+        <h1 className="mt-5 text-3xl">Form Component</h1>
+      </div>
       <div className="grid grid-cols-9 py-8">
         <FormComponent
           className={"col-start-3 col-end-8 block"}
@@ -259,6 +263,11 @@ export function BrandExpoScreen() {
             Submit
           </NblocksButton>
         </FormComponent>
+      </div>
+      <div className="grid">
+        <h1 className="mt-5 text-3xl">Text Comopnent</h1>
+        <TextComponent size={"base"}>This is text component.</TextComponent>
+        <TextComponent size={"sm"}>This is text component.</TextComponent>
       </div>
     </div>
   );
