@@ -2,12 +2,13 @@ import React from "react";
 import {
   Navigate, useLocation,
 } from "react-router-dom";
-import { useApp } from "../hooks/app-context";
 import { useAuth } from "../hooks/auth-context";
+import { useConfig } from "../hooks/config-context";
+import { RouteConfig } from "./AuthRoutes";
 
 function AuthGuard({ children }: { children: JSX.Element }) {
   const {currentUser} = useAuth();
-  const {debug} = useApp();
+  const {debug} = useConfig();
   let location = useLocation();
 
   if (!currentUser.authenticated) {
@@ -18,7 +19,7 @@ function AuthGuard({ children }: { children: JSX.Element }) {
     if (debug) {
       console.log("Authguard redirecting user to login");
     }
-    return <Navigate to="/auth/login" state={{ from: location }} replace />;
+    return <Navigate to={RouteConfig.login.LoginScreen} state={{ from: location }} replace />;
   }
 
   return children;

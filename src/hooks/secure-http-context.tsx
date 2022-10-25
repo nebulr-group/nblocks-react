@@ -3,6 +3,7 @@ import { AuthService } from "../utils/AuthService";
 import { AuthHttpClient } from "../utils/AuthHttpClient";
 import { AuthApolloClient } from "../utils/AuthApolloClient";
 import { ApolloProvider } from "@apollo/client";
+import { useConfig } from "./config-context";
 
 //TODO expose something simpler hook for external app developers to use
 const initialSecurityContext = {
@@ -16,15 +17,9 @@ const initialSecurityContext = {
 const SecureContext = React.createContext(initialSecurityContext);
 const useSecureContext = () => useContext(SecureContext);
 
-interface NblocksContextProps {
-  apiHost: string;
-  graphqlPath: string;
-  debug: boolean;
-  children: React.ReactNode;
-}
+const NblocksSecureContextProvider: FunctionComponent<{children: React.ReactNode}> = ({children}) => {
 
-const NblocksSecureContextProvider: FunctionComponent<NblocksContextProps> = ({children, apiHost, graphqlPath, debug}: NblocksContextProps) => {
-
+    const {apiHost, graphqlPath, debug} = useConfig();
     const [authenticated, setAuthenticated] = useState<boolean>(false);
     const [authHttpClient] = useState<AuthHttpClient>(new AuthHttpClient(apiHost, debug));
     const [authService] = useState<AuthService>(new AuthService(authHttpClient.httpClient, debug));

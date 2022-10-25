@@ -1,4 +1,4 @@
-import {AuthRoutes, SetupRoutes, UserRoutes, NblocksProvider, AuthGuard} from 'nblocks-react';
+import {AuthRoutes, SetupRoutes, OnboardRoutes, UserRoutes, NblocksProvider, AuthGuard} from 'nblocks-react';
 import React from 'react';
 import {
   Routes,
@@ -12,7 +12,7 @@ import {BrandExpoScreen} from './screens/BrandExpo.screen';
 function App() {
     return (
       <div className="App">
-        <NblocksProvider config={{ debug: true }}>
+        <NblocksProvider config={{ debug: true, handoverRoute: "/home" }}>
           <AppRoutes/>
         </NblocksProvider>
       </div>
@@ -33,6 +33,7 @@ function App() {
         <Route path="/home" element={<AuthGuard><HomeScreen /></AuthGuard>} />
         <Route path="/brandExpo" element={<AuthGuard><BrandExpoScreen /></AuthGuard>} />
         <Route path="/auth/*" element={<AuthRoutes/>} />
+        <Route path="/onboard/*" element={<OnboardRoutes/>} />
         <Route path="/setup/*" element={<SetupRoutes/>} />
         <Route path="/user/*" element={<AuthGuard><UserRoutes/></AuthGuard>} />
         <Route path="*" element={<Navigate to="/home" replace />} />

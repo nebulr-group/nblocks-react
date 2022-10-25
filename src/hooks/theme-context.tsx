@@ -1,9 +1,9 @@
 import React, { FunctionComponent, useContext, useEffect, useState } from "react";
-import { useApp } from "./app-context";
 import { useAuth } from "./auth-context";
 //import i18n from "i18next";
 //import { initReactI18next } from "react-i18next";
 import { defaultBranding, BrandingConfig, defaultColor, ColorConfig } from "../utils/BrandingConfig";
+import { useConfig } from "./config-context";
 
 const initialContext = {locale:"", styles: defaultBranding, colors: defaultColor};
 const Context = React.createContext(initialContext);
@@ -50,7 +50,7 @@ const NblocksThemeContextProvider: FunctionComponent<{
   children: React.ReactNode;
 }> = ({children, i18nOverrides, styleOverrides, colorOverrides}) => {
   
-  const {defaultLocale} = useApp();
+  const {defaultLocale} = useConfig();
   const {currentUser} = useAuth();
   const [locale, setLocale] = useState(initialContext.locale);
   const [styles, setStyles] = useState(initialContext.styles);
