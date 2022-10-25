@@ -2,7 +2,7 @@ import React, { FunctionComponent, useContext, useEffect, useState } from "react
 import { AuthService, UpdateUserProfileArgs } from "../utils/AuthService";
 import { CurrentUser } from "../models/current-user.model";
 import { useSecureContext } from "./secure-http-context";
-import { useApp } from "./app-context";
+import { useConfig } from "./config-context";
 
 const initialAuthContext = {
   currentUser: new CurrentUser(),
@@ -19,7 +19,7 @@ interface NblocksContextProps {
 }
 
 const NblocksAuthContextProvider: FunctionComponent<NblocksContextProps> = ({children}) => {
-    const {debug} = useApp();
+    const {debug} = useConfig();
     const {authenticated, didAuthenticate, authService, authApolloClient, authHttpClient} = useSecureContext();
     const [currentUser, setCurrentUser] = useState(new CurrentUser());
 

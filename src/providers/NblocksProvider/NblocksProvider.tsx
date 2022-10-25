@@ -1,9 +1,11 @@
 import React, { FunctionComponent } from 'react';
-import { LibConfig, NblocksAppContextProvider } from '../../hooks/app-context';
+import { NblocksAppContextProvider } from '../../hooks/app-context';
 import { NblocksAuthContextProvider } from '../../hooks/auth-context';
 import { LangOverrideParam, NblocksThemeContextProvider } from '../../hooks/theme-context';
 import { NblocksSecureContextProvider } from '../../hooks/secure-http-context';
 import { BrandingConfig, ColorConfig } from '../../utils/BrandingConfig';
+import { NblocksConfigContextProvider } from '../../hooks/config-context';
+import { LibConfig } from '../../models/lib-config';
 
 /**
  * Wrap your code into this Provider to get access to the Nblocks world
@@ -18,19 +20,18 @@ const NblocksProvider: FunctionComponent<{
   children: React.ReactNode;
 }> = ({children, config, i18nOverrides, styleOverrides, colorOverrides}) => {
 
-  const apiHost = config?.apiHost ? config.apiHost : "http://localhost:3000";
-  const graphqlPath = config?.graphqlPath ? config.graphqlPath : "/graphql"
-
   return (
-      <NblocksSecureContextProvider apiHost={apiHost} graphqlPath={graphqlPath} debug={!!config?.debug}>
+    <NblocksConfigContextProvider config={config}>
+      <NblocksSecureContextProvider>
         <NblocksAuthContextProvider>
-          <NblocksAppContextProvider config={config}>
+          <NblocksAppContextProvider>
             <NblocksThemeContextProvider i18nOverrides={i18nOverrides} styleOverrides={styleOverrides} colorOverrides={colorOverrides}>
               {children}
             </NblocksThemeContextProvider>
           </NblocksAppContextProvider>
         </NblocksAuthContextProvider>
       </NblocksSecureContextProvider>
+    </NblocksConfigContextProvider>
   );
 }
 

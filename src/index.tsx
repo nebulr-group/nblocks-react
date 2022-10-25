@@ -11,14 +11,25 @@ import { SubHeadingComponent } from "./components/shared/SubHeadingComponent";
 import { ImageComponent } from "./components/shared/ImageComponent";
 import { FormComponent } from "./components/shared/FormComponent";
 import { TextComponent } from "./components/shared/TextComponent";
+import { UserRoutes } from "./routes/UserRoutes";
+import { AuthGuard } from "./routes/AuthGuard";
+import { AccessControllComponent } from "./components/helpers/AccessControllComponent";
+import { LibConfig } from "./models/lib-config";
+import { useConfig } from "./hooks/config-context";
+import { OnboardRoutes } from "./routes/OnboardRoutes";
 import "./index.css";
 
 export {
+  useConfig,
+  AuthGuard,
   AuthRoutes,
+  OnboardRoutes,
   SetupRoutes,
+  UserRoutes,
   useAuth,
   useApp,
   NblocksProvider,
+  AccessControllComponent,
   NblocksButton,
   InputComponent,
   LinkComponent,
@@ -28,3 +39,5 @@ export {
   FormComponent,
   TextComponent,
 };
+
+export type { LibConfig };

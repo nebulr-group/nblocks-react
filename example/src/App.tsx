@@ -1,54 +1,67 @@
 import {
   AuthRoutes,
   SetupRoutes,
-  useAuth,
+  OnboardRoutes,
+  UserRoutes,
   NblocksProvider,
+  AuthGuard,
 } from "nblocks-react";
-import React, { Fragment } from "react";
+import React from "react";
 import { Routes, Route, Navigate, BrowserRouter } from "react-router-dom";
 import { HomeScreen } from "./screens/Home.screen";
 import { BrandExpoScreen } from "./screens/BrandExpo.screen";
 
 function App() {
   return (
-    <Fragment>
-      <NblocksProvider config={{ debug: true }}>
+    <div className="App">
+      <NblocksProvider config={{ debug: true, handoverRoute: "/home" }}>
         <AppRoutes />
       </NblocksProvider>
-    </Fragment>
+    </div>
   );
 }
 
 function AppRoutes() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/home" element={<HomeScreen />} />
-        <Route path="/brandExpo" element={<BrandExpoScreen />} />
-        <Route path="*" element={<Navigate to="/home" replace />} />
-      </Routes>
+      <NestedRoutes />
     </BrowserRouter>
   );
 }
 
-// function AppRoutes() {
-//     const {currentUser} = useAuth();
-
-//     if (currentUser.authenticated)
-//         return (
-//             <BrowserRouter>
-//               <Routes>
-//                 <Route path="/home" element={<HomeScreen />} />
-//                 <Route path="/brandExpo" element={<BrandExpoScreen />} />
-//                 <Route path="*" element={<Navigate to="/home" replace />} />
-//                 {/* <SetupRoutes /> */}
-//               </Routes>
-//             </BrowserRouter>
-//         );
-//     else
-//         return (
-//             <AuthRoutes></AuthRoutes>
-//         );
-// }
+function NestedRoutes() {
+  return (
+    <Routes>
+      <Route
+        path="/home"
+        element={
+          <AuthGuard>
+            <HomeScreen />
+          </AuthGuard>
+        }
+      />
+      <Route
+        path="/brandExpo"
+        element={
+          <AuthGuard>
+            <BrandExpoScreen />
+          </AuthGuard>
+        }
+      />
+      <Route path="/auth/*" element={<AuthRoutes />} />
+      <Route path="/onboard/*" element={<OnboardRoutes />} />
+      <Route path="/setup/*" element={<SetupRoutes />} />
+      <Route
+        path="/user/*"
+        element={
+          <AuthGuard>
+            <UserRoutes />
+          </AuthGuard>
+        }
+      />
+      <Route path="*" element={<Navigate to="/home" replace />} />
+    </Routes>
+  );
+}
 
 export default App;
