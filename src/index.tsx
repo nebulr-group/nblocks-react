@@ -10,6 +10,7 @@ import { HeadingComponent } from "./components/shared/HeadingComponent";
 import { SubHeadingComponent } from "./components/shared/SubHeadingComponent";
 import { ImageComponent } from "./components/shared/ImageComponent";
 import { FormComponent } from "./components/shared/FormComponent";
+import { TextComponent } from "./components/shared/TextComponent";
 import "./index.css";
 
 export {
@@ -25,4 +26,5 @@ export {
   SubHeadingComponent,
   ImageComponent,
   FormComponent,
+  TextComponent,
 };
