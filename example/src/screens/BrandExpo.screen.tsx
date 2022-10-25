@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   NblocksButton,
   InputComponent,
@@ -6,12 +6,16 @@ import {
   HeadingComponent,
   SubHeadingComponent,
   ImageComponent,
+  FormComponent,
 } from "nblocks-react";
 import icon from "../../assets/input-icon.svg";
 import iconWarning from "../../assets/input-warning-icon.svg";
 import image from "../../assets/demo-image.jpg";
 
 export function BrandExpoScreen() {
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+
   return (
     <div className="columns-1">
       <h1 className="mt-5 text-3xl">Brand Expo</h1>
@@ -30,9 +34,9 @@ export function BrandExpoScreen() {
         <h2 className="mt-5 text-3xl">Form Inputs</h2>
         <InputComponent
           type="text"
-          label="Email"
+          label="Email1"
           placeholder="olivia@untitledui.com"
-          name="test"
+          name="email1"
           infoLabel={{
             position: "left",
             src: `${icon}`,
@@ -47,7 +51,7 @@ export function BrandExpoScreen() {
           type="password"
           label="Password"
           placeholder="Password"
-          name="password"
+          name="password1"
           errorLabel={{
             position: "right",
             src: `${iconWarning}`,
@@ -207,6 +211,54 @@ export function BrandExpoScreen() {
             <ImageComponent src={image} type={"circle"}></ImageComponent>
           </div>
         </div>
+      </div>
+      <div className="grid grid-cols-9 py-8">
+        <FormComponent
+          className={"col-start-3 col-end-8 block"}
+          onSubmit={(event) => {
+            event.preventDefault();
+
+            console.log(email);
+            console.log(password);
+          }}
+        >
+          <InputComponent
+            type="email"
+            label="Enter Your Email Address"
+            placeholder="olivia@untitledui.com"
+            name="email"
+            labelClassName={"mt-4 block"}
+            caption={
+              <p className="mt-2 text-sm text-gray-500">
+                Please, enter your email.
+              </p>
+            }
+            onChange={(event) => setEmail(event.target.value)}
+            value={email}
+          />
+          <InputComponent
+            type="password"
+            label="Password"
+            placeholder="Password"
+            name="password"
+            labelClassName={"mt-5 block"}
+            caption={
+              <p className="mt-2 text-sm text-gray-500">
+                Please, enter your login password.
+              </p>
+            }
+            onChange={(event) => setPassword(event.target.value)}
+            value={password}
+          />
+          <NblocksButton
+            submit={true}
+            type={"tertiary"}
+            size={"xl"}
+            className={"w-full mt-5"}
+          >
+            Submit
+          </NblocksButton>
+        </FormComponent>
       </div>
     </div>
   );
