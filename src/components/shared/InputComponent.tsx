@@ -46,6 +46,7 @@ type ConfigObject = {
   value?: string | ReadonlyArray<string> | number | undefined;
   inputError?: boolean | undefined;
   onSuccessValidation?: boolean | undefined;
+  ref?: React.LegacyRef<HTMLInputElement>;
 
   onChange?: (event: ChangeEvent<HTMLInputElement>) => any | undefined;
 };
@@ -118,8 +119,11 @@ const InputComponent: FunctionComponent<ConfigObject> = ({
   inputError,
   onSuccessValidation,
   className,
+  ref,
   onChange,
 }) => {
+  labelClassName = labelClassName ? labelClassName : "";
+  className = className ? className : "";
   const getIcon = () => {
     if (inputError && errorLabel) {
       return (
@@ -156,7 +160,6 @@ const InputComponent: FunctionComponent<ConfigObject> = ({
       return;
     }
   };
-
   return (
     <>
       {label && (
@@ -192,6 +195,7 @@ const InputComponent: FunctionComponent<ConfigObject> = ({
           readOnly={readonly}
           list={list}
           value={value}
+          ref={ref}
           onChange={(event) => (onChange ? onChange(event) : undefined)}
         />
       </div>
