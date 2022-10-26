@@ -17,6 +17,7 @@ import { AccessControllComponent } from "./components/helpers/AccessControllComp
 import { LibConfig } from "./models/lib-config";
 import { useConfig } from "./hooks/config-context";
 import { OnboardRoutes } from "./routes/OnboardRoutes";
+import { TogglerComponent } from "./components/shared/TogglerComponent";
 import "./index.css";
 
 export {
@@ -38,6 +39,7 @@ export {
   ImageComponent,
   FormComponent,
   TextComponent,
+  TogglerComponent,
 };
 
 export type { LibConfig };
