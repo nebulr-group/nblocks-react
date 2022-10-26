@@ -8,6 +8,7 @@ import {
   ImageComponent,
   FormComponent,
   TextComponent,
+  TogglerComponent,
 } from "nblocks-react";
 import icon from "../../assets/input-icon.svg";
 import iconWarning from "../../assets/input-warning-icon.svg";
@@ -16,6 +17,8 @@ import image from "../../assets/demo-image.jpg";
 export function BrandExpoScreen() {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+
+  const [enabled, setEnabled] = useState(false);
 
   return (
     <div className="columns-1 py-8">
@@ -107,6 +110,16 @@ export function BrandExpoScreen() {
         <h1 className="mt-5 text-3xl">Links</h1>
         <LinkComponent to={"/"} type={"primary"} size={"sm"} className={"mt-5"}>
           Back to home
+        </LinkComponent>
+        <LinkComponent
+          to={"https://www.google.com"}
+          type={"primary"}
+          size={"sm"}
+          nativeBehavior={true}
+          target={"_blank"}
+          className={"mt-5"}
+        >
+          Go to Google
         </LinkComponent>
         <LinkComponent
           to={"/"}
@@ -268,6 +281,13 @@ export function BrandExpoScreen() {
         <h1 className="mt-5 text-3xl">Text Comopnent</h1>
         <TextComponent size={"base"}>This is text component.</TextComponent>
         <TextComponent size={"sm"}>This is text component.</TextComponent>
+      </div>
+      <div className="grid">
+        <h1 className="mt-5 text-3xl">Toggler Component</h1>
+        <TogglerComponent
+          enabled={enabled}
+          setEnabled={setEnabled}
+        ></TogglerComponent>
       </div>
     </div>
   );
