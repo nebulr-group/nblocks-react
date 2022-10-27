@@ -43,6 +43,10 @@ const ImageComponent: FunctionComponent<ConfigObject> = ({
   style,
 }) => {
   className = className ? className : "";
+  src = src
+    ? src
+    : "https://upload.wikimedia.org/wikipedia/commons/b/b1/Missing-image-232x150.png?20180322092056";
+
   return (
     <img
       src={src}

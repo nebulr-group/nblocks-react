@@ -14,6 +14,8 @@ type ConfigObject = {
   preventScrollReset?: boolean;
   className?: string;
   disabled?: boolean;
+  reloadDocument?: boolean;
+  target?: React.HTMLAttributeAnchorTarget;
   size?: "sm" | "md" | "lg" | "xl" | "2xl";
 };
 
@@ -29,24 +31,41 @@ type ConfigObject = {
 const LinkComponent: FunctionComponent<ConfigObject> = ({
   children,
   nativeBehavior,
+  reloadDocument,
   to,
   preventScrollReset,
   className,
   type,
   size,
   disabled,
+  target,
 }) => {
+  className = className ? className : "";
   return (
-    <Link
-      to={to}
-      preventScrollReset={preventScrollReset}
-      reloadDocument={nativeBehavior}
-      className={`${className}${getLinkTypeStyle(type)}${getDisabledStyle(
-        disabled
-      )}${getLinkBaseFontSizeStyle(size)}`}
-    >
-      {children}
-    </Link>
+    <>
+      {nativeBehavior ? (
+        <a
+          href={to}
+          className={`${className}${getLinkTypeStyle(type)}${getDisabledStyle(
+            disabled
+          )}${getLinkBaseFontSizeStyle(size)}`}
+          target={target}
+        >
+          {children}
+        </a>
+      ) : (
+        <Link
+          to={to}
+          preventScrollReset={preventScrollReset}
+          reloadDocument={reloadDocument}
+          className={`${className}${getLinkTypeStyle(type)}${getDisabledStyle(
+            disabled
+          )}${getLinkBaseFontSizeStyle(size)}`}
+        >
+          {children}
+        </Link>
+      )}
+    </>
   );
 };
 

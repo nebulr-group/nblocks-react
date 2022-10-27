@@ -1260,6 +1260,11 @@
   resolved "https://registry.yarnpkg.com/@headlessui/react/-/react-0.0.0-insiders.f66f492.tgz#f02973ecb798bd2ec37fe825978fd985d11e7bec"
   integrity sha512-QUNWsVfla2/H8k991xwG0f2u+ktQeglDtc/Jekjsgw+P97DejpdS18mVj33PCcspVaqL70Jsz208KN7dzCx0OQ==
 
+"@heroicons/react@^2.0.12":
+  version "2.0.12"
+  resolved "https://registry.yarnpkg.com/@heroicons/react/-/react-2.0.12.tgz#7e5a16c82512f89a30266dd36f8b8465b3e3e216"
+  integrity sha512-FZxKh3i9aKIDxyALTgIpSF2t6V6/eZfF5mRu41QlwkX3Oxzecdm1u6dpft6PQGxIBwO7TKYWaMAYYL8mp/EaOg==
+
 "@humanwhocodes/config-array@^0.10.5":
   version "0.10.7"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.10.7.tgz#6d53769fd0c222767e6452e8ebda825c22e9f0dc"

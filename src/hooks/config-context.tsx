@@ -1,22 +1,22 @@
 import React, { FunctionComponent, useContext } from "react";
 import { LibConfig } from "../models/lib-config";
 
-const intialContext:LibConfig = {
+const intialContext: LibConfig = {
   handoverRoute: "/",
-  defaultLocale: 'en',
+  defaultLocale: "en",
   apiHost: "http://localhost:3000",
   graphqlPath: "/graphql",
   debug: false,
   openRoutes: [],
-  languages: ['en'],
+  languages: ["en"],
   passwordComplexity: false,
   onboarding: {
     enabled: false,
     requiredFields: {
       firstName: false,
       lastName: false,
-      phoneNumber: false
-    }
+      phoneNumber: false,
+    },
   },
   socialLogins: {
     accountApiHost: "",
@@ -24,21 +24,24 @@ const intialContext:LibConfig = {
     providers: {
       google: false,
       github: false,
-      facebook: false
-    }
-  }
+      facebook: false,
+    },
+  },
+  signup: false,
 };
 
 const Context = React.createContext<LibConfig>(intialContext);
 const useConfig = () => useContext(Context);
 
-const NblocksConfigContextProvider: FunctionComponent<{config?: Partial<LibConfig>; children: React.ReactNode;}> = ({children, config}) => {
-
+const NblocksConfigContextProvider: FunctionComponent<{
+  config?: Partial<LibConfig>;
+  children: React.ReactNode;
+}> = ({ children, config }) => {
   return (
-    <Context.Provider value={{...intialContext,...config}}>
+    <Context.Provider value={{ ...intialContext, ...config }}>
       {children}
     </Context.Provider>
   );
-}
+};
 
-export {NblocksConfigContextProvider, useConfig};
+export { NblocksConfigContextProvider, useConfig };
