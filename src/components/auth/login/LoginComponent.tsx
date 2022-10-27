@@ -1,6 +1,5 @@
 import { useSecureContext } from "../../../hooks/secure-http-context";
 import React, { FormEvent, FunctionComponent, useState } from "react";
-import { AuthLayoutWrapperComponent } from "../AuthLayoutWrapperComponent";
 import { LinkComponent } from "../../shared/LinkComponent";
 import { RouteConfig } from "../../../routes/AuthRoutes";
 import { NblocksButton } from "../../shared/NblocksButton";
@@ -25,30 +24,25 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({ didLogin }) => {
   };
 
   return (
-    <AuthLayoutWrapperComponent
-      heading={"Log in to your account"}
-      subHeading={"Welcome back! Please enter your details."}
-    >
-      <form onSubmit={(event) => submit(event)}>
-        <div>
-          <InputComponent
-            type="email"
-            label="Email address"
-            placeholder="Enter your email"
-            name="username"
-            onChange={(event) => setUsername(event.target.value)}
-            value={username}
-          />
-          <InputComponent
-            type="password"
-            label="Password"
-            placeholder="Enter your password"
-            name="password"
-            onChange={(event) => setPassword(event.target.value)}
-            value={password}
-          />
-        </div>
-        <div>
+    <>
+      <form onSubmit={(event) => submit(event)} className="space-y-6">
+        <InputComponent
+          type="email"
+          label="Email address"
+          placeholder="Enter your email"
+          name="username"
+          onChange={(event) => setUsername(event.target.value)}
+          value={username}
+        />
+        <InputComponent
+          type="password"
+          label="Password"
+          placeholder="Enter your password"
+          name="password"
+          onChange={(event) => setPassword(event.target.value)}
+          value={password}
+        />
+        <div className="flex justify-end">
           <LinkComponent
             to={RouteConfig.password.ResetPasswordScreen}
             type="primary"
@@ -63,8 +57,9 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({ didLogin }) => {
             disabled={!username || !password}
             size="md"
             type="primary"
+            fullWidth={true}
           >
-            Login
+            Signin
           </NblocksButton>
         </div>
       </form>
@@ -82,7 +77,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({ didLogin }) => {
           </TextComponent>
         </div>
       )}
-    </AuthLayoutWrapperComponent>
+    </>
   );
 };
 

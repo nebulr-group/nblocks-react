@@ -4,6 +4,7 @@ import { useAuth } from "../../../hooks/auth-context";
 import { LoginComponent } from "../../../components/auth/login/LoginComponent";
 import { useConfig } from "../../../hooks/config-context";
 import { RouteConfig } from "../../../routes/AuthRoutes";
+import { AuthLayoutWrapperComponent } from "../../../components/auth/AuthLayoutWrapperComponent";
 
 export function LoginScreen() {
   document.title = "Login";
@@ -35,7 +36,14 @@ export function LoginScreen() {
   };
 
   if (!loggedIn) {
-    return <LoginComponent didLogin={() => onDidLogin()} />;
+    return (
+      <AuthLayoutWrapperComponent
+        heading={"Log in to your account"}
+        subHeading={"Welcome back! Please enter your details."}
+      >
+        <LoginComponent didLogin={() => onDidLogin()} />
+      </AuthLayoutWrapperComponent>
+    );
   } else {
     return (
       <Navigate to={RouteConfig.login.ChooseUserScreen} state={targetUrl} />

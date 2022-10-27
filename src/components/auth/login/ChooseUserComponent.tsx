@@ -7,6 +7,9 @@ import { NblocksButton } from "../../shared/NblocksButton";
 import { AuthService } from "../../../utils/AuthService";
 import { Option, RadioGroupComponent } from "../../shared/RadioGroupComponent";
 import { ImageComponent } from "../../shared/ImageComponent";
+import { TextComponent } from "../../shared/TextComponent";
+import { LinkComponent } from "../../shared/LinkComponent";
+import { RouteConfig } from "../../../routes/AuthRoutes";
 
 type ComponentProps = {
   didSelectUser: (user: AuthTenantUserResponseDto) => void;
@@ -69,10 +72,7 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
   });
 
   return (
-    <AuthLayoutWrapperComponent
-      heading={"Welcome back!"}
-      subHeading={"Choose a workspace you want to login into below."}
-    >
+    <>
       <div>
         {users && users?.length > 0 && (
           <RadioGroupComponent
@@ -91,11 +91,22 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
           size="md"
           type="primary"
           onClick={() => submit()}
+          fullWidth={true}
         >
           Login
         </NblocksButton>
       </div>
-    </AuthLayoutWrapperComponent>
+      <div>
+        <TextComponent size="sm">Not seeing your workspace?</TextComponent>
+        <LinkComponent
+          to={RouteConfig.login.LoginScreen}
+          type="primary"
+          size="sm"
+        >
+          Try a different email
+        </LinkComponent>
+      </div>
+    </>
   );
 };
 

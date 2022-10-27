@@ -30,20 +30,24 @@ const AuthLayoutWrapperComponent: FunctionComponent<ComponentProps> = ({
       <SubHeadingComponent type={"secondary"} size="2xl">
         {subHeading}
       </SubHeadingComponent>
-      {children}
+      <div className="space-y-6 py-6">{children}</div>
       <div>
-        <TextComponent size="sm">
-          ©2022 Nebulr AB. All Rights Reserved.
-        </TextComponent>
-        <LinkComponent
-          type="primary"
-          to="https://google.com"
-          nativeBehavior={true}
-          target="_blank"
-          size="sm"
-        >
-          Privacy policy
-        </LinkComponent>
+        <div>
+          <TextComponent size="sm">
+            ©2022 Nebulr AB. All Rights Reserved.
+          </TextComponent>
+        </div>
+        <div>
+          <LinkComponent
+            type="primary"
+            to={app.privacyPolicyUrl!}
+            nativeBehavior={true}
+            target="_blank"
+            size="sm"
+          >
+            Privacy policy
+          </LinkComponent>
+        </div>
       </div>
     </div>
   );

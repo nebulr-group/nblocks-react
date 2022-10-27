@@ -1,5 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { AuthLayoutWrapperComponent } from "../../../components/auth/AuthLayoutWrapperComponent";
 import { ChooseUserComponent } from "../../../components/auth/login/ChooseUserComponent";
 import { useConfig } from "../../../hooks/config-context";
 import { AuthTenantUserResponseDto } from "../../../models/auth-tenant-user-response.dto";
@@ -34,6 +35,11 @@ export function ChooseUserScreen() {
   };
 
   return (
-    <ChooseUserComponent didSelectUser={(user) => onDidSelectUser(user)} />
+    <AuthLayoutWrapperComponent
+      heading={"Welcome back!"}
+      subHeading={"Choose a workspace you want to login into below."}
+    >
+      <ChooseUserComponent didSelectUser={(user) => onDidSelectUser(user)} />
+    </AuthLayoutWrapperComponent>
   );
 }
