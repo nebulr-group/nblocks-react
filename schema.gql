@@ -1,0 +1,109 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type App {
+  logo: String
+  name: String
+  privacyPolicyUrl: String
+  termsOfServiceUrl: String
+  uiUrl: String
+  websiteUrl: String
+}
+
+input CreateTenantInput {
+  email: String!
+  logo: String
+  name: String
+  plan: String!
+}
+
+type Mutation {
+  createTenantAnonymous(tenant: CreateTenantInput!): Tenant!
+
+  """
+  This will create a new user for a tenant.
+  """
+  createUsers(userNames: [String!]!): [User!]!
+  deleteUser(userId: String!): Boolean!
+  sendPasswordResetLink(userId: String!): Boolean!
+  updateTenant(tenant: TenantInput!): Tenant!
+
+  """
+  Update the user. You can change role, teams and also enable or disable the user from logging in.
+  """
+  updateUser(user: UserInput!): User!
+}
+
+type Query {
+  """
+  Gets useful App configs for the UI to consume
+  """
+  getAppAnonymous: App!
+
+  """
+  Obtain an short lived session url to redirect or present the user its Stripe subscription panel for updating payment or subscription data.
+  """
+  getCustomerPortal: String!
+
+  """
+  Gets a single tenant
+  """
+  getTenant: Tenant!
+  getTenantAnonymous: TenantAnonymous!
+
+  """
+  Lists all tenants
+  """
+  listTenants: [Tenant!]!
+
+  """
+  List all available user roles that the current user can assign others
+  """
+  listUserRoles: [String!]!
+
+  """
+  List all users in this tenant.
+  """
+  listUsers: [User!]!
+}
+
+type Tenant {
+  createdAt: String
+  id: String!
+  locale: String
+  logo: String!
+  mfa: Boolean
+  name: String!
+  plan: String
+}
+
+type TenantAnonymous {
+  id: String!
+  locale: String
+  name: String
+}
+
+input TenantInput {
+  locale: String
+  mfa: Boolean
+  name: String
+}
+
+type User {
+  createdAt: String
+  email: String
+  enabled: Boolean
+  fullName: String
+  id: String!
+  onboarded: Boolean
+  role: String
+  teams: [String!]
+  username: String
+}
+
+input UserInput {
+  enabled: Boolean
+  id: String!
+  role: String
+}

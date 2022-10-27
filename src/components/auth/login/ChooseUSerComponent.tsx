@@ -18,11 +18,7 @@ const convertToOption = (user: AuthTenantUserResponseDto): Option => {
     value: user.id,
     icon: (
       <div style={{ minWidth: 32, height: 32 }}>
-        <ImageComponent
-          src={
-            "https://public.nblocks.dev/assets/logos/nblocks-logo-purple.png"
-          }
-        />
+        <ImageComponent src={user.tenant.logo} />
       </div>
     ),
   };
