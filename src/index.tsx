@@ -18,6 +18,7 @@ import { LibConfig } from "./models/lib-config";
 import { useConfig } from "./hooks/config-context";
 import { OnboardRoutes } from "./routes/OnboardRoutes";
 import { TogglerComponent } from "./components/shared/TogglerComponent";
+import { ModalComponent } from "./components/shared/ModalComponent";
 import "./index.css";
 
 export {
@@ -40,6 +41,7 @@ export {
   FormComponent,
   TextComponent,
   TogglerComponent,
+  ModalComponent,
 };
 
 export type { LibConfig };
