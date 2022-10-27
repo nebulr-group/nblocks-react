@@ -1,5 +1,5 @@
 import { useSecureContext } from "../../../hooks/secure-http-context";
-import React, { FunctionComponent, useState } from "react";
+import React, { FormEvent, FunctionComponent, useState } from "react";
 import { AuthLayoutWrapperComponent } from "../AuthLayoutWrapperComponent";
 import { LinkComponent } from "../../shared/LinkComponent";
 import { RouteConfig } from "../../../routes/AuthRoutes";
@@ -18,7 +18,8 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({ didLogin }) => {
   const [password, setPassword] = useState("");
   const { signup } = useConfig();
 
-  const submit = async () => {
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
     await authService.authenticate(username, password);
     didLogin();
   };
@@ -28,46 +29,45 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({ didLogin }) => {
       heading={"Log in to your account"}
       subHeading={"Welcome back! Please enter your details."}
     >
-      {/* <form> */}
-      <div>
-        <InputComponent
-          type="email"
-          label="Email address"
-          placeholder="Enter your email"
-          name="username"
-          onChange={(event) => setUsername(event.target.value)}
-          value={username}
-        />
-        <InputComponent
-          type="password"
-          label="Password"
-          placeholder="Enter your password"
-          name="password"
-          onChange={(event) => setPassword(event.target.value)}
-          value={password}
-        />
-      </div>
-      <div>
-        <LinkComponent
-          to={RouteConfig.password.ResetPasswordScreen}
-          type="primary"
-          size="sm"
-        >
-          Forgot password
-        </LinkComponent>
-      </div>
-      <div>
-        <NblocksButton
-          submit={true}
-          disabled={!username || !password}
-          size="md"
-          type="primary"
-          onClick={() => submit()}
-        >
-          Login
-        </NblocksButton>
-      </div>
-      {/* </form> */}
+      <form onSubmit={(event) => submit(event)}>
+        <div>
+          <InputComponent
+            type="email"
+            label="Email address"
+            placeholder="Enter your email"
+            name="username"
+            onChange={(event) => setUsername(event.target.value)}
+            value={username}
+          />
+          <InputComponent
+            type="password"
+            label="Password"
+            placeholder="Enter your password"
+            name="password"
+            onChange={(event) => setPassword(event.target.value)}
+            value={password}
+          />
+        </div>
+        <div>
+          <LinkComponent
+            to={RouteConfig.password.ResetPasswordScreen}
+            type="primary"
+            size="sm"
+          >
+            Forgot password
+          </LinkComponent>
+        </div>
+        <div>
+          <NblocksButton
+            submit={true}
+            disabled={!username || !password}
+            size="md"
+            type="primary"
+          >
+            Login
+          </NblocksButton>
+        </div>
+      </form>
       {signup && (
         <div>
           <TextComponent size="sm">
