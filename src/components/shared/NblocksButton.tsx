@@ -5,7 +5,7 @@ import { FunctionComponent, ReactNode } from "react";
  *
  */
 type ConfigObject = {
-  onClick?: () => any;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   type?:
     | "primary"
     | "secondary"
@@ -65,7 +65,7 @@ const NblocksButton: FunctionComponent<ConfigObject> = ({
     <button
       className={className + buttonTypeStyle + buttonPadding}
       disabled={disabled}
-      onClick={() => (onClick ? onClick() : null)}
+      onClick={onClick}
       type={submit ? "submit" : "button"}
     >
       {children}
