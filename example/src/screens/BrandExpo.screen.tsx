@@ -10,11 +10,13 @@ import {
   TextComponent,
   TogglerComponent,
   ModalComponent,
+  HorizontalEllipsisMenu,
 } from "nblocks-react";
 import icon from "../../assets/input-icon.svg";
 import iconWarning from "../../assets/input-warning-icon.svg";
 import keySvg from "../../assets/key-icon.svg";
 import image from "../../assets/demo-image.jpg";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 
 export function BrandExpoScreen() {
   const [password, setPassword] = useState("");
@@ -311,6 +313,29 @@ export function BrandExpoScreen() {
               Open Modal
             </NblocksButton>
           </div>
+        </div>
+        <div>
+          <h1 className="mt-5 text-3xl">Menu Drop Down</h1>
+          <HorizontalEllipsisMenu
+            options={[
+              {
+                label: "button1",
+                icon: keySvg,
+                type: "danger",
+                onClick: () => alert("Option 1 was clicked!"),
+              },
+              {
+                label: "button2",
+                icon: <XMarkIcon />,
+                onClick: () => alert("Option 2 was clicked!"),
+              },
+              {
+                label: "button3",
+                labelPosition: "center",
+                onClick: () => alert("Option 3 was clicked!"),
+              },
+            ]}
+          />
         </div>
       </div>
       <ModalComponent
