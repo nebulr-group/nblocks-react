@@ -19,6 +19,7 @@ import { useConfig } from "./hooks/config-context";
 import { OnboardRoutes } from "./routes/OnboardRoutes";
 import { TogglerComponent } from "./components/shared/TogglerComponent";
 import { ModalComponent } from "./components/shared/ModalComponent";
+import { HorizontalEllipsisMenu } from "./components/shared/HorizontalEllipsisMenu";
 import "./index.css";
 
 export {
@@ -42,6 +43,7 @@ export {
   TextComponent,
   TogglerComponent,
   ModalComponent,
+  HorizontalEllipsisMenu,
 };
 
 export type { LibConfig };
