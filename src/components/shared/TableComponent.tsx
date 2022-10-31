@@ -13,8 +13,9 @@ import {
   Row,
 } from "@tanstack/react-table";
 import { NblocksButton } from "./NblocksButton";
-import { User } from "../../generated/graphql";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/solid";
+import { ListUsersDocument, UpdateUserDocument, User } from "../../gql/graphql";
+import { useMutation, useQuery } from "@apollo/client";
 
 declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {
@@ -148,8 +149,19 @@ const defaultData: User[] = [
 ];
 
 const TableComponent: FunctionComponent<ConfigObject> = () => {
-  const [data, setData] = useState(() => [...defaultData]);
+  const { data, loading, error } = useQuery(ListUsersDocument);
+  const [
+    updateUserMutation,
+    { loading: mutationLoading, error: mutationError },
+  ] = useMutation(UpdateUserDocument);
+
   const columnHelper = createColumnHelper<User>();
+
+  const updateUser = async () => {
+    await updateUserMutation({
+      variables: { user: { id: "", role: "", enabled: true } },
+    });
+  };
 
   const columns = [
     columnHelper.accessor("fullName", {
@@ -171,11 +183,18 @@ const TableComponent: FunctionComponent<ConfigObject> = () => {
       header: "Email Address",
       footer: (props) => props.column.id,
       cell: (info) => info.getValue(),
+      meta: { editable: true },
+    }),
+    columnHelper.display({
+      id: "edit",
+      cell: (props) => (
+        <NblocksButton onClick={() => console.log(props)}>Edit</NblocksButton>
+      ),
     }),
   ];
 
   const table = useReactTable({
-    data,
+    data: data ? data.listUsers : [],
     columns,
     // Pipeline
     getCoreRowModel: getCoreRowModel(),
@@ -184,17 +203,17 @@ const TableComponent: FunctionComponent<ConfigObject> = () => {
     //
     meta: {
       updateData: (rowIndex, columnId, value) => {
-        setData((old) =>
-          old.map((row, index) => {
-            if (index === rowIndex) {
-              return {
-                ...old[rowIndex]!,
-                [columnId]: value,
-              };
-            }
-            return row;
-          })
-        );
+        //setData((old) =>
+        // old.map((row, index) => {
+        //   if (index === rowIndex) {
+        //     return {
+        //       ...old[rowIndex]!,
+        //       [columnId]: value,
+        //     };
+        //   }
+        //   return row;
+        // });
+        // );
       },
     },
     debugTable: true,
@@ -266,11 +285,14 @@ const TableRowComponent: FunctionComponent<{ row: Row<User> }> = ({ row }) => {
 
   return (
     <tr key={row.id} className={"border-t border-b"}>
-      {row.getVisibleCells().map((cell) => (
-        <td key={cell.id}>
-          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-        </td>
-      ))}
+      {row.getVisibleCells().map((cell) => {
+        console.log(cell.column.columnDef.cell);
+        return (
+          <td key={cell.id}>
+            <p>{flexRender(cell.column.columnDef.cell, cell.getContext())}</p>
+          </td>
+        );
+      })}
     </tr>
   );
 };

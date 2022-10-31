@@ -1,0 +1,13 @@
+mutation CreateUsers($userNames:[String!]!){
+  createUsers(userNames:$userNames){
+    id
+    fullName
+    email
+    username
+    createdAt
+    onboarded
+    enabled
+    role
+    teams   
+  }
+}

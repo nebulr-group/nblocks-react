@@ -1,0 +1,13 @@
+query ListUsers{
+  listUsers{       
+    id
+    fullName
+    email
+    username
+    createdAt
+    onboarded
+    enabled
+    role
+    teams
+  }
+}
