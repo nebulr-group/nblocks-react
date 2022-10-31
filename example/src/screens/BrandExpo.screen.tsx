@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   NblocksButton,
   InputComponent,
@@ -11,6 +11,7 @@ import {
   TogglerComponent,
   ModalComponent,
   HorizontalEllipsisMenu,
+  TableComponent,
 } from "nblocks-react";
 import icon from "../../assets/input-icon.svg";
 import iconWarning from "../../assets/input-warning-icon.svg";
@@ -337,7 +338,11 @@ export function BrandExpoScreen() {
             ]}
           />
         </div>
+        <div>
+          <TableComponent />
+        </div>
       </div>
+
       <ModalComponent
         isOpen={isOpen}
         setIsOpen={setIsOpen}

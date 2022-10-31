@@ -20,6 +20,7 @@ import { OnboardRoutes } from "./routes/OnboardRoutes";
 import { TogglerComponent } from "./components/shared/TogglerComponent";
 import { ModalComponent } from "./components/shared/ModalComponent";
 import { HorizontalEllipsisMenu } from "./components/shared/HorizontalEllipsisMenu";
+import { TableComponent } from "./components/shared/TableComponent";
 import "./index.css";
 
 export {
@@ -44,6 +45,7 @@ export {
   TogglerComponent,
   ModalComponent,
   HorizontalEllipsisMenu,
+  TableComponent,
 };
 
 export type { LibConfig };
