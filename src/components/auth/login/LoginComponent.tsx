@@ -6,9 +6,10 @@ import { NblocksButton } from "../../shared/NblocksButton";
 import { InputComponent } from "../../shared/InputComponent";
 import { TextComponent } from "../../shared/TextComponent";
 import { useConfig } from "../../../hooks/config-context";
+import { MfaState } from "../../../utils/AuthService";
 
 type ComponentProps = {
-  didLogin: () => void;
+  didLogin: (mfa: MfaState) => void;
 };
 
 const LoginComponent: FunctionComponent<ComponentProps> = ({ didLogin }) => {
@@ -19,8 +20,8 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({ didLogin }) => {
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    await authService.authenticate(username, password);
-    didLogin();
+    const response = await authService.authenticate(username, password);
+    didLogin(response.mfaState);
   };
 
   return (

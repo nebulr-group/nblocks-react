@@ -6,41 +6,41 @@ import { LinkComponent } from "../../shared/LinkComponent";
 import { NblocksButton } from "../../shared/NblocksButton";
 
 type ComponentProps = {
-  didRecoverMfaCode: () => void;
+  didSetupMfaCode: () => void;
 };
 
-const RecoverMfaComponent: FunctionComponent<ComponentProps> = ({
-  didRecoverMfaCode,
+const SetupMfaPhoneComponent: FunctionComponent<ComponentProps> = ({
+  didSetupMfaCode,
 }) => {
   const { authService } = useSecureContext();
-  const [recoverCode, setRecoverCode] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    await authService.resetUserMfaSetup(recoverCode);
-    didRecoverMfaCode();
+    await authService.resetUserMfaSetup("1245");
+    didSetupMfaCode();
   };
 
   return (
     <>
       <form onSubmit={(event) => submit(event)} className="space-y-6">
         <InputComponent
-          type="password"
-          label="Recovery code"
-          placeholder="Enter your recovery code"
-          name="username"
-          onChange={(event) => setRecoverCode(event.target.value)}
-          value={recoverCode}
+          type="text"
+          label="Phone number"
+          placeholder="+46..."
+          name="phoneNumber"
+          onChange={(event) => setPhoneNumber(event.target.value)}
+          value={phoneNumber}
         />
         <div>
           <NblocksButton
             submit={true}
-            disabled={!recoverCode}
+            disabled={!phoneNumber}
             size="md"
             type="primary"
             fullWidth={true}
           >
-            Reset
+            Submit
           </NblocksButton>
         </div>
       </form>
@@ -57,4 +57,4 @@ const RecoverMfaComponent: FunctionComponent<ComponentProps> = ({
   );
 };
 
-export { RecoverMfaComponent };
+export { SetupMfaPhoneComponent };
