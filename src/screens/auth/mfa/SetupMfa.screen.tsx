@@ -14,7 +14,7 @@ const SetupMfaScreen: FunctionComponent<{}> = () => {
     switch (setupStep) {
       case 0:
         return (
-          <SetupMfaPhoneComponent didSetupMfaCode={() => setSetupStep(1)} />
+          <SetupMfaPhoneComponent didSetupPhoneNumber={() => setSetupStep(1)} />
         );
 
       case 1:

@@ -4,7 +4,6 @@ import { RouteConfig } from "../../../routes/AuthRoutes";
 import { InputComponent } from "../../shared/InputComponent";
 import { LinkComponent } from "../../shared/LinkComponent";
 import { NblocksButton } from "../../shared/NblocksButton";
-import { AuthLayoutWrapperComponent } from "../AuthLayoutWrapperComponent";
 
 type ComponentProps = {
   didSendResetPasswordLink: () => void;
@@ -18,7 +17,7 @@ const ResetPasswordComponent: FunctionComponent<ComponentProps> = ({
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    await authService.sendResetPasswordLink("oscar@nebulr.group");
+    await authService.sendResetPasswordLink(email);
     didSendResetPasswordLink();
   };
 

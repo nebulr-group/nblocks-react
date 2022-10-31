@@ -1,0 +1,11 @@
+mutation CreateTenantAnonymous($tenant: CreateTenantInput!) {
+  createTenantAnonymous(tenant: $tenant) {
+    id
+    name
+    locale
+    logo
+    plan
+    mfa
+    createdAt
+  }
+}

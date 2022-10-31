@@ -29,7 +29,7 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    await authService.updatePassword(resetToken, "helloworld");
+    await authService.updatePassword(resetToken, newPassword);
     didSetPassword();
   };
 

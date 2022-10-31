@@ -6,19 +6,19 @@ import { LinkComponent } from "../../shared/LinkComponent";
 import { NblocksButton } from "../../shared/NblocksButton";
 
 type ComponentProps = {
-  didSetupMfaCode: () => void;
+  didSetupPhoneNumber: () => void;
 };
 
 const SetupMfaPhoneComponent: FunctionComponent<ComponentProps> = ({
-  didSetupMfaCode,
+  didSetupPhoneNumber,
 }) => {
   const { authService } = useSecureContext();
   const [phoneNumber, setPhoneNumber] = useState("");
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    await authService.resetUserMfaSetup("1245");
-    didSetupMfaCode();
+    await authService.startMfaUserSetup(phoneNumber);
+    didSetupPhoneNumber();
   };
 
   return (
