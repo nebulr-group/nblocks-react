@@ -1,26 +1,80 @@
-import React, { FunctionComponent } from 'react';
-import { useSecureContext } from '../../../hooks/secure-http-context';
+import React, { FormEvent, FunctionComponent, useState } from "react";
+import { useSecureContext } from "../../../hooks/secure-http-context";
+import { RouteConfig } from "../../../routes/AuthRoutes";
+import { InputComponent } from "../../shared/InputComponent";
+import { LinkComponent } from "../../shared/LinkComponent";
+import { NblocksButton } from "../../shared/NblocksButton";
 
 type ComponentProps = {
-  didCommitMfaCode: () => void;
-}
+  /** Setup mode will call a different API endpoint which is used when setting up MFA (optional) */
+  setupMode?: boolean;
+  /** Callback when user completed input. If setupMode is `true` a recover code will be provided in the callback */
+  didCommitMfaCode: (recoverCode?: string) => void;
+};
 
-const RequireMfaComponent: FunctionComponent<ComponentProps> = ({didCommitMfaCode}) => {
+const RequireMfaComponent: FunctionComponent<ComponentProps> = ({
+  didCommitMfaCode,
+  setupMode,
+}) => {
+  const { authService } = useSecureContext();
+  const [mfaCode, setMfaCode] = useState("");
 
-  const {authService} = useSecureContext();
-
-  const submit = async () => {
-    await authService.commitMfaCode("1245");
-    didCommitMfaCode();
-  }
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+    let recoverCode = undefined;
+    if (setupMode) {
+      recoverCode = await authService.finishMfaUserSetup(mfaCode);
+    } else {
+      await authService.commitMfaCode(mfaCode);
+    }
+    didCommitMfaCode(recoverCode);
+  };
 
   return (
-    <div>
-      <h1>RequireMfaComponent</h1>
-      <p>Clicking below will commit a mfa code "1234" for testing purposes</p>
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => submit()}>Commit MFA code</button>
-    </div>
-  )
-}
+    <>
+      <form onSubmit={(event) => submit(event)} className="space-y-6">
+        <InputComponent
+          type="text"
+          label="Secure code"
+          placeholder="Enter the secure code"
+          name="username"
+          onChange={(event) => setMfaCode(event.target.value)}
+          value={mfaCode}
+        />
+        {!setupMode && (
+          <div className="flex justify-end">
+            <LinkComponent
+              to={RouteConfig.mfa.RecoverMfaScreen}
+              type="primary"
+              size="sm"
+            >
+              Use recover code?
+            </LinkComponent>
+          </div>
+        )}
+        <div>
+          <NblocksButton
+            submit={true}
+            disabled={!mfaCode}
+            size="md"
+            type="primary"
+            fullWidth={true}
+          >
+            Verify
+          </NblocksButton>
+        </div>
+      </form>
+      <div>
+        <LinkComponent
+          to={RouteConfig.login.LoginScreen}
+          type="primary"
+          size="sm"
+        >
+          Back to login
+        </LinkComponent>
+      </div>
+    </>
+  );
+};
 
-export {RequireMfaComponent};
+export { RequireMfaComponent };

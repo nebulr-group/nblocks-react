@@ -17,6 +17,9 @@ type ConfigObject = {
   submit?: boolean;
   disabled?: boolean;
   children: ReactNode;
+
+  /**Allows the button to take full width. This overrides the width constraints for `size`*/
+  fullWidth?: boolean;
   className?: string;
 };
 
@@ -58,12 +61,18 @@ const NblocksButton: FunctionComponent<ConfigObject> = ({
   size,
   disabled,
   children,
+  fullWidth,
 }) => {
   const buttonTypeStyle = getButtonTypeStyle(type);
   const buttonPadding = getPadding(size);
   return (
     <button
-      className={className + buttonTypeStyle + buttonPadding}
+      className={
+        className +
+        buttonTypeStyle +
+        buttonPadding +
+        `${fullWidth ? " w-full" : ""}`
+      }
       disabled={disabled}
       onClick={onClick}
       type={submit ? "submit" : "button"}

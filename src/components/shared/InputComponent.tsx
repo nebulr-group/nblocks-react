@@ -47,8 +47,8 @@ type ConfigObject = {
   inputError?: boolean | undefined;
   onSuccessValidation?: boolean | undefined;
   ref?: React.LegacyRef<HTMLInputElement>;
-
   onChange?: (event: ChangeEvent<HTMLInputElement>) => any | undefined;
+  onBlur?: () => void | undefined;
 };
 
 /**
@@ -121,9 +121,11 @@ const InputComponent: FunctionComponent<ConfigObject> = ({
   className,
   ref,
   onChange,
+  onBlur,
 }) => {
   labelClassName = labelClassName ? labelClassName : "";
   className = className ? className : "";
+
   const getIcon = () => {
     if (inputError && errorLabel) {
       return (
@@ -160,8 +162,9 @@ const InputComponent: FunctionComponent<ConfigObject> = ({
       return;
     }
   };
+
   return (
-    <>
+    <div>
       {label && (
         <label
           htmlFor={name}
@@ -196,11 +199,12 @@ const InputComponent: FunctionComponent<ConfigObject> = ({
           list={list}
           value={value}
           ref={ref}
+          onBlur={() => (onBlur ? onBlur() : undefined)}
           onChange={(event) => (onChange ? onChange(event) : undefined)}
         />
       </div>
       {caption}
-    </>
+    </div>
   );
 };
 

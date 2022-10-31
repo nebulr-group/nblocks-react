@@ -8,9 +8,13 @@ type HeadingType = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
  */
 type ConfigObject = {
   children?: React.ReactNode;
+
+  /** Defines the header element type. This doesn't affect the styling. Treat this as relative declarations should you have multiple headings on a page. Start with h1. */
   type: HeadingType;
+
   className?: string;
   style?: React.CSSProperties;
+  /** lg:18px, xl:20px, 2xl:24px, 3xl:30px, 4xl:36px, 5xl:48px, 6xl:60px */
   size?:
     | "lg"
     | "xl"

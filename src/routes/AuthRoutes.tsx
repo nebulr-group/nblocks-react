@@ -1,10 +1,6 @@
 import React from "react";
 import { LoginScreen } from "../screens/auth/login/Login.screen";
-import {
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { LogoutScreen } from "../screens/auth/login/Logout.screen";
 import { ChooseUserScreen } from "../screens/auth/login/ChooseUser.screen";
 import { ResetPasswordScreen } from "../screens/auth/password/ResetPassword.screen";
@@ -19,25 +15,28 @@ const RouteConfig: NavigationConfig = {
   login: {
     LoginScreen: "/auth/login",
     LogoutScreen: "/auth/logout",
-    ChooseUserScreen: "/auth/choose-user"
+    ChooseUserScreen: "/auth/choose-user",
   },
   password: {
     ResetPasswordScreen: "/auth/reset-password",
     SetPasswordScreen: "/auth/set-password/",
   },
-  mfa : {
-    'RequireMfaScreen': "/auth/mfa/required",
-    'RecoverMfaScreen':  "/auth/mfa/recover",
-    'SetupMfaScreen':  "/auth/mfa/setup",
+  mfa: {
+    RequireMfaScreen: "/auth/mfa/required",
+    RecoverMfaScreen: "/auth/mfa/recover",
+    SetupMfaScreen: "/auth/mfa/setup",
   },
   onboard: {
     OnboardUserScreen: "/onboard/user",
-    OnboardTenantScreen: "/onboard/tenant"
-  }
-}
+    OnboardTenantScreen: "/onboard/tenant",
+  },
+  setup: {
+    signup: "/setup/signup",
+    config: "/setup/config",
+  },
+};
 
 const AuthRoutes = () => {
-
   return (
     <Routes>
       <Route path="login" element={<LoginScreen />}></Route>
@@ -50,7 +49,10 @@ const AuthRoutes = () => {
         <Route path="recover" element={<RecoverMfaScreen />}></Route>
         <Route path="setup" element={<SetupMfaScreen />}></Route>
       </Route>
-      <Route path="*" element={<Navigate to={RouteConfig.login.LoginScreen} replace />} />
+      <Route
+        path="*"
+        element={<Navigate to={RouteConfig.login.LoginScreen} replace />}
+      />
     </Routes>
   );
 };

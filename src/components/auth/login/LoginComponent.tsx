@@ -1,24 +1,85 @@
 import { useSecureContext } from "../../../hooks/secure-http-context";
-import React, { FunctionComponent } from "react";
+import React, { FormEvent, FunctionComponent, useState } from "react";
+import { LinkComponent } from "../../shared/LinkComponent";
+import { RouteConfig } from "../../../routes/AuthRoutes";
+import { NblocksButton } from "../../shared/NblocksButton";
+import { InputComponent } from "../../shared/InputComponent";
+import { TextComponent } from "../../shared/TextComponent";
+import { useConfig } from "../../../hooks/config-context";
+import { MfaState } from "../../../utils/AuthService";
 
 type ComponentProps = {
-  didLogin: () => void
-}
+  didLogin: (mfa: MfaState) => void;
+};
 
-const LoginComponent: FunctionComponent<ComponentProps> = ({didLogin}) => {
+const LoginComponent: FunctionComponent<ComponentProps> = ({ didLogin }) => {
+  const { authService } = useSecureContext();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const { signup } = useConfig();
 
-  const {authService} = useSecureContext();
-
-  const submit = async () => {
-    await authService.authenticate("oscar@nebulr.group", "helloworld");
-    didLogin();
-  }
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+    const response = await authService.authenticate(username, password);
+    didLogin(response.mfaState);
+  };
 
   return (
-    <div>
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => submit()}>Login</button>
-    </div>
-  )
-}
+    <>
+      <form onSubmit={(event) => submit(event)} className="space-y-6">
+        <InputComponent
+          type="email"
+          label="Email address"
+          placeholder="Enter your email"
+          name="username"
+          onChange={(event) => setUsername(event.target.value)}
+          value={username}
+        />
+        <InputComponent
+          type="password"
+          label="Password"
+          placeholder="Enter your password"
+          name="password"
+          onChange={(event) => setPassword(event.target.value)}
+          value={password}
+        />
+        <div className="flex justify-end">
+          <LinkComponent
+            to={RouteConfig.password.ResetPasswordScreen}
+            type="primary"
+            size="sm"
+          >
+            Forgot password
+          </LinkComponent>
+        </div>
+        <div>
+          <NblocksButton
+            submit={true}
+            disabled={!username || !password}
+            size="md"
+            type="primary"
+            fullWidth={true}
+          >
+            Signin
+          </NblocksButton>
+        </div>
+      </form>
+      {signup && (
+        <div>
+          <TextComponent size="sm">
+            Don't have an account?&nbsp;
+            <LinkComponent
+              to={RouteConfig.setup.signup}
+              type="primary"
+              size="sm"
+            >
+              Create one
+            </LinkComponent>
+          </TextComponent>
+        </div>
+      )}
+    </>
+  );
+};
 
-export {LoginComponent}
+export { LoginComponent };
