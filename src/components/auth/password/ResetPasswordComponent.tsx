@@ -1,26 +1,60 @@
 import { useSecureContext } from "../../../hooks/secure-http-context";
-import React, { FunctionComponent } from "react";
+import React, { FormEvent, FunctionComponent, useState } from "react";
+import { RouteConfig } from "../../../routes/AuthRoutes";
+import { InputComponent } from "../../shared/InputComponent";
+import { LinkComponent } from "../../shared/LinkComponent";
+import { NblocksButton } from "../../shared/NblocksButton";
 
 type ComponentProps = {
-  didSendResetPasswordLink: () => void
-}
+  didSendResetPasswordLink: () => void;
+};
 
-const ResetPasswordComponent: FunctionComponent<ComponentProps> = ({didSendResetPasswordLink}) => {
+const ResetPasswordComponent: FunctionComponent<ComponentProps> = ({
+  didSendResetPasswordLink,
+}) => {
+  const { authService } = useSecureContext();
+  const [email, setEmail] = useState("");
 
-  const {authService} = useSecureContext();
-
-  const submit = async () => {
-    await authService.sendResetPasswordLink("oscar@nebulr.group");
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+    await authService.sendResetPasswordLink(email);
     didSendResetPasswordLink();
-  }
+  };
 
   return (
-    <div>
-      <h1>ResetPasswordComponent</h1>
-      <p>Clicking below will simulate requesting a forgot password email</p>
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => submit()}>Request new password</button>
-    </div>
+    <>
+      <form onSubmit={(event) => submit(event)} className="space-y-6">
+        <InputComponent
+          type="email"
+          label="Email address"
+          placeholder="Enter your email"
+          name="username"
+          onChange={(event) => setEmail(event.target.value)}
+          value={email}
+        />
+        <div>
+          <NblocksButton
+            submit={true}
+            disabled={!email}
+            size="md"
+            type="primary"
+            fullWidth={true}
+          >
+            Reset password
+          </NblocksButton>
+        </div>
+      </form>
+      <div>
+        <LinkComponent
+          to={RouteConfig.login.LoginScreen}
+          type="primary"
+          size="sm"
+        >
+          Back to login
+        </LinkComponent>
+      </div>
+    </>
   );
-}
+};
 
-export {ResetPasswordComponent}
+export { ResetPasswordComponent };

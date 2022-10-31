@@ -14,7 +14,9 @@ import { BrandExpoScreen } from "./screens/BrandExpo.screen";
 function App() {
   return (
     <div className="App">
-      <NblocksProvider config={{ debug: true, handoverRoute: "/home" }}>
+      <NblocksProvider
+        config={{ debug: true, handoverRoute: "/home", signup: true }}
+      >
         <AppRoutes />
       </NblocksProvider>
     </div>
