@@ -11,11 +11,18 @@ import {
   Column,
   Table,
   Row,
+  getExpandedRowModel,
 } from "@tanstack/react-table";
 import { NblocksButton } from "./NblocksButton";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/solid";
-import { ListUsersDocument, UpdateUserDocument, User } from "../../gql/graphql";
+import {
+  ListUsersDocument,
+  UpdateUserDocument,
+  User,
+  UserInput,
+} from "../../gql/graphql";
 import { useMutation, useQuery } from "@apollo/client";
+import { TogglerComponent } from "./TogglerComponent";
 
 declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {
@@ -24,129 +31,6 @@ declare module "@tanstack/react-table" {
 }
 
 type ConfigObject = {};
-
-const defaultData: User[] = [
-  {
-    createdAt: "2022-09-16T08:32:06.772+00:00",
-    email: "oscar@nebulr.group",
-    enabled: true,
-    fullName: "Oscar Soderlund",
-    id: "1",
-    onboarded: true,
-    role: "OWNER",
-    username: "oscar@nebulr.group",
-  },
-  {
-    createdAt: "2022-09-16T08:32:06.772+00:00",
-    email: "oscar@nebulr.group",
-    enabled: true,
-    fullName: "Oscar Soderlund",
-    id: "2",
-    onboarded: true,
-    role: "OWNER",
-    username: "oscar@nebulr.group",
-  },
-  {
-    createdAt: "2022-09-16T08:32:06.772+00:00",
-    email: "oscar@nebulr.group",
-    enabled: true,
-    fullName: "Oscar Soderlund",
-    id: "3",
-    onboarded: true,
-    role: "OWNER",
-    username: "oscar@nebulr.group",
-  },
-  {
-    createdAt: "2022-09-16T08:32:06.772+00:00",
-    email: "oscar@nebulr.group",
-    enabled: false,
-    fullName: "Oscar Soderlund",
-    id: "4",
-    onboarded: true,
-    role: "OWNER",
-    username: "oscar@nebulr.group",
-  },
-  {
-    createdAt: "2022-09-16T08:32:06.772+00:00",
-    email: "oscar@nebulr.group",
-    enabled: false,
-    fullName: "Oscar Soderlund",
-    id: "4",
-    onboarded: true,
-    role: "OWNER",
-    username: "oscar@nebulr.group",
-  },
-  {
-    createdAt: "2022-09-16T08:32:06.772+00:00",
-    email: "oscar@nebulr.group",
-    enabled: false,
-    fullName: "Oscar Soderlund",
-    id: "4",
-    onboarded: true,
-    role: "OWNER",
-    username: "oscar@nebulr.group",
-  },
-  {
-    createdAt: "2022-09-16T08:32:06.772+00:00",
-    email: "oscar@nebulr.group",
-    enabled: false,
-    fullName: "Oscar Soderlund",
-    id: "4",
-    onboarded: true,
-    role: "OWNER",
-    username: "oscar@nebulr.group",
-  },
-  {
-    createdAt: "2022-09-16T08:32:06.772+00:00",
-    email: "oscar@nebulr.group",
-    enabled: false,
-    fullName: "Oscar Soderlund",
-    id: "4",
-    onboarded: true,
-    role: "OWNER",
-    username: "oscar@nebulr.group",
-  },
-  {
-    createdAt: "2022-09-16T08:32:06.772+00:00",
-    email: "oscar@nebulr.group",
-    enabled: false,
-    fullName: "Oscar Soderlund",
-    id: "4",
-    onboarded: true,
-    role: "OWNER",
-    username: "oscar@nebulr.group",
-  },
-  {
-    createdAt: "2022-09-16T08:32:06.772+00:00",
-    email: "oscar@nebulr.group",
-    enabled: false,
-    fullName: "Oscar Soderlund",
-    id: "4",
-    onboarded: true,
-    role: "OWNER",
-    username: "oscar@nebulr.group",
-  },
-  {
-    createdAt: "2022-09-16T08:32:06.772+00:00",
-    email: "oscar@nebulr.group",
-    enabled: false,
-    fullName: "Oscar Soderlund",
-    id: "4",
-    onboarded: true,
-    role: "OWNER",
-    username: "oscar@nebulr.group",
-  },
-  {
-    createdAt: "2022-09-16T08:32:06.772+00:00",
-    email: "oscar@nebulr.group",
-    enabled: false,
-    fullName: "Oscar Soderlund",
-    id: "4",
-    onboarded: true,
-    role: "OWNER",
-    username: "oscar@nebulr.group",
-  },
-];
 
 const TableComponent: FunctionComponent<ConfigObject> = () => {
   const { data, loading, error } = useQuery(ListUsersDocument);
@@ -157,9 +41,9 @@ const TableComponent: FunctionComponent<ConfigObject> = () => {
 
   const columnHelper = createColumnHelper<User>();
 
-  const updateUser = async () => {
+  const updateUser = async (user: UserInput) => {
     await updateUserMutation({
-      variables: { user: { id: "", role: "", enabled: true } },
+      variables: { user },
     });
   };
 
@@ -167,28 +51,40 @@ const TableComponent: FunctionComponent<ConfigObject> = () => {
     columnHelper.accessor("fullName", {
       header: "Name",
       footer: (props) => props.column.id,
-      cell: (info) => info.getValue(),
+      cell: ({ row, cell }) => cell.getValue(),
     }),
     columnHelper.accessor("enabled", {
       header: "Status",
       footer: (props) => props.column.id,
-      cell: (info) => (info.getValue() ? <i>Active</i> : <i>Deactivated</i>),
+      cell: ({ row, cell }) => {
+        return row.getIsExpanded() ? (
+          <TogglerComponent enabled={cell.getValue()!} setEnabled={() => {}} />
+        ) : (
+          JSON.stringify(cell.getValue())
+        );
+      },
     }),
     columnHelper.accessor("role", {
       header: "Role",
       footer: (props) => props.column.id,
-      cell: (info) => info.getValue(),
+      cell: ({ row, cell }) => cell.getValue(),
     }),
     columnHelper.accessor("email", {
       header: "Email Address",
       footer: (props) => props.column.id,
-      cell: (info) => info.getValue(),
-      meta: { editable: true },
+      cell: ({ row, cell }) => cell.getValue(),
     }),
     columnHelper.display({
       id: "edit",
-      cell: (props) => (
-        <NblocksButton onClick={() => console.log(props)}>Edit</NblocksButton>
+      header: () => null,
+      cell: ({ row, cell }) => (
+        <NblocksButton
+          type="primary"
+          size="md"
+          onClick={row.getToggleExpandedHandler()}
+        >
+          {row.getIsExpanded() ? "Save" : "Edit"}
+        </NblocksButton>
       ),
     }),
   ];
@@ -200,6 +96,8 @@ const TableComponent: FunctionComponent<ConfigObject> = () => {
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getRowCanExpand: () => true,
+    getExpandedRowModel: getExpandedRowModel(),
     //
     meta: {
       updateData: (rowIndex, columnId, value) => {
@@ -242,8 +140,8 @@ const TableComponent: FunctionComponent<ConfigObject> = () => {
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <TableRowComponent row={row} />
+          {table.getRowModel().rows.map((row, i) => (
+            <TableRowComponent row={row} key={i} />
           ))}
         </tbody>
       </table>
@@ -284,12 +182,11 @@ const TableRowComponent: FunctionComponent<{ row: Row<User> }> = ({ row }) => {
   //const { edit, setEdit } = useState(false);
 
   return (
-    <tr key={row.id} className={"border-t border-b"}>
+    <tr className={"border-t border-b"}>
       {row.getVisibleCells().map((cell) => {
-        console.log(cell.column.columnDef.cell);
         return (
           <td key={cell.id}>
-            <p>{flexRender(cell.column.columnDef.cell, cell.getContext())}</p>
+            {flexRender(cell.column.columnDef.cell, cell.getContext())}
           </td>
         );
       })}
