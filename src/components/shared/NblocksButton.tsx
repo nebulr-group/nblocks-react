@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactNode } from "react";
+import React, { FunctionComponent, ReactNode } from "react";
 
 /**
  * Object type with specific fields for type checking props that are passed to NblocksButton.

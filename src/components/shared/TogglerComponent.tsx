@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import React, { FunctionComponent } from "react";
 // Open Source (MIT License) component library
 import { Switch } from "@headlessui/react";
 
