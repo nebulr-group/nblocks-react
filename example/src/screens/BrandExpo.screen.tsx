@@ -8,6 +8,7 @@ import {
   ImageComponent,
   FormComponent,
   TextComponent,
+  AlertComponent,
 } from "nblocks-react";
 import icon from "../../assets/input-icon.svg";
 import iconWarning from "../../assets/input-warning-icon.svg";
@@ -268,6 +269,37 @@ export function BrandExpoScreen() {
         <h1 className="mt-5 text-3xl">Text Comopnent</h1>
         <TextComponent size={"base"}>This is text component.</TextComponent>
         <TextComponent size={"sm"}>This is text component.</TextComponent>
+      </div>
+      <h1 className="mt-5 text-3xl">Alerts</h1>
+      <div className="space-y-2">
+        <AlertComponent
+          title="Primary heading"
+          messages={["There's something that needs your attention"]}
+          type="primary"
+        />
+        <AlertComponent
+          title="Secondary heading"
+          messages={[
+            "There's something that needs your attention",
+            "There's another thing that needs your attention",
+          ]}
+          type="secondary"
+        />
+        <AlertComponent
+          title="Danger heading"
+          messages={["Something went terrible wrong"]}
+          type="danger"
+        />
+        <AlertComponent
+          title="Warning heading"
+          messages={["Your missing some important info"]}
+          type="warning"
+        />
+        <AlertComponent
+          title="Success heading"
+          messages={["Something went good!"]}
+          type="success"
+        />
       </div>
     </div>
   );

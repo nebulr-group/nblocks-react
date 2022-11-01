@@ -46,11 +46,10 @@ const RadioGroupComponent: FunctionComponent<ConfigObject> = ({
 
   useEffect(() => {
     if (!defaultValue && !haveNotifiedAboutDefaultFallback) {
-      console.log("telling");
       didSelectOption(selected);
       sethaveNotifiedAboutDefaultFallback(true);
     }
-  });
+  }, []);
 
   return (
     <div>

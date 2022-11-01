@@ -21,11 +21,7 @@ export function LoginScreen() {
   // Watch current user. If we got here premature make sure to redirect user back to where it came from
   useEffect(() => {
     if (currentUser.authenticated) {
-      if (debug) {
-        console.log(
-          `User was already authenticated. Redirecting back to: ${targetUrl}`
-        );
-      }
+      log(`User was already authenticated. Redirecting back to: ${targetUrl}`);
       navigate(targetUrl);
     }
   }, [currentUser]);
@@ -34,17 +30,26 @@ export function LoginScreen() {
   const onDidLogin = (mfa: MfaState) => {
     switch (mfa) {
       case "REQUIRED":
+        log("Navigating to Require MFA screen");
         navigate(RouteConfig.mfa.RequireMfaScreen);
         break;
 
       case "SETUP":
+        log("Navigating to Setup MFA screen");
         navigate(RouteConfig.mfa.SetupMfaScreen);
         break;
 
       case "DISABLED":
       default:
+        log("Navigating to Choose user screen");
         navigate(RouteConfig.login.ChooseUserScreen);
         break;
+    }
+  };
+
+  const log = (msg: string) => {
+    if (debug) {
+      console.log(msg);
     }
   };
 

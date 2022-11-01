@@ -18,6 +18,7 @@ import { LibConfig } from "./models/lib-config";
 import { useConfig } from "./hooks/config-context";
 import { OnboardRoutes } from "./routes/OnboardRoutes";
 import "./index.css";
+import { AlertComponent } from "./components/shared/AlertComponent";
 
 export {
   useConfig,
@@ -38,6 +39,7 @@ export {
   ImageComponent,
   FormComponent,
   TextComponent,
+  AlertComponent,
 };
 
 export type { LibConfig };

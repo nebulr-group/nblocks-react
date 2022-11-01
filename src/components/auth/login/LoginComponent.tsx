@@ -7,6 +7,8 @@ import { InputComponent } from "../../shared/InputComponent";
 import { TextComponent } from "../../shared/TextComponent";
 import { useConfig } from "../../../hooks/config-context";
 import { MfaState } from "../../../utils/AuthService";
+import { AlertComponent } from "../../shared/AlertComponent";
+import { UnauthenticatedError } from "../../../utils/errors/UnauthenticatedError";
 
 type ComponentProps = {
   didLogin: (mfa: MfaState) => void;
@@ -16,16 +18,36 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({ didLogin }) => {
   const { authService } = useSecureContext();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const { signup } = useConfig();
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    const response = await authService.authenticate(username, password);
-    didLogin(response.mfaState);
+    try {
+      const response = await authService.authenticate(username, password);
+      didLogin(response.mfaState);
+    } catch (error) {
+      if (error instanceof UnauthenticatedError) {
+        setErrorMsg("Wrong credentials, please try again.");
+      } else {
+        setErrorMsg(
+          "There was an error when logging in. Try again, otherwise contact support."
+        );
+      }
+      setUsername("");
+      setPassword("");
+    }
   };
 
   return (
     <>
+      {errorMsg && (
+        <AlertComponent
+          type="danger"
+          title="An error occured"
+          messages={[errorMsg]}
+        />
+      )}
       <form onSubmit={(event) => submit(event)} className="space-y-6">
         <InputComponent
           type="email"
