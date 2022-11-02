@@ -17,6 +17,10 @@ import { AccessControllComponent } from "./components/helpers/AccessControllComp
 import { LibConfig } from "./models/lib-config";
 import { useConfig } from "./hooks/config-context";
 import { OnboardRoutes } from "./routes/OnboardRoutes";
+import { TogglerComponent } from "./components/shared/TogglerComponent";
+import { ModalComponent } from "./components/shared/ModalComponent";
+import { HorizontalEllipsisMenu } from "./components/shared/HorizontalEllipsisMenu";
+import { TableComponent } from "./components/shared/TableComponent";
 import "./index.css";
 import { AlertComponent } from "./components/shared/AlertComponent";
 
@@ -39,6 +43,10 @@ export {
   ImageComponent,
   FormComponent,
   TextComponent,
+  TogglerComponent,
+  ModalComponent,
+  HorizontalEllipsisMenu,
+  TableComponent,
   AlertComponent,
 };
 

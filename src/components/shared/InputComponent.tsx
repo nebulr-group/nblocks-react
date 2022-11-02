@@ -1,4 +1,4 @@
-import { ChangeEvent, FunctionComponent, ReactNode } from "react";
+import React, { ChangeEvent, FunctionComponent, ReactNode } from "react";
 // When updating/extending this reusable input component
 // please reference the official html input specification:
 // https://html.spec.whatwg.org/multipage/input.html

@@ -1045,7 +1045,7 @@
     "@babel/helper-create-regexp-features-plugin" "^7.18.6"
     "@babel/helper-plugin-utils" "^7.18.6"
 
-"@babel/preset-env@^7.11.0", "@babel/preset-env@^7.12.1", "@babel/preset-env@^7.16.4":
+"@babel/preset-env@^7.11.0", "@babel/preset-env@^7.12.1", "@babel/preset-env@^7.16.4", "@babel/preset-env@^7.19.4":
   version "7.19.4"
   resolved "https://registry.yarnpkg.com/@babel/preset-env/-/preset-env-7.19.4.tgz#4c91ce2e1f994f717efb4237891c3ad2d808c94b"
   integrity sha512-5QVOTXUdqTCjQuh2GGtdd7YEhoRXBMVGROAtsBeLGIbIz3obCBIfRMT1I3ZKkMgNzwkyCkftDXSSkHxnfVf4qg==
@@ -2346,6 +2346,18 @@
     "@svgr/plugin-jsx" "^5.5.0"
     "@svgr/plugin-svgo" "^5.5.0"
     loader-utils "^2.0.0"
+
+"@tanstack/react-table@^8.5.21":
+  version "8.5.21"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-table/-/react-table-8.5.21.tgz#4f65d5739f8fdeb3a69e527728e97d5e62c1f5c5"
+  integrity sha512-YW46a8bPRhm41MHo77HTGu7GPMEEcfnjc39geCOn6D/9cODHK9SRTu5N26m7+9H8ImPEsOmaBZajgDaLzGiraA==
+  dependencies:
+    "@tanstack/table-core" "8.5.21"
+
+"@tanstack/table-core@8.5.21":
+  version "8.5.21"
+  resolved "https://registry.yarnpkg.com/@tanstack/table-core/-/table-core-8.5.21.tgz#374911075adec084274ede947a38cd1becb57384"
+  integrity sha512-e5hDtr3OxP6lOOieMbYnUwvQbavACYvqIArGY0WIF0W7jAjeIkvjgC7lxRyKoW8hJrPC5GCKHW5RjoNel+IeGA==
 
 "@testing-library/dom@^8.5.0":
   version "8.19.0"

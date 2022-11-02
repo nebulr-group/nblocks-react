@@ -1,11 +1,11 @@
-import { FunctionComponent, ReactNode } from "react";
+import React, { FunctionComponent, ReactNode } from "react";
 
 /**
  * Object type with specific fields for type checking props that are passed to NblocksButton.
  *
  */
 type ConfigObject = {
-  onClick?: () => any;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   type?:
     | "primary"
     | "secondary"
@@ -74,7 +74,7 @@ const NblocksButton: FunctionComponent<ConfigObject> = ({
         `${fullWidth ? " w-full" : ""}`
       }
       disabled={disabled}
-      onClick={() => (onClick ? onClick() : null)}
+      onClick={onClick}
       type={submit ? "submit" : "button"}
     >
       {children}

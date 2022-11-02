@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   NblocksButton,
   InputComponent,
@@ -8,299 +8,402 @@ import {
   ImageComponent,
   FormComponent,
   TextComponent,
+  TogglerComponent,
+  ModalComponent,
+  HorizontalEllipsisMenu,
+  TableComponent,
   AlertComponent,
 } from "nblocks-react";
 import icon from "../../assets/input-icon.svg";
 import iconWarning from "../../assets/input-warning-icon.svg";
+import keySvg from "../../assets/key-icon.svg";
 import image from "../../assets/demo-image.jpg";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 
 export function BrandExpoScreen() {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
 
-  return (
-    <div className="columns-1 py-8">
-      <h1 className="mt-5 text-3xl">Brand Expo</h1>
-      <div>
-        <NblocksButton
-          type="primary"
-          size="xl"
-          disabled={false}
-          onClick={() => console.log("Hello World!")}
-          className={"mt-4"}
-        >
-          Button
-        </NblocksButton>
-      </div>
-      <div className="grid">
-        <h2 className="mt-5 text-3xl">Form Inputs</h2>
-        <InputComponent
-          type="text"
-          label="Email1"
-          placeholder="olivia@untitledui.com"
-          name="email1"
-          infoLabel={{
-            position: "left",
-            src: `${icon}`,
-            alt: "Tool tip icon.",
-          }}
-          labelClassName={"mt-4"}
-          onChange={(event) => {
-            console.log(event.target.value);
-          }}
-        />
-        <InputComponent
-          type="password"
-          label="Password"
-          placeholder="Password"
-          name="password1"
-          errorLabel={{
-            position: "right",
-            src: `${iconWarning}`,
-            alt: "Tool tip icon.",
-          }}
-          inputError={true}
-          labelClassName={"mt-4"}
-          caption={<p className="mt-2 text-sm text-gray-500">Hello World</p>}
-        />
-        <InputComponent
-          type="number"
-          label="Number"
-          placeholder="Number"
-          name="number"
-          min={1}
-          max={100000}
-          labelClassName={"mt-4"}
-          infoLabel={{
-            position: "right",
-            src: `${icon}`,
-            alt: "Tool tip icon.",
-          }}
-        />
-        <InputComponent
-          type="tel"
-          label="Telephone Number"
-          placeholder="Telephone Number"
-          name="tel"
-          minLength={1}
-          maxLength={10}
-          labelClassName={"mt-4"}
-          infoLabel={{
-            position: "right",
-            src: `${icon}`,
-            alt: "Tool tip icon.",
-          }}
-        />
-        <InputComponent
-          type="text"
-          label="Text"
-          placeholder="Text"
-          name="text"
-          labelClassName={"mt-4"}
-          infoLabel={{
-            position: "right",
-            src: `${icon}`,
-            alt: "Tool tip icon.",
-          }}
-        />
-      </div>
-      <div className="grid">
-        <h1 className="mt-5 text-3xl">Links</h1>
-        <LinkComponent to={"/"} type={"primary"} size={"sm"} className={"mt-5"}>
-          Back to home
-        </LinkComponent>
-        <LinkComponent
-          to={"/"}
-          type={"primary"}
-          size={"md"}
-          className={"mt-5"}
-          disabled={true}
-        >
-          Back to home
-        </LinkComponent>
-        <LinkComponent
-          to={"/home"}
-          type={"secondary"}
-          className={"mt-5"}
-          size={"lg"}
-        >
-          Back to home
-        </LinkComponent>
-      </div>
-      <div className="grid">
-        <h1 className="mt-5 text-3xl">Headings</h1>
-        <HeadingComponent type={"h1"} size={"8xl"} className={"mt-5"}>
-          Hello World
-        </HeadingComponent>
-        <HeadingComponent type={"h2"} size={"7xl"} className={"mt-5"}>
-          Hello World
-        </HeadingComponent>
-        <HeadingComponent type={"h3"} size={"6xl"} className={"mt-5"}>
-          Hello World
-        </HeadingComponent>
-        <HeadingComponent type={"h4"} size={"5xl"} className={"mt-5"}>
-          Hello World
-        </HeadingComponent>
-        <HeadingComponent type={"h5"} size={"4xl"} className={"mt-5"}>
-          Hello World
-        </HeadingComponent>
-        <HeadingComponent type={"h6"} size={"3xl"} className={"mt-5"}>
-          Hello World
-        </HeadingComponent>
-      </div>
-      <div className="grid">
-        <h1 className="mt-5 text-3xl">Subheadings</h1>
-        <SubHeadingComponent type={"primary"} size={"6xl"}>
-          Hello World
-        </SubHeadingComponent>
-        <SubHeadingComponent type={"primary"} size={"5xl"}>
-          Hello World
-        </SubHeadingComponent>
-        <SubHeadingComponent type={"primary"} size={"4xl"}>
-          Hello World
-        </SubHeadingComponent>
-        <SubHeadingComponent type={"primary"} size={"3xl"}>
-          Hello World
-        </SubHeadingComponent>
-        <SubHeadingComponent type={"primary"} size={"2xl"}>
-          Hello World
-        </SubHeadingComponent>
-        <SubHeadingComponent type={"primary"} size={"xl"}>
-          Hello World
-        </SubHeadingComponent>
-        <SubHeadingComponent type={"primary"} size={"lg"}>
-          Hello World
-        </SubHeadingComponent>
-        <SubHeadingComponent type={"primary"} size={"base"}>
-          Hello World
-        </SubHeadingComponent>
-        <SubHeadingComponent type={"primary"} size={"sm"}>
-          Hello World
-        </SubHeadingComponent>
-      </div>
-      <div className="grid">
-        <h1 className="mt-5 text-3xl">Image Component</h1>
-        <div className="flex flex-column items-baseline mt-5">
-          <div style={{ width: 32, height: 32 }}>
-            <ImageComponent src={image}></ImageComponent>
-          </div>
-          <div style={{ width: 64, height: 64 }} className="ml-5">
-            <ImageComponent src={image}></ImageComponent>
-          </div>
-          <div style={{ width: 124, height: 124 }} className="ml-5">
-            <ImageComponent src={image}></ImageComponent>
-          </div>
-        </div>
-        <div className="flex flex-column items-baseline mt-5">
-          <div style={{ width: 32, height: 32 }}>
-            <ImageComponent src={image} type={"rounded"}></ImageComponent>
-          </div>
-          <div style={{ width: 64, height: 64 }} className="ml-5">
-            <ImageComponent src={image} type={"rounded"}></ImageComponent>
-          </div>
-          <div style={{ width: 124, height: 124 }} className="ml-5">
-            <ImageComponent src={image} type={"rounded"}></ImageComponent>
-          </div>
-        </div>
-        <div className="flex flex-column items-baseline mt-5">
-          <div style={{ width: 32, height: 32 }}>
-            <ImageComponent src={image} type={"circle"}></ImageComponent>
-          </div>
-          <div style={{ width: 64, height: 64 }} className="ml-5">
-            <ImageComponent src={image} type={"circle"}></ImageComponent>
-          </div>
-          <div style={{ width: 124, height: 124 }} className="ml-5">
-            <ImageComponent src={image} type={"circle"}></ImageComponent>
-          </div>
-        </div>
-      </div>
-      <div>
-        <h1 className="mt-5 text-3xl">Form Component</h1>
-      </div>
-      <div className="grid grid-cols-9 py-8">
-        <FormComponent
-          className={"col-start-3 col-end-8 block"}
-          onSubmit={(event) => {
-            event.preventDefault();
+  const [enabled, setEnabled] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
-            console.log(email);
-            console.log(password);
-          }}
-        >
+  return (
+    <>
+      <div className="columns-1 py-8">
+        <h1 className="mt-5 text-3xl">Brand Expo</h1>
+        <div>
+          <NblocksButton
+            type="primary"
+            size="xl"
+            disabled={false}
+            onClick={() => console.log("Hello World!")}
+            className={"mt-4"}
+          >
+            Button
+          </NblocksButton>
+        </div>
+        <div className="grid">
+          <h2 className="mt-5 text-3xl">Form Inputs</h2>
           <InputComponent
-            type="email"
-            label="Enter Your Email Address"
+            type="text"
+            label="Email1"
             placeholder="olivia@untitledui.com"
-            name="email"
-            labelClassName={"mt-4 block"}
-            caption={
-              <p className="mt-2 text-sm text-gray-500">
-                Please, enter your email.
-              </p>
-            }
-            onChange={(event) => setEmail(event.target.value)}
-            value={email}
+            name="email1"
+            infoLabel={{
+              position: "left",
+              src: `${icon}`,
+              alt: "Tool tip icon.",
+            }}
+            labelClassName={"mt-4"}
+            onChange={(event) => {
+              console.log(event.target.value);
+            }}
           />
           <InputComponent
             type="password"
             label="Password"
             placeholder="Password"
-            name="password"
-            labelClassName={"mt-5 block"}
-            caption={
-              <p className="mt-2 text-sm text-gray-500">
-                Please, enter your login password.
-              </p>
-            }
-            onChange={(event) => setPassword(event.target.value)}
-            value={password}
+            name="password1"
+            errorLabel={{
+              position: "right",
+              src: `${iconWarning}`,
+              alt: "Tool tip icon.",
+            }}
+            inputError={true}
+            labelClassName={"mt-4"}
+            caption={<p className="mt-2 text-sm text-gray-500">Hello World</p>}
           />
-          <NblocksButton
-            submit={true}
-            type={"tertiary"}
-            size={"xl"}
-            className={"w-full mt-5"}
+          <InputComponent
+            type="number"
+            label="Number"
+            placeholder="Number"
+            name="number"
+            min={1}
+            max={100000}
+            labelClassName={"mt-4"}
+            infoLabel={{
+              position: "right",
+              src: `${icon}`,
+              alt: "Tool tip icon.",
+            }}
+          />
+          <InputComponent
+            type="tel"
+            label="Telephone Number"
+            placeholder="Telephone Number"
+            name="tel"
+            minLength={1}
+            maxLength={10}
+            labelClassName={"mt-4"}
+            infoLabel={{
+              position: "right",
+              src: `${icon}`,
+              alt: "Tool tip icon.",
+            }}
+          />
+          <InputComponent
+            type="text"
+            label="Text"
+            placeholder="Text"
+            name="text"
+            labelClassName={"mt-4"}
+            infoLabel={{
+              position: "right",
+              src: `${icon}`,
+              alt: "Tool tip icon.",
+            }}
+          />
+        </div>
+        <div className="grid">
+          <h1 className="mt-5 text-3xl">Links</h1>
+          <LinkComponent
+            to={"/"}
+            type={"primary"}
+            size={"sm"}
+            className={"mt-5"}
           >
-            Submit
+            Back to home
+          </LinkComponent>
+          <LinkComponent
+            to={"https://www.google.com"}
+            type={"primary"}
+            size={"sm"}
+            nativeBehavior={true}
+            target={"_blank"}
+            className={"mt-5"}
+          >
+            Go to Google
+          </LinkComponent>
+          <LinkComponent
+            to={"/"}
+            type={"primary"}
+            size={"md"}
+            className={"mt-5"}
+            disabled={true}
+          >
+            Back to home
+          </LinkComponent>
+          <LinkComponent
+            to={"/home"}
+            type={"secondary"}
+            className={"mt-5"}
+            size={"lg"}
+          >
+            Back to home
+          </LinkComponent>
+        </div>
+        <div className="grid">
+          <h1 className="mt-5 text-3xl">Headings</h1>
+          <HeadingComponent type={"h1"} size={"8xl"} className={"mt-5"}>
+            Hello World
+          </HeadingComponent>
+          <HeadingComponent type={"h2"} size={"7xl"} className={"mt-5"}>
+            Hello World
+          </HeadingComponent>
+          <HeadingComponent type={"h3"} size={"6xl"} className={"mt-5"}>
+            Hello World
+          </HeadingComponent>
+          <HeadingComponent type={"h4"} size={"5xl"} className={"mt-5"}>
+            Hello World
+          </HeadingComponent>
+          <HeadingComponent type={"h5"} size={"4xl"} className={"mt-5"}>
+            Hello World
+          </HeadingComponent>
+          <HeadingComponent type={"h6"} size={"3xl"} className={"mt-5"}>
+            Hello World
+          </HeadingComponent>
+        </div>
+        <div className="grid">
+          <h1 className="mt-5 text-3xl">Subheadings</h1>
+          <SubHeadingComponent type={"primary"} size={"6xl"}>
+            Hello World
+          </SubHeadingComponent>
+          <SubHeadingComponent type={"primary"} size={"5xl"}>
+            Hello World
+          </SubHeadingComponent>
+          <SubHeadingComponent type={"primary"} size={"4xl"}>
+            Hello World
+          </SubHeadingComponent>
+          <SubHeadingComponent type={"primary"} size={"3xl"}>
+            Hello World
+          </SubHeadingComponent>
+          <SubHeadingComponent type={"primary"} size={"2xl"}>
+            Hello World
+          </SubHeadingComponent>
+          <SubHeadingComponent type={"primary"} size={"xl"}>
+            Hello World
+          </SubHeadingComponent>
+          <SubHeadingComponent type={"primary"} size={"lg"}>
+            Hello World
+          </SubHeadingComponent>
+          <SubHeadingComponent type={"primary"} size={"base"}>
+            Hello World
+          </SubHeadingComponent>
+          <SubHeadingComponent type={"primary"} size={"sm"}>
+            Hello World
+          </SubHeadingComponent>
+        </div>
+        <div className="grid">
+          <h1 className="mt-5 text-3xl">Image Component</h1>
+          <div className="flex flex-column items-baseline mt-5">
+            <div style={{ width: 32, height: 32 }}>
+              <ImageComponent src={image}></ImageComponent>
+            </div>
+            <div style={{ width: 64, height: 64 }} className="ml-5">
+              <ImageComponent src={image}></ImageComponent>
+            </div>
+            <div style={{ width: 124, height: 124 }} className="ml-5">
+              <ImageComponent src={image}></ImageComponent>
+            </div>
+          </div>
+          <div className="flex flex-column items-baseline mt-5">
+            <div style={{ width: 32, height: 32 }}>
+              <ImageComponent src={image} type={"rounded"}></ImageComponent>
+            </div>
+            <div style={{ width: 64, height: 64 }} className="ml-5">
+              <ImageComponent src={image} type={"rounded"}></ImageComponent>
+            </div>
+            <div style={{ width: 124, height: 124 }} className="ml-5">
+              <ImageComponent src={image} type={"rounded"}></ImageComponent>
+            </div>
+          </div>
+          <div className="flex flex-column items-baseline mt-5">
+            <div style={{ width: 32, height: 32 }}>
+              <ImageComponent src={image} type={"circle"}></ImageComponent>
+            </div>
+            <div style={{ width: 64, height: 64 }} className="ml-5">
+              <ImageComponent src={image} type={"circle"}></ImageComponent>
+            </div>
+            <div style={{ width: 124, height: 124 }} className="ml-5">
+              <ImageComponent src={image} type={"circle"}></ImageComponent>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h1 className="mt-5 text-3xl">Form Component</h1>
+        </div>
+        <div className="grid grid-cols-9 py-8">
+          <FormComponent
+            className={"col-start-3 col-end-8 block"}
+            onSubmit={(event) => {
+              event.preventDefault();
+
+              console.log(email);
+              console.log(password);
+            }}
+          >
+            <InputComponent
+              type="email"
+              label="Enter Your Email Address"
+              placeholder="olivia@untitledui.com"
+              name="email"
+              labelClassName={"mt-4 block"}
+              caption={
+                <p className="mt-2 text-sm text-gray-500">
+                  Please, enter your email.
+                </p>
+              }
+              onChange={(event) => setEmail(event.target.value)}
+              value={email}
+            />
+            <InputComponent
+              type="password"
+              label="Password"
+              placeholder="Password"
+              name="password"
+              labelClassName={"mt-5 block"}
+              caption={
+                <p className="mt-2 text-sm text-gray-500">
+                  Please, enter your login password.
+                </p>
+              }
+              onChange={(event) => setPassword(event.target.value)}
+              value={password}
+            />
+            <NblocksButton
+              submit={true}
+              type={"tertiary"}
+              size={"xl"}
+              className={"w-full mt-5"}
+            >
+              Submit
+            </NblocksButton>
+          </FormComponent>
+        </div>
+        <div className="grid">
+          <h1 className="mt-5 text-3xl">Text Comopnent</h1>
+          <TextComponent size={"base"}>This is text component.</TextComponent>
+          <TextComponent size={"sm"}>This is text component.</TextComponent>
+        </div>
+        <h1 className="mt-5 text-3xl">Alerts</h1>
+        <div className="space-y-2">
+          <AlertComponent
+            title="Primary heading"
+            messages={["There's something that needs your attention"]}
+            type="primary"
+          />
+          <AlertComponent
+            title="Secondary heading"
+            messages={[
+              "There's something that needs your attention",
+              "There's another thing that needs your attention",
+            ]}
+            type="secondary"
+          />
+          <AlertComponent
+            title="Danger heading"
+            messages={["Something went terrible wrong"]}
+            type="danger"
+          />
+          <AlertComponent
+            title="Warning heading"
+            messages={["Your missing some important info"]}
+            type="warning"
+          />
+          <AlertComponent
+            title="Success heading"
+            messages={["Something went good!"]}
+            type="success"
+          />
+        </div>
+        <div className="grid">
+          <h1 className="mt-5 text-3xl">Toggler Component</h1>
+          <TogglerComponent
+            enabled={enabled}
+            setEnabled={setEnabled}
+          ></TogglerComponent>
+        </div>
+        <div className="grid">
+          <h1 className="mt-5 text-3xl">Modal Component</h1>
+          <div>
+            <NblocksButton
+              type={"primary"}
+              size={"lg"}
+              onClick={() => {
+                setIsOpen(true);
+              }}
+            >
+              Open Modal
+            </NblocksButton>
+          </div>
+        </div>
+        <div>
+          <h1 className="mt-5 text-3xl">Menu Drop Down</h1>
+          <HorizontalEllipsisMenu
+            options={[
+              {
+                label: "button1",
+                icon: keySvg,
+                type: "danger",
+                onClick: () => alert("Option 1 was clicked!"),
+              },
+              {
+                label: "button2",
+                icon: <XMarkIcon />,
+                onClick: () => alert("Option 2 was clicked!"),
+              },
+              {
+                label: "button3",
+                labelPosition: "center",
+                onClick: () => alert("Option 3 was clicked!"),
+              },
+            ]}
+          />
+        </div>
+        <div>
+          <TableComponent />
+        </div>
+      </div>
+
+      <ModalComponent
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        heading={"Reset Password"}
+        description={"Do you want to send a reset password link to Candice Wu?"}
+        imageSrc={keySvg}
+      >
+        <div className="flex flex-col-reverse md:flex-row md:justify-between mt-5 gap-3">
+          <NblocksButton
+            size="md"
+            className="w-full"
+            type="tertiary"
+            onClick={() => setIsOpen(false)}
+          >
+            Cancel
           </NblocksButton>
-        </FormComponent>
-      </div>
-      <div className="grid">
-        <h1 className="mt-5 text-3xl">Text Comopnent</h1>
-        <TextComponent size={"base"}>This is text component.</TextComponent>
-        <TextComponent size={"sm"}>This is text component.</TextComponent>
-      </div>
-      <h1 className="mt-5 text-3xl">Alerts</h1>
-      <div className="space-y-2">
-        <AlertComponent
-          title="Primary heading"
-          messages={["There's something that needs your attention"]}
-          type="primary"
-        />
-        <AlertComponent
-          title="Secondary heading"
-          messages={[
-            "There's something that needs your attention",
-            "There's another thing that needs your attention",
-          ]}
-          type="secondary"
-        />
-        <AlertComponent
-          title="Danger heading"
-          messages={["Something went terrible wrong"]}
-          type="danger"
-        />
-        <AlertComponent
-          title="Warning heading"
-          messages={["Your missing some important info"]}
-          type="warning"
-        />
-        <AlertComponent
-          title="Success heading"
-          messages={["Something went good!"]}
-          type="success"
-        />
-      </div>
-    </div>
+          <NblocksButton
+            size="md"
+            className="w-full"
+            type="primary"
+            onClick={() => {
+              alert("Saved!");
+              setIsOpen(false);
+            }}
+          >
+            Save changes
+          </NblocksButton>
+        </div>
+      </ModalComponent>
+    </>
   );
 }

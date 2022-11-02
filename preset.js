@@ -10,6 +10,8 @@ module.exports = {
       green: colors.green,
       yellow: colors.yellow,
       red: colors.red,
+      blueGray: colors.slate,
+      blue: colors.blue,
     },
   },
   plugins: [],
