@@ -20,7 +20,7 @@ import { OnboardRoutes } from "./routes/OnboardRoutes";
 import { TogglerComponent } from "./components/shared/TogglerComponent";
 import { ModalComponent } from "./components/shared/ModalComponent";
 import { HorizontalEllipsisMenu } from "./components/shared/HorizontalEllipsisMenu";
-import { TableComponent } from "./components/shared/TableComponent";
+import { UserListTableComponent } from "./components/shared/UserListTableComponent";
 import { ChipComponent } from "./components/shared/ChipComponent";
 import "./index.css";
 
@@ -46,7 +46,7 @@ export {
   TogglerComponent,
   ModalComponent,
   HorizontalEllipsisMenu,
-  TableComponent,
+  UserListTableComponent,
   ChipComponent,
 };
 
