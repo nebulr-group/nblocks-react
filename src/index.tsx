@@ -22,6 +22,7 @@ import { ModalComponent } from "./components/shared/ModalComponent";
 import { HorizontalEllipsisMenu } from "./components/shared/HorizontalEllipsisMenu";
 import { TableComponent } from "./components/shared/TableComponent";
 import "./index.css";
+import { AlertComponent } from "./components/shared/AlertComponent";
 
 export {
   useConfig,
@@ -46,6 +47,7 @@ export {
   ModalComponent,
   HorizontalEllipsisMenu,
   TableComponent,
+  AlertComponent,
 };
 
 export type { LibConfig };

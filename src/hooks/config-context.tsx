@@ -10,14 +10,6 @@ const intialContext: LibConfig = {
   openRoutes: [],
   languages: ["en"],
   passwordComplexity: false,
-  onboarding: {
-    enabled: false,
-    requiredFields: {
-      firstName: false,
-      lastName: false,
-      phoneNumber: false,
-    },
-  },
   socialLogins: {
     accountApiHost: "",
     appId: "",

@@ -1,20 +1,41 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { AuthLayoutWrapperComponent } from "../../../components/auth/AuthLayoutWrapperComponent";
 import { ResetPasswordComponent } from "../../../components/auth/password/ResetPasswordComponent";
+import { ResetPasswordSuccessComponent } from "../../../components/auth/password/ResetPasswordSuccessComponent";
 
 const ResetPasswordScreen: FunctionComponent<{}> = () => {
-  const onDidSendResetPasswordLink = () => {
-    alert("A password link has been sent, check your inbox");
+  const [linkSent, setLinkSent] = useState(false);
+  const [email, setEmail] = useState("");
+
+  const onDidSendResetPasswordLink = (email: string) => {
+    setEmail(email);
+    setLinkSent(true);
+  };
+
+  const renderChild = () => {
+    if (linkSent) {
+      return <ResetPasswordSuccessComponent />;
+    } else {
+      return (
+        <ResetPasswordComponent
+          didSendResetPasswordLink={(email) =>
+            onDidSendResetPasswordLink(email)
+          }
+        />
+      );
+    }
   };
 
   return (
     <AuthLayoutWrapperComponent
-      heading={"Forgot password?"}
-      subHeading={"No worries, we'll send you reset instructions."}
+      heading={linkSent ? "Check your email" : "Forgot password?"}
+      subHeading={
+        linkSent
+          ? `We sent a password reset link to ${email}.`
+          : "No worries, we'll send you reset instructions."
+      }
     >
-      <ResetPasswordComponent
-        didSendResetPasswordLink={() => onDidSendResetPasswordLink()}
-      />
+      {renderChild()}
     </AuthLayoutWrapperComponent>
   );
 };

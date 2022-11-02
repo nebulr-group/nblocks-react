@@ -1,6 +1,8 @@
 import React, { FormEvent, FunctionComponent, useState } from "react";
 import { useSecureContext } from "../../../hooks/secure-http-context";
 import { RouteConfig } from "../../../routes/AuthRoutes";
+import { UnauthenticatedError } from "../../../utils/errors/UnauthenticatedError";
+import { AlertComponent } from "../../shared/AlertComponent";
 import { InputComponent } from "../../shared/InputComponent";
 import { LinkComponent } from "../../shared/LinkComponent";
 import { NblocksButton } from "../../shared/NblocksButton";
@@ -18,20 +20,39 @@ const RequireMfaComponent: FunctionComponent<ComponentProps> = ({
 }) => {
   const { authService } = useSecureContext();
   const [mfaCode, setMfaCode] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     let recoverCode = undefined;
-    if (setupMode) {
-      recoverCode = await authService.finishMfaUserSetup(mfaCode);
-    } else {
-      await authService.commitMfaCode(mfaCode);
+    try {
+      if (setupMode) {
+        recoverCode = await authService.finishMfaUserSetup(mfaCode);
+      } else {
+        await authService.commitMfaCode(mfaCode);
+      }
+      didCommitMfaCode(recoverCode);
+    } catch (error) {
+      if (error instanceof UnauthenticatedError) {
+        setErrorMsg("Wrong security code, please try again.");
+      } else {
+        setErrorMsg(
+          "There was an error when logging in. Try again, otherwise contact support."
+        );
+      }
+      setMfaCode("");
     }
-    didCommitMfaCode(recoverCode);
   };
 
   return (
     <>
+      {errorMsg && (
+        <AlertComponent
+          type="danger"
+          title="An error occured"
+          messages={[errorMsg]}
+        />
+      )}
       <form onSubmit={(event) => submit(event)} className="space-y-6">
         <InputComponent
           type="text"

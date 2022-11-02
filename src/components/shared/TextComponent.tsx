@@ -8,6 +8,7 @@ type ConfigObject = {
   children?: React.ReactNode;
   style?: React.CSSProperties;
   className?: string;
+  colorName?: string;
   size?: "sm" | "base";
   breakType?: "normal" | "words" | "all";
   whitespaceType?: "normal" | "nowrap" | "pre" | "pre-line" | "pre-wrap";
@@ -28,6 +29,7 @@ const TextComponent: FunctionComponent<ConfigObject> = ({
   breakType,
   whitespaceType,
   overflowType,
+  colorName,
 }) => {
   className = className ? className : "";
   return (
@@ -36,12 +38,15 @@ const TextComponent: FunctionComponent<ConfigObject> = ({
         breakType
       )}${getWhitespaceType(whitespaceType)}${getTextOverflowType(
         overflowType
-      )}`}
+      )} ${getTextColor(colorName)}`}
       style={style}
     >
       {children}
     </p>
   );
+};
+const getTextColor = (colorName?: ConfigObject["colorName"]) => {
+  return colorName ? colorName : "text-gray-900";
 };
 
 /**
@@ -70,9 +75,9 @@ const getTextOverflowType = (overflowType: ConfigObject["overflowType"]) => {
 const getTextSizeStyle = (size: ConfigObject["size"]) => {
   switch (size) {
     case "sm":
-      return " text-sm text-gray-900";
+      return " text-sm";
     case "base":
-      return " text-base text-gray-900";
+      return " text-base";
     default:
       return "";
   }
