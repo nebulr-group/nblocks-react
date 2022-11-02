@@ -15,10 +15,10 @@ type ConfigObject = {
   isOpen: boolean;
   children?: React.ReactNode;
   heading?: string;
-  imageSrc?: string;
-  imageType?: "primary" | "danger" | "warning" | "success" | "info";
+  icon?: React.ReactNode;
+  iconType?: "primary" | "danger" | "warning" | "success" | "info";
+  iconClassName?: string;
   description?: string;
-  imageClassName?: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -43,7 +43,7 @@ type ConfigObject = {
  *    setIsOpen={setIsOpen}
  *    heading={"Modal's Example Title!"}
  *    description={"Modal's example description."}
- *    imageSrc={svgIcon}
+ *    icon={svgIcon}
  *    >
  *        <NblocksButton
  *          size="md"
@@ -75,12 +75,30 @@ const ModalComponent: FunctionComponent<ConfigObject> = ({
   children,
   heading,
   description,
-  imageSrc,
-  imageClassName,
-  imageType,
+  icon,
+  iconClassName,
+  iconType,
   setIsOpen,
 }) => {
-  imageClassName = imageClassName ? imageClassName : "";
+  iconClassName = iconClassName ? iconClassName : "";
+
+  const getModalIcon = (icon: React.ReactNode) => {
+    if (typeof icon === "string") {
+      return (
+        <ImageComponent
+          src={icon}
+          className={`${iconClassName}${getIconTypeStyle(iconType)}`}
+        />
+      );
+    } else {
+      return (
+        <div className={`${iconClassName}${getIconTypeStyle(iconType)}`}>
+          {icon}
+        </div>
+      );
+    }
+  };
+
   return (
     <Dialog
       open={isOpen}
@@ -89,21 +107,18 @@ const ModalComponent: FunctionComponent<ConfigObject> = ({
     >
       <Dialog.Overlay className={"fixed inset-0 bg-gray-400/30"} />
       <Dialog.Panel
-        className={"relative w-full p-4 md:p-6 max-w-md bg-white rounded-lg"}
+        className={
+          "relative w-full p-4 md:p-6 max-w-md bg-white rounded-lg z-50"
+        }
       >
-        <div className="flex justify-between p-0">
-          {imageSrc && (
+        <div className={`flex ${icon ? "justify-between" : "justify-end"} p-0`}>
+          {icon && (
             <div
-              className={`border-8 w-14 h-14 rounded-full flex justify-center items-center${getImageTypeStyle(
-                imageType
+              className={`border-8 w-14 h-14 rounded-full flex justify-center items-center${getIconBackgroundTypeStyle(
+                iconType
               )}`}
             >
-              <div className="p-1">
-                <ImageComponent
-                  src={imageSrc}
-                  className={`${imageClassName}`}
-                />
-              </div>
+              {getModalIcon(icon)}
             </div>
           )}
           <NblocksButton
@@ -139,8 +154,8 @@ const ModalComponent: FunctionComponent<ConfigObject> = ({
  * @param imageType
  * @returns
  */
-const getImageTypeStyle = (imageType: ConfigObject["imageType"]) => {
-  switch (imageType) {
+const getIconBackgroundTypeStyle = (iconType: ConfigObject["iconType"]) => {
+  switch (iconType) {
     case "danger":
       return " bg-red-200 border-red-100";
     case "success":
@@ -153,6 +168,23 @@ const getImageTypeStyle = (imageType: ConfigObject["imageType"]) => {
       return " bg-blue-200 border-blue-100";
     default:
       return " bg-purple-200 border-purple-100";
+  }
+};
+
+const getIconTypeStyle = (iconType: ConfigObject["iconType"]) => {
+  switch (iconType) {
+    case "danger":
+      return " text-red-600 h-5 w-5";
+    case "success":
+      return " text-green-600 h-5 w-5";
+    case "warning":
+      return " text-yellow-600 h-5 w-5";
+    case "primary":
+      return " text-purple-600 h-5 w-5";
+    case "info":
+      return " text-blue-600 h-5 w-5";
+    default:
+      return " text-purple-600 h-5 w-5";
   }
 };
 
