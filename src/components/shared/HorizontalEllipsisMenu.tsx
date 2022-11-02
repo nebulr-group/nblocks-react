@@ -9,7 +9,7 @@ import { ImageComponent } from "./ImageComponent";
  * that is used to create & configure button instance
  * in HorizontalEllipsisMenu component.
  */
-type Option = {
+export type Option = {
   /** Displayed label */
   label: string;
   /** Displayed position of the button label */
@@ -86,19 +86,20 @@ const HorizontalEllipsisMenu: FunctionComponent<ConfigObject> = ({
     }
   };
   return (
-    <Popover className={"relative inline-block"}>
-      <Popover.Button className="w-6 h-6 outline-none">
+    <Popover className={"relative inline-flex"}>
+      <Popover.Button className="w-6 h-6 outline-none my-auto">
         <EllipsisHorizontalIcon />
       </Popover.Button>
       <Popover.Panel
-        className={`absolute bg-white text-gray-900 border rounded-lg max-w-md overflow-hidden p-2 left-0 ${getPopoverPosition(
+        className={`absolute bg-white text-gray-900 border rounded-lg z-50 p-2 min-h-max min-w-max${getPopoverPosition(
           position
         )}`}
       >
         <div className="flex flex-col w-full">
-          {options.map((option) => {
+          {options.map((option, index) => {
             return (
               <NblocksButton
+                key={index}
                 onClick={option.onClick}
                 className={`flex items-center w-full py-2 px-2 rounded-lg font-medium${getOptionStyle(
                   option.type
@@ -155,11 +156,11 @@ const getOptionStyle = (type: Option["type"]) => {
 const getPopoverPosition = (position: ConfigObject["position"]) => {
   switch (position) {
     case "left":
-      return " right-0";
+      return " right-0 origin-top-left inset-y-full";
     case "right":
-      return " left-0";
+      return " left-0 origin-top-right inset-y-full";
     default:
-      return "";
+      return " left-0 origin-top-right inset-y-full";
   }
 };
 
