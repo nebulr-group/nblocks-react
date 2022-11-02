@@ -21,6 +21,7 @@ import { TogglerComponent } from "./components/shared/TogglerComponent";
 import { ModalComponent } from "./components/shared/ModalComponent";
 import { HorizontalEllipsisMenu } from "./components/shared/HorizontalEllipsisMenu";
 import { TableComponent } from "./components/shared/TableComponent";
+import { ChipComponent } from "./components/shared/ChipComponent";
 import "./index.css";
 
 export {
@@ -46,6 +47,7 @@ export {
   ModalComponent,
   HorizontalEllipsisMenu,
   TableComponent,
+  ChipComponent,
 };
 
 export type { LibConfig };
