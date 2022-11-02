@@ -10,11 +10,7 @@ module.exports = function (api) {
 
   // Configuration
   return {
-    presets: [
-      "@babel/preset-env",
-      "@babel/preset-react",
-      "@babel/preset-typescript",
-    ],
+    presets: ["@babel/preset-react", "@babel/preset-typescript"],
     plugins: [
       [
         "module-resolver",
