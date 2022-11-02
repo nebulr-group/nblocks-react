@@ -68,15 +68,14 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
   useEffect(() => {
     if (users) {
       // Support pre selecting user based on localstorage data
-      AuthService.getTenantUserId().then((id) => {
-        if (id) {
-          const userMatch = users.find((user) => user.id === id);
-          if (userMatch) {
-            log("Pre selecting current workspace");
-            setSelectedUser(userMatch);
-          }
+      const id = AuthService.getTenantUserId();
+      if (id) {
+        const userMatch = users.find((user) => user.id === id);
+        if (userMatch) {
+          log("Pre selecting current workspace");
+          setSelectedUser(userMatch);
         }
-      });
+      }
 
       // Auto select user if only one workspace is available
       if (users.length === 1) {
