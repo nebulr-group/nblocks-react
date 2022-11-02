@@ -1,4 +1,7 @@
 export interface LibConfig {
+  /** Sets several other configs into a sensible default for development */
+  devMode: boolean;
+
   // Output debug messages from plugin
   debug: boolean;
 

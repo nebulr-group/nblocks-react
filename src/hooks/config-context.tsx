@@ -1,7 +1,8 @@
 import React, { FunctionComponent, useContext } from "react";
 import { LibConfig } from "../models/lib-config";
 
-const intialContext: LibConfig = {
+const initialContext: LibConfig = {
+  devMode: false,
   handoverRoute: "/",
   defaultLocale: "en",
   apiHost: "http://localhost:3000",
@@ -9,7 +10,7 @@ const intialContext: LibConfig = {
   debug: false,
   openRoutes: [],
   languages: ["en"],
-  passwordComplexity: false,
+  passwordComplexity: true,
   socialLogins: {
     accountApiHost: "",
     appId: "",
@@ -22,15 +23,20 @@ const intialContext: LibConfig = {
   signup: false,
 };
 
-const Context = React.createContext<LibConfig>(intialContext);
+const Context = React.createContext<LibConfig>(initialContext);
 const useConfig = () => useContext(Context);
 
 const NblocksConfigContextProvider: FunctionComponent<{
   config?: Partial<LibConfig>;
   children: React.ReactNode;
 }> = ({ children, config }) => {
+  if (config?.devMode) {
+    initialContext.signup = true;
+    initialContext.passwordComplexity = false;
+  }
+
   return (
-    <Context.Provider value={{ ...intialContext, ...config }}>
+    <Context.Provider value={{ ...initialContext, ...config }}>
       {children}
     </Context.Provider>
   );

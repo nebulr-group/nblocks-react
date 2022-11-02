@@ -1,68 +1,26 @@
-import {
-  AuthRoutes,
-  SetupRoutes,
-  OnboardRoutes,
-  UserRoutes,
-  NblocksProvider,
-  AuthGuard,
-} from "nblocks-react";
+import { NblocksProvider } from "nblocks-react";
 import React from "react";
-import { Routes, Route, Navigate, BrowserRouter } from "react-router-dom";
 import { HomeScreen } from "./screens/Home.screen";
-import { BrandExpoScreen } from "./screens/BrandExpo.screen";
 
 function App() {
   return (
     <div className="App">
-      <NblocksProvider
-        config={{ debug: true, handoverRoute: "/home", signup: true }}
-      >
-        <AppRoutes />
+      <NblocksProvider config={{ debug: true, devMode: true }}>
+        <header className="App-header">
+          <p>
+            Edit <code>src/App.tsx</code> and save to reload.
+          </p>
+          <a
+            className="App-link"
+            href="https://reactjs.org"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Learn React
+          </a>
+        </header>
       </NblocksProvider>
     </div>
-  );
-}
-
-function AppRoutes() {
-  return (
-    <BrowserRouter>
-      <NestedRoutes />
-    </BrowserRouter>
-  );
-}
-
-function NestedRoutes() {
-  return (
-    <Routes>
-      <Route
-        path="/home"
-        element={
-          <AuthGuard>
-            <HomeScreen />
-          </AuthGuard>
-        }
-      />
-      <Route
-        path="/brandExpo"
-        element={
-          <AuthGuard>
-            <BrandExpoScreen />
-          </AuthGuard>
-        }
-      />
-      <Route path="/auth/*" element={<AuthRoutes />} />
-      <Route path="/onboard/*" element={<OnboardRoutes />} />
-      <Route path="/setup/*" element={<SetupRoutes />} />
-      <Route
-        path="/user/*"
-        element={
-          <AuthGuard>
-            <UserRoutes />
-          </AuthGuard>
-        }
-      />
-      <Route path="*" element={<Navigate to="/home" replace />} />
-    </Routes>
   );
 }
 
