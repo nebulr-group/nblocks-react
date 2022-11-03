@@ -94,7 +94,7 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
           messages={["You don't belong to any workspace. Contact support!"]}
         />
       )}
-      <div>
+      <div className="max-w-sm w-full mb-6">
         {users && users?.length > 0 && (
           <RadioGroupComponent
             didSelectOption={(value) => onDidSelectOption(value)}
@@ -105,7 +105,7 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
           />
         )}
       </div>
-      <div>
+      <div className="max-w-sm w-full">
         <NblocksButton
           submit={true}
           disabled={!selectedUser}
@@ -117,12 +117,13 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
           Login
         </NblocksButton>
       </div>
-      <div>
+      <div className="text-center mt-8">
         <TextComponent size="sm">Not seeing your workspace?</TextComponent>
         <LinkComponent
           to={RouteConfig.login.LoginScreen}
           type="primary"
           size="sm"
+          className="font-semibold"
         >
           Try a different email
         </LinkComponent>
