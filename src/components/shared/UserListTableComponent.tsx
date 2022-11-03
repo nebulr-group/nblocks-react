@@ -13,6 +13,7 @@ import { ListUsersDocument, User } from "../../gql/graphql";
 import { useQuery } from "@apollo/client";
 import { UserTableRowComponent } from "./UserTableRowComponent";
 import { ModalComponent } from "./ModalComponent";
+import { SafeUserNameComponent } from "./SafeUserNameComponent";
 
 /**
  *
@@ -29,13 +30,15 @@ export type ModalState = {
 
 const UserListTableComponent: FunctionComponent<ConfigObject> = () => {
   const [isOpen, setIsOpen] = useState(false);
+
   const [modalState, setModalState] = useState<ModalState>({
     heading: "",
     description: "",
     type: "primary",
     onPrimaryClick: () => {},
   });
-  const { data, loading, error } = useQuery(ListUsersDocument);
+
+  const listUsersQuery = useQuery(ListUsersDocument);
 
   const columnHelper = createColumnHelper<User>();
 
@@ -44,7 +47,9 @@ const UserListTableComponent: FunctionComponent<ConfigObject> = () => {
       header: "Name",
       footer: (props) => props.column.id,
       cell: (info) => (
-        <span className="font-medium text-gray-900">{info.getValue()}</span>
+        <span className="font-medium text-gray-900">
+          <SafeUserNameComponent name={info.getValue()!} />
+        </span>
       ),
     }),
     columnHelper.accessor("enabled", {
@@ -121,7 +126,7 @@ const UserListTableComponent: FunctionComponent<ConfigObject> = () => {
   };
 
   const table = useReactTable({
-    data: data ? data.listUsers : [],
+    data: listUsersQuery.data ? listUsersQuery.data.listUsers : [],
     columns,
     // Pipeline
     getCoreRowModel: getCoreRowModel(),

@@ -1,7 +1,6 @@
 import { useQuery } from "@apollo/client";
 import React, { FunctionComponent, useContext } from "react";
 import { App, GetAppAnonymousDocument } from "../gql/graphql";
-import { useConfig } from "./config-context";
 
 const initialContext: App = {};
 

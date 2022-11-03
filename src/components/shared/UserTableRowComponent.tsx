@@ -1,7 +1,14 @@
 import React, { useState, useEffect, FunctionComponent } from "react";
 import { Cell, flexRender, Row } from "@tanstack/react-table";
-import { UpdateUserDocument, User } from "../../gql/graphql";
-import { useMutation } from "@apollo/client";
+import {
+  DeleteUserDocument,
+  ListUserRolesDocument,
+  ListUsersDocument,
+  SendPasswordResetLinkDocument,
+  UpdateUserDocument,
+  User,
+} from "../../gql/graphql";
+import { useMutation, useQuery } from "@apollo/client";
 import { TogglerComponent } from "./TogglerComponent";
 import { NblocksButton } from "./NblocksButton";
 import { ListBoxComponent } from "./ListBoxComponent";
@@ -9,6 +16,7 @@ import { HorizontalEllipsisMenu, Option } from "./HorizontalEllipsisMenu";
 import { ChipComponent } from "./ChipComponent";
 import { ModalState } from "./UserListTableComponent";
 import { KeyIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { useAuth } from "../../hooks/auth-context";
 
 type ConfigObject = {
   row: Row<User>;
@@ -26,18 +34,43 @@ const UserTableRowComponent: FunctionComponent<ConfigObject> = ({
   // Row editing cells value states
   const [enabled, setEnabled] = useState(true);
   const [role, setRole] = useState("");
-  // Set your role options
-  const roles = ["OWNER", "MANAGER", "ADMIN"];
 
-  const [
-    updateUserMutation,
-    { loading: mutationLoading, error: mutationError },
-  ] = useMutation(UpdateUserDocument);
+  const { currentUser } = useAuth();
+
+  const listRolesQuery = useQuery(ListUserRolesDocument);
+  const [updateUserMutation, updateUserMutationData] =
+    useMutation(UpdateUserDocument);
+  const [resetPasswordMutation, resetPasswordUserMutationData] = useMutation(
+    SendPasswordResetLinkDocument
+  );
+  const [deleteUserMutation, deleteUserMutationData] =
+    useMutation(DeleteUserDocument);
+
+  const loading =
+    listRolesQuery.loading ||
+    updateUserMutationData.loading ||
+    resetPasswordUserMutationData.loading;
+
   const updateUser = async () => {
     await updateUserMutation({
       variables: {
         user: { id: row.original.id, role: role, enabled: enabled },
       },
+    });
+    setEdit(false);
+  };
+
+  const deleteUser = async () => {
+    await deleteUserMutation({
+      variables: { userId: row.original.id },
+      refetchQueries: [{ query: ListUsersDocument }],
+    });
+    setEdit(false);
+  };
+
+  const sendResetLink = async () => {
+    await resetPasswordMutation({
+      variables: { userId: row.original.id },
     });
     setEdit(false);
   };
@@ -76,7 +109,11 @@ const UserTableRowComponent: FunctionComponent<ConfigObject> = ({
           <>
             {edit ? (
               <ListBoxComponent
-                items={roles}
+                items={
+                  listRolesQuery.data?.listUserRoles
+                    ? listRolesQuery.data?.listUserRoles
+                    : []
+                }
                 selected={role}
                 setSelected={setRole}
               />
@@ -95,7 +132,10 @@ const UserTableRowComponent: FunctionComponent<ConfigObject> = ({
                 icon: <KeyIcon />,
                 type: "primary",
                 description: `Do you want to send a reset password link to ${cell.row.original.fullName}?`,
-                onPrimaryClick: () => {},
+                onPrimaryClick: () => {
+                  sendResetLink();
+                  setModalIsOpen(false);
+                },
               });
               setModalIsOpen(true);
             },
@@ -110,7 +150,8 @@ const UserTableRowComponent: FunctionComponent<ConfigObject> = ({
                 type: "danger",
                 description: `Are you sure you want to delete the user ${cell.row.original.fullName}?`,
                 onPrimaryClick: () => {
-                  // On Deletion
+                  deleteUser();
+                  setModalIsOpen(false);
                 },
               });
               setModalIsOpen(true);
@@ -118,31 +159,35 @@ const UserTableRowComponent: FunctionComponent<ConfigObject> = ({
           },
         ];
 
-        return (
-          <div className="flex items-center">
-            {edit && (
+        if (row.original.id === currentUser.user?.id) {
+          return <></>;
+        } else {
+          return (
+            <div className="flex items-center">
+              {edit && (
+                <NblocksButton
+                  onClick={() => setEdit(false)}
+                  className="mr-3"
+                  type={"tertiary"}
+                  size={"sm"}
+                >
+                  Cancel
+                </NblocksButton>
+              )}
               <NblocksButton
-                onClick={() => setEdit(false)}
-                className="mr-3"
-                type={"tertiary"}
-                size={"sm"}
+                onClick={() => (edit ? updateUser() : setEdit(true))}
+                className={`${!edit && "text-purple-700 mr-3"}`}
+                type={edit ? "primary" : undefined}
+                size={edit ? "sm" : undefined}
               >
-                Cancel
+                {edit ? "Save" : "Edit"}
               </NblocksButton>
-            )}
-            <NblocksButton
-              onClick={() => (edit ? updateUser() : setEdit(true))}
-              className={`${!edit && "text-purple-700 mr-3"}`}
-              type={edit ? "primary" : undefined}
-              size={edit ? "sm" : undefined}
-            >
-              {edit ? "Save" : "Edit"}
-            </NblocksButton>
-            {!edit && (
-              <HorizontalEllipsisMenu options={options} position={"left"} />
-            )}
-          </div>
-        );
+              {!edit && (
+                <HorizontalEllipsisMenu options={options} position={"left"} />
+              )}
+            </div>
+          );
+        }
       default:
         return flexRender(cell.column.columnDef.cell, cell.getContext());
     }
