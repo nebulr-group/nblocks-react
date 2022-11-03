@@ -1,3 +1,4 @@
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import React, { FunctionComponent } from "react";
 import { RouteConfig } from "../../../routes/AuthRoutes";
 import { LinkComponent } from "../../shared/LinkComponent";
@@ -11,10 +12,12 @@ const ResetPasswordSuccessComponent: FunctionComponent<
     <>
       <LinkComponent
         to={RouteConfig.login.LoginScreen}
-        type="primary"
+        type={"secondary"}
         size="sm"
+        className="font-semibold flex items-center"
       >
-        Back to login
+        <ArrowLeftIcon className="w-5 inline-block mr-1 font-bold" /> Back to
+        login
       </LinkComponent>
     </>
   );
