@@ -5,6 +5,7 @@ import { InputComponent } from "../../shared/InputComponent";
 import { LinkComponent } from "../../shared/LinkComponent";
 import { NblocksButton } from "../../shared/NblocksButton";
 import { AlertComponent } from "../../shared/AlertComponent";
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 
 type ComponentProps = {
   didSendResetPasswordLink: (email: string) => void;
@@ -34,13 +35,18 @@ const ResetPasswordComponent: FunctionComponent<ComponentProps> = ({
   return (
     <>
       {errorMsg && (
-        <AlertComponent
-          type="danger"
-          title="An error occured"
-          messages={[errorMsg]}
-        />
+        <div className="max-w-sm w-full mb-6">
+          <AlertComponent
+            type="danger"
+            title="An error occured"
+            messages={[errorMsg]}
+          />
+        </div>
       )}
-      <form onSubmit={(event) => submit(event)} className="space-y-6">
+      <form
+        onSubmit={(event) => submit(event)}
+        className="space-y-6 max-w-sm w-full"
+      >
         <InputComponent
           type="email"
           label="Email address"
@@ -61,13 +67,14 @@ const ResetPasswordComponent: FunctionComponent<ComponentProps> = ({
           </NblocksButton>
         </div>
       </form>
-      <div>
+      <div className="mt-8">
         <LinkComponent
           to={RouteConfig.login.LoginScreen}
-          type="primary"
+          type={"secondary"}
           size="sm"
+          className="font-semibold flex items-center"
         >
-          Back to login
+          <ArrowLeftIcon className="w-5 inline-block mr-1" /> Back to login
         </LinkComponent>
       </div>
     </>
