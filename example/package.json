@@ -24,7 +24,6 @@
   "license": "ISC",
   "devDependencies": {
     "@apollo/client": "3",
-    "@apollo/react-hooks": "4",
     "@babel/cli": "^7.19.3",
     "@babel/core": "^7.19.3",
     "@babel/preset-env": "^7.19.4",

@@ -11,7 +11,7 @@ import {
   TogglerComponent,
   ModalComponent,
   HorizontalEllipsisMenu,
-  TableComponent,
+  UserListTableComponent,
   AlertComponent,
 } from "nblocks-react";
 import icon from "../../assets/input-icon.svg";
@@ -345,6 +345,37 @@ export function BrandExpoScreen() {
             >
               Open Modal
             </NblocksButton>
+            <ModalComponent
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+              heading={"Reset Password"}
+              description={
+                "Do you want to send a reset password link to Candice Wu?"
+              }
+              icon={keySvg}
+            >
+              <div className="flex flex-col-reverse md:flex-row md:justify-between mt-5 gap-3">
+                <NblocksButton
+                  size="md"
+                  className="w-full"
+                  type="tertiary"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Cancel
+                </NblocksButton>
+                <NblocksButton
+                  size="md"
+                  className="w-full"
+                  type="primary"
+                  onClick={() => {
+                    alert("Saved!");
+                    setIsOpen(false);
+                  }}
+                >
+                  Save changes
+                </NblocksButton>
+              </div>
+            </ModalComponent>
           </div>
         </div>
         <div>
@@ -370,40 +401,11 @@ export function BrandExpoScreen() {
             ]}
           />
         </div>
-        <div>
-          <TableComponent />
+        <div className="w-full">
+          <h1 className="mt-5 text-3xl">User List Component</h1>
+          <UserListTableComponent />
         </div>
       </div>
-
-      <ModalComponent
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        heading={"Reset Password"}
-        description={"Do you want to send a reset password link to Candice Wu?"}
-        imageSrc={keySvg}
-      >
-        <div className="flex flex-col-reverse md:flex-row md:justify-between mt-5 gap-3">
-          <NblocksButton
-            size="md"
-            className="w-full"
-            type="tertiary"
-            onClick={() => setIsOpen(false)}
-          >
-            Cancel
-          </NblocksButton>
-          <NblocksButton
-            size="md"
-            className="w-full"
-            type="primary"
-            onClick={() => {
-              alert("Saved!");
-              setIsOpen(false);
-            }}
-          >
-            Save changes
-          </NblocksButton>
-        </div>
-      </ModalComponent>
     </>
   );
 }
