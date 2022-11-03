@@ -14,7 +14,6 @@
   ],
   "devDependencies": {
     "@apollo/client": "3",
-    "@apollo/react-hooks": "4",
     "@babel/cli": "^7.19.3",
     "@babel/core": "^7.19.3",
     "@babel/preset-env": "^7.19.4",
@@ -22,7 +21,7 @@
     "@babel/preset-typescript": "^7.18.6",
     "@graphql-codegen/cli": "^2.13.7",
     "@graphql-codegen/client-preset": "^1.1.1",
-    "@headlessui/react": "^0.0.0-insiders.f66f492",
+    "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^2.0.12",
     "@tanstack/react-table": "^8.5.21",
     "@testing-library/jest-dom": "^5.16.5",
@@ -46,8 +45,7 @@
   },
   "peerDependencies": {
     "@apollo/client": "3",
-    "@apollo/react-hooks": "4",
-    "@headlessui/react": "^0.0.0-insiders.f66f492",
+    "@headlessui/react": "^1",
     "@heroicons/react": "^2",
     "@tanstack/react-table": "^8.5.21",
     "axios": "^1",
@@ -55,8 +53,8 @@
     "react": "^18",
     "react-dom": "^18",
     "react-router-dom": "^6",
-    "web-vitals": "^2",
-    "typescript": "^4"
+    "typescript": "^4",
+    "web-vitals": "^2"
   },
   "license": "MIT",
   "homepage": "https://github.com/nebulr-group/nblocks-react#readme",
