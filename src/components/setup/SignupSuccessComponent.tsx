@@ -10,8 +10,9 @@ const SignupSuccessComponent: FunctionComponent<ComponentProps> = ({}) => {
       <div>
         <LinkComponent
           to={RouteConfig.login.LoginScreen}
-          type="primary"
+          type={"secondary"}
           size="sm"
+          className="font-semibold"
         >
           Back to login
         </LinkComponent>

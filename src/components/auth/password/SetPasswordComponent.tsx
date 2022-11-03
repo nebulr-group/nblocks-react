@@ -72,13 +72,18 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
   return (
     <>
       {errorMsg && (
-        <AlertComponent
-          type="danger"
-          title="An error occured"
-          messages={[errorMsg]}
-        />
+        <div className="max-w-sm w-full mb-6">
+          <AlertComponent
+            type="danger"
+            title="An error occured"
+            messages={[errorMsg]}
+          />
+        </div>
       )}
-      <form onSubmit={(event) => submit(event)} className="space-y-6">
+      <form
+        onSubmit={(event) => submit(event)}
+        className="space-y-6 max-w-sm w-full"
+      >
         <div>
           <InputComponent
             type="password"
@@ -114,11 +119,12 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
           </NblocksButton>
         </div>
       </form>
-      <div>
+      <div className="mt-8">
         <LinkComponent
           to={RouteConfig.login.LoginScreen}
-          type="primary"
+          type={"secondary"}
           size="sm"
+          className="font-semibold "
         >
           Back to login
         </LinkComponent>
