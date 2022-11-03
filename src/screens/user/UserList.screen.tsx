@@ -1,12 +1,12 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent } from "react";
+import { UserListTableComponent } from "../../components/shared/UserListTableComponent";
 
 const UserListScreen: FunctionComponent<{}> = () => {
-
   return (
     <>
-      <span>UserListScreen</span>
+      <UserListTableComponent />
     </>
-  )
-}
+  );
+};
 
-export {UserListScreen};
+export { UserListScreen };
