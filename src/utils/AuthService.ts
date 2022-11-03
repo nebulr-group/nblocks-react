@@ -1,6 +1,6 @@
 import { AxiosInstance } from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AuthTenantUserResponseDto } from "../models/auth-tenant-user-response.dto";
+import { NblocksStorage } from "./Storage";
 
 //FIXME centralize models
 export type UpdateUserProfileArgs = {
@@ -29,9 +29,9 @@ export class AuthService {
   private readonly httpClient: AxiosInstance;
   private readonly debug: boolean;
 
-  private static AUTH_TOKEN_KEY = "NBLOCKS_AUTH_TOKEN";
-  private static TENANT_USER_ID_KEY = "NBLOCKS_TENANT_USER_ID";
-  private static MFA_TOKEN_KEY = "NBLOCKS_MFA_TOKEN";
+  private static AUTH_TOKEN_KEY = "AUTH_TOKEN";
+  private static TENANT_USER_ID_KEY = "TENANT_USER_ID";
+  private static MFA_TOKEN_KEY = "MFA_TOKEN";
 
   userAuthenticated: boolean;
 
@@ -61,7 +61,7 @@ export class AuthService {
     }>(this.ENDPOINTS.authenticate, { username, password });
     if (!response.data.token) throw new Error("Wrong credentials");
 
-    await AuthService.setAuthToken(response.data.token);
+    AuthService.setAuthToken(response.data.token);
 
     return { mfaState: response.data.mfaState };
   }
@@ -86,7 +86,7 @@ export class AuthService {
       this.ENDPOINTS.commitMfaCode,
       { mfaCode }
     );
-    await AuthService.setMfaToken(result.data.mfaToken);
+    AuthService.setMfaToken(result.data.mfaToken);
   }
 
   async startMfaUserSetup(phoneNumber: string): Promise<void> {
@@ -105,7 +105,7 @@ export class AuthService {
       mfaToken: string;
       backupCode: string;
     }>(this.ENDPOINTS.finishMfaUserSetup, { mfaCode });
-    await AuthService.setMfaToken(result.data.mfaToken);
+    AuthService.setMfaToken(result.data.mfaToken);
     return result.data.backupCode;
   }
 
@@ -136,41 +136,36 @@ export class AuthService {
   }
 
   static async hasFullAuthContext(): Promise<boolean> {
-    return !!(await this.getAuthToken()) && !!(await this.getTenantUserId());
+    return !!this.getAuthToken() && !!this.getTenantUserId();
   }
 
-  static async setAuthToken(token: string): Promise<void> {
-    await AsyncStorage.setItem(this.AUTH_TOKEN_KEY, token);
+  static setAuthToken(token: string): void {
+    NblocksStorage.setItem(this.AUTH_TOKEN_KEY, token);
   }
 
-  static async setMfaToken(token: string): Promise<void> {
-    await AsyncStorage.setItem(this.MFA_TOKEN_KEY, token);
+  static setMfaToken(token: string): void {
+    NblocksStorage.setItem(this.MFA_TOKEN_KEY, token);
   }
 
-  static async setTenantUserId(userId: string): Promise<void> {
-    await AsyncStorage.setItem(this.TENANT_USER_ID_KEY, userId);
+  static setTenantUserId(userId: string): void {
+    NblocksStorage.setItem(this.TENANT_USER_ID_KEY, userId);
   }
 
-  static async getAuthToken(): Promise<string | null> {
-    const data = AsyncStorage.getItem(this.AUTH_TOKEN_KEY);
-    return data;
+  static getAuthToken(): string | null {
+    return NblocksStorage.getItem(this.AUTH_TOKEN_KEY);
   }
 
-  static async getMfaToken(): Promise<string | null> {
-    const data = AsyncStorage.getItem(this.MFA_TOKEN_KEY);
-    return data;
+  static getMfaToken(): string | null {
+    return NblocksStorage.getItem(this.MFA_TOKEN_KEY);
   }
 
-  static async getTenantUserId(): Promise<string | null> {
-    const data = await AsyncStorage.getItem(this.TENANT_USER_ID_KEY);
-    return data;
+  static getTenantUserId(): string | null {
+    return NblocksStorage.getItem(this.TENANT_USER_ID_KEY);
   }
 
-  static async clearAuthStorage(): Promise<void> {
-    await Promise.all([
-      AsyncStorage.removeItem(this.AUTH_TOKEN_KEY),
-      AsyncStorage.removeItem(this.TENANT_USER_ID_KEY),
-      AsyncStorage.removeItem(this.MFA_TOKEN_KEY),
-    ]);
+  static clearAuthStorage(): void {
+    NblocksStorage.removeItem(this.AUTH_TOKEN_KEY);
+    NblocksStorage.removeItem(this.TENANT_USER_ID_KEY);
+    NblocksStorage.removeItem(this.MFA_TOKEN_KEY);
   }
 }

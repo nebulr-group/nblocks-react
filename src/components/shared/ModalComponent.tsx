@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import React, { FunctionComponent } from "react";
 import { Dialog } from "@headlessui/react";
 import { ImageComponent } from "./ImageComponent";
 import { HeadingComponent } from "./HeadingComponent";

@@ -1,3 +1,5 @@
+const pak = require("./package.json");
+
 module.exports = {
-  presets: ["@babel/preset-typescript", "@babel/preset-typescript"],
+  presets: ["@babel/preset-react", "@babel/preset-typescript"],
 };

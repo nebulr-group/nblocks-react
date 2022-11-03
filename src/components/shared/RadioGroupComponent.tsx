@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
 import { TextComponent } from "./TextComponent";
@@ -46,11 +46,10 @@ const RadioGroupComponent: FunctionComponent<ConfigObject> = ({
 
   useEffect(() => {
     if (!defaultValue && !haveNotifiedAboutDefaultFallback) {
-      console.log("telling");
       didSelectOption(selected);
       sethaveNotifiedAboutDefaultFallback(true);
     }
-  });
+  }, []);
 
   return (
     <div>

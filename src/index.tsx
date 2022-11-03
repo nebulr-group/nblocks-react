@@ -23,6 +23,7 @@ import { HorizontalEllipsisMenu } from "./components/shared/HorizontalEllipsisMe
 import { UserListTableComponent } from "./components/shared/UserListTableComponent";
 import { ChipComponent } from "./components/shared/ChipComponent";
 import "./index.css";
+import { AlertComponent } from "./components/shared/AlertComponent";
 
 export {
   useConfig,
@@ -48,6 +49,7 @@ export {
   HorizontalEllipsisMenu,
   UserListTableComponent,
   ChipComponent,
+  AlertComponent,
 };
 
 export type { LibConfig };

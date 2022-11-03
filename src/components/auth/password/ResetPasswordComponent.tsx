@@ -4,9 +4,10 @@ import { RouteConfig } from "../../../routes/AuthRoutes";
 import { InputComponent } from "../../shared/InputComponent";
 import { LinkComponent } from "../../shared/LinkComponent";
 import { NblocksButton } from "../../shared/NblocksButton";
+import { AlertComponent } from "../../shared/AlertComponent";
 
 type ComponentProps = {
-  didSendResetPasswordLink: () => void;
+  didSendResetPasswordLink: (email: string) => void;
 };
 
 const ResetPasswordComponent: FunctionComponent<ComponentProps> = ({
@@ -14,15 +15,31 @@ const ResetPasswordComponent: FunctionComponent<ComponentProps> = ({
 }) => {
   const { authService } = useSecureContext();
   const [email, setEmail] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    await authService.sendResetPasswordLink(email);
-    didSendResetPasswordLink();
+
+    try {
+      await authService.sendResetPasswordLink(email);
+      didSendResetPasswordLink(email);
+    } catch (error) {
+      setErrorMsg(
+        "There was an error when resetting the password. Try again, otherwise contact support."
+      );
+      setEmail("");
+    }
   };
 
   return (
     <>
+      {errorMsg && (
+        <AlertComponent
+          type="danger"
+          title="An error occured"
+          messages={[errorMsg]}
+        />
+      )}
       <form onSubmit={(event) => submit(event)} className="space-y-6">
         <InputComponent
           type="email"

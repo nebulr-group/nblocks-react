@@ -1,6 +1,7 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+    "target": "ES6",
     "baseUrl": "./",
     "paths": {
       "nblocks-react": ["../src/index.tsx"]

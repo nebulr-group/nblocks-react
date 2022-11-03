@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import React, { FunctionComponent } from "react";
 import { Popover } from "@headlessui/react";
 import { NblocksButton } from "./NblocksButton";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";

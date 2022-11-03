@@ -1,5 +1,3 @@
-/*- Main Style Folder -*/
-@config "../tailwind.config.js";
 /*-- Tailwind --*/
 @tailwind base;
 @tailwind components;

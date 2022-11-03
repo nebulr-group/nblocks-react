@@ -1,11 +1,13 @@
 import { useSecureContext } from "../../../hooks/secure-http-context";
-import React, { FormEvent, FunctionComponent } from "react";
+import React, { FormEvent, FunctionComponent, useState } from "react";
 import { RouteConfig } from "../../../routes/AuthRoutes";
 import { InputComponent } from "../../shared/InputComponent";
 import { LinkComponent } from "../../shared/LinkComponent";
 import { NblocksButton } from "../../shared/NblocksButton";
 import { usePasswordValidation } from "../../../hooks/usePasswordValidation";
 import { ValidationMessageComponent } from "../../shared/ValidationMessageComponent";
+import { UnauthenticatedError } from "../../../utils/errors/UnauthenticatedError";
+import { AlertComponent } from "../../shared/AlertComponent";
 
 type ComponentProps = {
   didSetPassword: () => void;
@@ -17,6 +19,8 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
   resetToken,
 }) => {
   const { authService } = useSecureContext();
+  const [errorMsg, setErrorMsg] = useState("");
+
   const {
     password: newPassword,
     feedbackLog: newPasswordFeedbackLog,
@@ -29,8 +33,23 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    await authService.updatePassword(resetToken, newPassword);
-    didSetPassword();
+
+    try {
+      await authService.updatePassword(resetToken, newPassword);
+      didSetPassword();
+    } catch (error) {
+      if (error instanceof UnauthenticatedError) {
+        setErrorMsg(
+          "The link has expired. You need to request a new reset password link again."
+        );
+      } else {
+        setErrorMsg(
+          "There was an error when logging in. Try again, otherwise contact support."
+        );
+      }
+      onNewPasswordTextChangeValidation("");
+      setConfirmPassword("");
+    }
   };
 
   const samePasswordValidator = (
@@ -52,6 +71,13 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
 
   return (
     <>
+      {errorMsg && (
+        <AlertComponent
+          type="danger"
+          title="An error occured"
+          messages={[errorMsg]}
+        />
+      )}
       <form onSubmit={(event) => submit(event)} className="space-y-6">
         <div>
           <InputComponent
