@@ -29,6 +29,9 @@ export interface LibConfig {
   /** Enable password complexity according to ISO27001 */
   passwordComplexity: boolean;
 
+  /** If this is a single page application and to have routes for /auth etc provided by plugin or bring your own react router */
+  spa: boolean;
+
   /** Available social login providers and account api data that the user can use for authorization. */
   socialLogins: {
     accountApiHost: string;

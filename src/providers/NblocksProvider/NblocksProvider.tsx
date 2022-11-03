@@ -7,7 +7,10 @@ import {
 } from "../../hooks/theme-context";
 import { NblocksSecureContextProvider } from "../../hooks/secure-http-context";
 import { BrandingConfig, ColorConfig } from "../../utils/BrandingConfig";
-import { NblocksConfigContextProvider } from "../../hooks/config-context";
+import {
+  NblocksConfigContextProvider,
+  useConfig,
+} from "../../hooks/config-context";
 import { LibConfig } from "../../models/lib-config";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthGuard } from "../../routes/AuthGuard";
@@ -41,9 +44,7 @@ const NblocksProvider: FunctionComponent<{
               styleOverrides={styleOverrides}
               colorOverrides={colorOverrides}
             >
-              <DevRouterWrapper devMode={config?.devMode}>
-                {children}
-              </DevRouterWrapper>
+              <DevRouterWrapper>{children}</DevRouterWrapper>
             </NblocksThemeContextProvider>
           </NblocksAppContextProvider>
         </NblocksAuthContextProvider>
@@ -52,11 +53,20 @@ const NblocksProvider: FunctionComponent<{
   );
 };
 
+/**
+ * The DevRouterWrapper defines a new BrowserRouter if `config.spa == true` otherwise it's up to the developer to setup routes
+ * In Spa mode, the children will be restricted using AuthGuard
+ * @returns
+ */
 const DevRouterWrapper: FunctionComponent<{
-  devMode?: boolean;
   children: JSX.Element;
-}> = ({ children, devMode }) => {
-  if (devMode) {
+}> = ({ children }) => {
+  const { debug, spa } = useConfig();
+
+  if (spa) {
+    if (debug) {
+      console.log("Resorting to built-in Routing");
+    }
     return (
       <BrowserRouter>
         <Routes>

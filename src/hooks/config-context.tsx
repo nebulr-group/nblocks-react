@@ -11,6 +11,7 @@ const initialContext: LibConfig = {
   openRoutes: [],
   languages: ["en"],
   passwordComplexity: true,
+  spa: false,
   socialLogins: {
     accountApiHost: "",
     appId: "",
@@ -30,7 +31,9 @@ const NblocksConfigContextProvider: FunctionComponent<{
   config?: Partial<LibConfig>;
   children: React.ReactNode;
 }> = ({ children, config }) => {
+  // Set some sensible defaults for devMode
   if (config?.devMode) {
+    initialContext.spa = true;
     initialContext.signup = true;
     initialContext.passwordComplexity = false;
   }
