@@ -48,13 +48,18 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({ didSignup }) => {
   return (
     <>
       {errorMsg && (
-        <AlertComponent
-          type="danger"
-          title="An error occured"
-          messages={[errorMsg]}
-        />
+        <div className="max-w-sm w-full mb-6">
+          <AlertComponent
+            type="danger"
+            title="An error occured"
+            messages={[errorMsg]}
+          />
+        </div>
       )}
-      <form onSubmit={(event) => submit(event)} className="space-y-6">
+      <form
+        onSubmit={(event) => submit(event)}
+        className="space-y-6 max-w-sm w-full"
+      >
         <InputComponent
           type="email"
           label="Email address*"
@@ -91,13 +96,14 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({ didSignup }) => {
           </NblocksButton>
         </div>
       </form>
-      <div>
+      <div className="mt-8">
         <TextComponent size="sm">
           Already have an account?&nbsp;
           <LinkComponent
             to={RouteConfig.login.LoginScreen}
             type="primary"
             size="sm"
+            className="font-semibold"
           >
             Log in
           </LinkComponent>
