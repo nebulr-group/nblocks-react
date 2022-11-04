@@ -14,31 +14,38 @@ const SetupMfaRecoverCodeComponent: FunctionComponent<ComponentProps> = ({
   recoverCode,
 }) => {
   return (
-    <>
-      {/* <div className="space-y-6"> */}
-      <HeadingComponent
-        size="4xl"
-        type={"h1"}
-        className="inline border-solid border border-gray-500 rounded-md py-3 px-4"
-      >
-        {recoverCode}
-      </HeadingComponent>
-      <NblocksButton
-        size="md"
-        type="primary"
-        fullWidth={true}
-        onClick={() => didClickContinue()}
-      >
-        Continue
-      </NblocksButton>
-      <LinkComponent
-        to={RouteConfig.login.LoginScreen}
-        type="primary"
-        size="sm"
-      >
-        Back to login
-      </LinkComponent>
-    </>
+    <div className="max-w-sm w-full">
+      <div className="space-y-6 flex flex-col mt-6 md:mt-8 text-center ">
+        <div>
+          <HeadingComponent
+            size="4xl"
+            type={"h1"}
+            className="inline-block border-solid border border-gray-500 rounded-md py-3 px-4"
+          >
+            {recoverCode}
+          </HeadingComponent>
+        </div>
+        <NblocksButton
+          size="md"
+          type="primary"
+          fullWidth={true}
+          onClick={() => didClickContinue()}
+        >
+          Continue
+        </NblocksButton>
+      </div>
+
+      <div className="mt-8 text-center">
+        <LinkComponent
+          to={RouteConfig.login.LoginScreen}
+          type="secondary"
+          className="font-semibold"
+          size="sm"
+        >
+          Back to login
+        </LinkComponent>
+      </div>
+    </div>
   );
 };
 
