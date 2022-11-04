@@ -26,8 +26,11 @@ export interface LibConfig {
   /** Fallback to a certain language if we couldn't identify the currect locale of the user */
   defaultLocale: string;
 
-  /** Enable password complexity according to ISO27001 */
-  passwordComplexity: boolean;
+  /** Enable password validation according to ISO27001 */
+  passwordValidation: boolean;
+
+  /** Bring-Your-Own password challenge, overriding the ISO27001 standard*/
+  passwordComplexityRegex?: RegExp;
 
   /** If this is a single page application and to have routes for /auth etc provided by plugin or bring your own react router */
   spa: boolean;

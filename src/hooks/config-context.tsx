@@ -10,7 +10,7 @@ const initialContext: LibConfig = {
   debug: false,
   openRoutes: [],
   languages: ["en"],
-  passwordComplexity: true,
+  passwordValidation: true,
   spa: false,
   socialLogins: {
     accountApiHost: "",
@@ -35,7 +35,7 @@ const NblocksConfigContextProvider: FunctionComponent<{
   if (config?.devMode) {
     initialContext.spa = true;
     initialContext.signup = true;
-    initialContext.passwordComplexity = false;
+    initialContext.passwordValidation = false;
   }
 
   return (

@@ -8,6 +8,7 @@ import { usePasswordValidation } from "../../../hooks/usePasswordValidation";
 import { ValidationMessageComponent } from "../../shared/ValidationMessageComponent";
 import { UnauthenticatedError } from "../../../utils/errors/UnauthenticatedError";
 import { AlertComponent } from "../../shared/AlertComponent";
+import { useConfig } from "../../../hooks/config-context";
 
 type ComponentProps = {
   didSetPassword: () => void;
@@ -20,6 +21,7 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
 }) => {
   const { authService } = useSecureContext();
   const [errorMsg, setErrorMsg] = useState("");
+  const { passwordValidation, passwordComplexityRegex } = useConfig();
 
   const {
     password: newPassword,
@@ -30,6 +32,14 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
 
   const { password: confirmPassword, setPassword: setConfirmPassword } =
     usePasswordValidation();
+
+  const updateNewPasswordValue = (value: string) => {
+    onNewPasswordTextChangeValidation(
+      value,
+      passwordComplexityRegex,
+      !passwordValidation
+    );
+  };
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -90,9 +100,7 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
             label="Password"
             placeholder="Enter a new password"
             name="password"
-            onChange={(event) =>
-              onNewPasswordTextChangeValidation(event.target.value)
-            }
+            onChange={(event) => updateNewPasswordValue(event.target.value)}
             value={newPassword}
           />
           {renderErrorMessages && newPasswordFeedbackLog[0].error ? (
