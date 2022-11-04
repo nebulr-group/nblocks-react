@@ -1,6 +1,7 @@
 import { useMutation } from "@apollo/client";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import {
+  HeadingComponent,
   InputComponent,
   ModalComponent,
   NblocksButton,
@@ -8,12 +9,20 @@ import {
   UserListTableComponent,
 } from "../..";
 import { CreateUsersDocument, ListUsersDocument } from "../../gql/graphql";
+import { UserPlusIcon } from "@heroicons/react/24/outline";
 
 const UserListScreen: FunctionComponent<{}> = () => {
   return (
-    <div>
-      <InviteUserBtn />
-      <UserListTableComponent />
+    <div className="min-h-screen flex flex-col">
+      <div className="flex justify-between items-center py-5 mx-6">
+        <HeadingComponent type={"h1"} size={"3xl"} className={"inline-block"}>
+          Users
+        </HeadingComponent>
+        <InviteUserBtn />
+      </div>
+      <div className="grow flex flex-col justify-between">
+        <UserListTableComponent />
+      </div>
     </div>
   );
 };
@@ -41,10 +50,10 @@ const InviteUserBtn: FunctionComponent<{}> = () => {
 
   return (
     <>
-      <div className="flex justify-end p-6">
+      <div>
         <NblocksButton
           type={"primary"}
-          size={"lg"}
+          size={"md"}
           onClick={() => {
             setIsOpen(true);
           }}
@@ -55,16 +64,18 @@ const InviteUserBtn: FunctionComponent<{}> = () => {
       <ModalComponent
         isOpen={isOpen}
         setIsOpen={setIsOpen}
+        icon={<UserPlusIcon />}
         heading={"Add user"}
         description={
           "Add one or multiple users. You can change their role in the table after they are added."
         }
       >
-        <div className="space-y-3">
+        <div className="space-y-3 mt-5">
           {usernames.map((username, i) => (
             <InputComponent
               key={`email${i}`}
               type="email"
+              label={i === 0 ? "Email address" : undefined}
               placeholder="you@domain.com"
               name={`email${i}`}
               value={username}
@@ -90,7 +101,7 @@ const InviteUserBtn: FunctionComponent<{}> = () => {
             </TextComponent>
           </NblocksButton>
         </div>
-        <div className="flex flex-col-reverse md:flex-row md:justify-between mt-5 gap-3">
+        <div className="flex flex-col-reverse md:flex-row md:justify-between mt-8 gap-3">
           <NblocksButton
             size="md"
             className="w-full"
