@@ -25,6 +25,7 @@ import { ChipComponent } from "./components/shared/ChipComponent";
 import "./index.css";
 import { AlertComponent } from "./components/shared/AlertComponent";
 import { SkeletonLoader } from "./components/shared/SkeletonLoader";
+import { InstallationCompleteComponent } from "./components/shared/InstallationCompleteComponent";
 
 export {
   useConfig,
@@ -52,6 +53,7 @@ export {
   ChipComponent,
   AlertComponent,
   SkeletonLoader,
+  InstallationCompleteComponent,
 };
 
 export type { LibConfig };

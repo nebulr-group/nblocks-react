@@ -1,4 +1,4 @@
-import { NblocksProvider } from "nblocks-react";
+import { NblocksProvider, InstallationCompleteComponent } from "nblocks-react";
 import React from "react";
 import { HomeScreen } from "./screens/Home.screen";
 
@@ -18,6 +18,7 @@ function App() {
           >
             Learn React
           </a>
+          <InstallationCompleteComponent />
         </header>
       </NblocksProvider>
     </div>
