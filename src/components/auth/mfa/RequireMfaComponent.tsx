@@ -21,9 +21,11 @@ const RequireMfaComponent: FunctionComponent<ComponentProps> = ({
   const { authService } = useSecureContext();
   const [mfaCode, setMfaCode] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
+    setIsLoading(true);
     let recoverCode = undefined;
     try {
       if (setupMode) {
@@ -32,7 +34,9 @@ const RequireMfaComponent: FunctionComponent<ComponentProps> = ({
         await authService.commitMfaCode(mfaCode);
       }
       didCommitMfaCode(recoverCode);
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       if (error instanceof UnauthenticatedError) {
         setErrorMsg("Wrong security code, please try again.");
       } else {
@@ -84,6 +88,7 @@ const RequireMfaComponent: FunctionComponent<ComponentProps> = ({
             submit={true}
             disabled={!mfaCode}
             size="md"
+            isLoading={isLoading}
             type="primary"
             fullWidth={true}
           >

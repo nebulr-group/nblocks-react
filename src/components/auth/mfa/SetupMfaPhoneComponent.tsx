@@ -16,16 +16,20 @@ const SetupMfaPhoneComponent: FunctionComponent<ComponentProps> = ({
   const { authService } = useSecureContext();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
+    setIsLoading(true);
     try {
       await authService.startMfaUserSetup(phoneNumber);
       didSetupPhoneNumber();
+      setIsLoading(false);
     } catch (error) {
       setErrorMsg(
         "There was an error when trying to setup your phone number. Try again and make sure you're using the correct format, otherwise contact support."
       );
+      setIsLoading(false);
       setPhoneNumber("");
     }
   };
@@ -59,6 +63,7 @@ const SetupMfaPhoneComponent: FunctionComponent<ComponentProps> = ({
             disabled={!phoneNumber}
             size="md"
             type="primary"
+            isLoading={isLoading}
             fullWidth={true}
           >
             Submit

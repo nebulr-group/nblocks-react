@@ -17,18 +17,21 @@ const ResetPasswordComponent: FunctionComponent<ComponentProps> = ({
   const { authService } = useSecureContext();
   const [email, setEmail] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-
+    setIsLoading(true);
     try {
       await authService.sendResetPasswordLink(email);
       didSendResetPasswordLink(email);
+      setIsLoading(false);
     } catch (error) {
       setErrorMsg(
         "There was an error when resetting the password. Try again, otherwise contact support."
       );
       setEmail("");
+      setIsLoading(false);
     }
   };
 
@@ -60,6 +63,7 @@ const ResetPasswordComponent: FunctionComponent<ComponentProps> = ({
             submit={true}
             disabled={!email}
             size="md"
+            isLoading={isLoading}
             type="primary"
             fullWidth={true}
           >

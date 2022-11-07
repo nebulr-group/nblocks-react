@@ -17,12 +17,15 @@ const RecoverMfaComponent: FunctionComponent<ComponentProps> = ({
   const { authService } = useSecureContext();
   const [recoverCode, setRecoverCode] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
+    setIsLoading(true);
     try {
       await authService.resetUserMfaSetup(recoverCode);
       didRecoverMfaCode();
+      setIsLoading(false);
     } catch (error) {
       if (error instanceof UnauthenticatedError) {
         setErrorMsg("Wrong recovery code, please try again.");
@@ -31,6 +34,7 @@ const RecoverMfaComponent: FunctionComponent<ComponentProps> = ({
           "There was an error when recovering. Try again, otherwise contact support."
         );
       }
+      setIsLoading(false);
       setRecoverCode("");
     }
   };
@@ -63,6 +67,7 @@ const RecoverMfaComponent: FunctionComponent<ComponentProps> = ({
             submit={true}
             disabled={!recoverCode}
             size="md"
+            isLoading={isLoading}
             type="primary"
             fullWidth={true}
           >
