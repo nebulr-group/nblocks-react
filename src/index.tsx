@@ -24,6 +24,7 @@ import { UserListTableComponent } from "./components/shared/UserListTableCompone
 import { ChipComponent } from "./components/shared/ChipComponent";
 import "./index.css";
 import { AlertComponent } from "./components/shared/AlertComponent";
+import { SkeletonLoader } from "./components/shared/SkeletonLoader";
 
 export {
   useConfig,
@@ -50,6 +51,7 @@ export {
   UserListTableComponent,
   ChipComponent,
   AlertComponent,
+  SkeletonLoader,
 };
 
 export type { LibConfig };
