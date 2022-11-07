@@ -11,6 +11,7 @@ import { LinkComponent } from "../../shared/LinkComponent";
 import { RouteConfig } from "../../../routes/AuthRoutes";
 import { AlertComponent } from "../../shared/AlertComponent";
 import { useConfig } from "../../../hooks/config-context";
+import { SkeletonLoader } from "../../shared/SkeletonLoader";
 
 type ComponentProps = {
   didSelectUser: (user: AuthTenantUserResponseDto) => void;
@@ -32,18 +33,22 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
   didSelectUser,
 }) => {
   const { switchUser } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
   const { authService, didAuthenticate } = useSecureContext();
   const [users, setUsers] = useState<AuthTenantUserResponseDto[]>();
   const [selectedUser, setSelectedUser] = useState<AuthTenantUserResponseDto>();
   const { debug } = useConfig();
 
   const submit = async (user?: AuthTenantUserResponseDto) => {
+    setIsLoading(true);
     if (user) {
       await switchUser(user.id);
       didAuthenticate(true);
       didSelectUser(user);
+      setIsLoading(false);
     } else {
       console.error("No selected user. Submitting doesn't matter yet");
+      setIsLoading(false);
     }
   };
 
@@ -95,7 +100,7 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
         />
       )}
       <div className="max-w-sm w-full mb-6">
-        {users && users?.length > 0 && (
+        {users && users?.length > 0 ? (
           <RadioGroupComponent
             didSelectOption={(value) => onDidSelectOption(value)}
             defaultValue={
@@ -103,6 +108,12 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
             }
             options={users.map((u) => convertToOption(u))}
           />
+        ) : (
+          <>
+            <SkeletonLoader className="w-full mt-3 h-14 rounded-md" />
+            <SkeletonLoader className="w-full mt-3 h-14 rounded-md" />
+            <SkeletonLoader className="w-full mt-3 h-14 rounded-md" />
+          </>
         )}
       </div>
       <div className="max-w-sm w-full">
@@ -110,6 +121,7 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
           submit={true}
           disabled={!selectedUser}
           size="md"
+          isLoading={isLoading}
           type="primary"
           onClick={() => submit(selectedUser)}
           fullWidth={true}
