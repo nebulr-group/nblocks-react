@@ -14,6 +14,7 @@ import { useQuery } from "@apollo/client";
 import { UserTableRowComponent } from "./UserTableRowComponent";
 import { ModalComponent } from "./ModalComponent";
 import { SafeUserNameComponent } from "./SafeUserNameComponent";
+import { SkeletonLoader } from "./SkeletonLoader";
 
 /**
  *
@@ -38,7 +39,7 @@ const UserListTableComponent: FunctionComponent<ConfigObject> = () => {
     onPrimaryClick: () => {},
   });
 
-  const listUsersQuery = useQuery(ListUsersDocument);
+  const { data, loading } = useQuery(ListUsersDocument);
 
   const columnHelper = createColumnHelper<User>();
 
@@ -126,7 +127,7 @@ const UserListTableComponent: FunctionComponent<ConfigObject> = () => {
   };
 
   const table = useReactTable({
-    data: listUsersQuery.data ? listUsersQuery.data.listUsers : [],
+    data: data?.listUsers ? data.listUsers : [],
     columns,
     // Pipeline
     getCoreRowModel: getCoreRowModel(),
@@ -136,7 +137,7 @@ const UserListTableComponent: FunctionComponent<ConfigObject> = () => {
   });
   return (
     <>
-      <div className="w-full h-full overflow-x-auto grow">
+      <div className="w-full h-full overflow-x-auto">
         <table className="w-full text-left">
           <thead className="h-11 bg-gray-50 border-t border-b border-gray-200">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -155,6 +156,61 @@ const UserListTableComponent: FunctionComponent<ConfigObject> = () => {
             ))}
           </thead>
           <tbody>
+            {table.getRowModel().rows.length === 0 && loading && (
+              <>
+                <tr>
+                  <td className={"relative"}>
+                    <SkeletonLoader className="h-8 w-full rounded-md" />
+                  </td>
+                  <td className={"relative"}>
+                    <SkeletonLoader className="h-8 w-full rounded-md" />
+                  </td>
+                  <td className={"relative"}>
+                    <SkeletonLoader className="h-8 w-full rounded-md" />
+                  </td>
+                  <td className={"relative"}>
+                    <SkeletonLoader className="h-8 w-full rounded-md" />
+                  </td>
+                  <td className={"relative"}>
+                    <SkeletonLoader className="h-8 w-full rounded-md" />
+                  </td>
+                </tr>
+                <tr>
+                  <td className={"relative"}>
+                    <SkeletonLoader className="h-8 w-full rounded-md" />
+                  </td>
+                  <td className={"relative"}>
+                    <SkeletonLoader className="h-8 w-full rounded-md" />
+                  </td>
+                  <td className={"relative"}>
+                    <SkeletonLoader className="h-8 w-full rounded-md" />
+                  </td>
+                  <td className={"relative"}>
+                    <SkeletonLoader className="h-8 w-full rounded-md" />
+                  </td>
+                  <td className={"relative"}>
+                    <SkeletonLoader className="h-8 w-full rounded-md" />
+                  </td>
+                </tr>
+                <tr>
+                  <td className={"relative"}>
+                    <SkeletonLoader className="h-8 w-full rounded-md" />
+                  </td>
+                  <td className={"relative"}>
+                    <SkeletonLoader className="h-8 w-full rounded-md" />
+                  </td>
+                  <td className={"relative"}>
+                    <SkeletonLoader className="h-8 w-full rounded-md" />
+                  </td>
+                  <td className={"relative"}>
+                    <SkeletonLoader className="h-8 w-full rounded-md" />
+                  </td>
+                  <td className={"relative"}>
+                    <SkeletonLoader className="h-8 w-full rounded-md" />
+                  </td>
+                </tr>
+              </>
+            )}
             {table.getRowModel().rows.map((row, index) => (
               <UserTableRowComponent
                 row={row}
