@@ -22,9 +22,11 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({ didSignup }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
+    setIsLoading(true);
 
     try {
       await createTenantAnonymous({
@@ -38,10 +40,12 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({ didSignup }) => {
         },
       });
       didSignup(email);
+      setIsLoading(false);
     } catch (error) {
       setErrorMsg(
         "There was an error when creating the account. Try again, otherwise contact support."
       );
+      setIsLoading(false);
     }
   };
 
@@ -89,6 +93,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({ didSignup }) => {
             submit={true}
             disabled={!email}
             size="md"
+            isLoading={isLoading}
             type="primary"
             fullWidth={true}
           >

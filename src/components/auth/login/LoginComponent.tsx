@@ -19,17 +19,22 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({ didLogin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [isloading, setIsLoading] = useState(false);
   const { signup } = useConfig();
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
+    setIsLoading(true);
     try {
       const response = await authService.authenticate(username, password);
       didLogin(response.mfaState);
+      setIsLoading(false);
     } catch (error) {
       if (error instanceof UnauthenticatedError) {
+        setIsLoading(false);
         setErrorMsg("Wrong credentials, please try again.");
       } else {
+        setIsLoading(false);
         setErrorMsg(
           "There was an error when logging in. Try again, otherwise contact support."
         );
@@ -86,9 +91,10 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({ didLogin }) => {
             disabled={!username || !password}
             size="md"
             type="primary"
+            isLoading={isloading}
             fullWidth={true}
           >
-            Signin
+            Sign in
           </NblocksButton>
         </div>
       </form>

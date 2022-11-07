@@ -1,4 +1,6 @@
 import React, { FunctionComponent, ReactNode } from "react";
+import { Transition } from "@headlessui/react";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 
 /**
  * Object type with specific fields for type checking props that are passed to NblocksButton.
@@ -13,11 +15,11 @@ type ConfigObject = {
     | "success"
     | "warning"
     | "danger";
+  isLoading?: boolean;
   size?: "sm" | "md" | "lg" | "xl" | "2xl";
   submit?: boolean;
   disabled?: boolean;
   children: ReactNode;
-
   /**Allows the button to take full width. This overrides the width constraints for `size`*/
   fullWidth?: boolean;
   className?: string;
@@ -62,6 +64,7 @@ const NblocksButton: FunctionComponent<ConfigObject> = ({
   disabled,
   children,
   fullWidth,
+  isLoading,
 }) => {
   const buttonTypeStyle = getButtonTypeStyle(type);
   const buttonPadding = getPadding(size);
@@ -71,12 +74,17 @@ const NblocksButton: FunctionComponent<ConfigObject> = ({
         className +
         buttonTypeStyle +
         buttonPadding +
-        `${fullWidth ? " w-full" : ""}`
+        `${fullWidth ? " w-full" : ""} flex items-center justify-center`
       }
       disabled={disabled}
       onClick={onClick}
       type={submit ? "submit" : "button"}
     >
+      {isLoading !== undefined && (
+        <Transition show={isLoading}>
+          <ArrowPathIcon className="animate-spin h-5 mr-2" />
+        </Transition>
+      )}
       {children}
     </button>
   );

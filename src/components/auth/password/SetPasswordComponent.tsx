@@ -21,6 +21,7 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
 }) => {
   const { authService } = useSecureContext();
   const [errorMsg, setErrorMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { passwordValidation, passwordComplexityRegex } = useConfig();
 
   const {
@@ -43,10 +44,11 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-
+    setIsLoading(true);
     try {
       await authService.updatePassword(resetToken, newPassword);
       didSetPassword();
+      setIsLoading(false);
     } catch (error) {
       if (error instanceof UnauthenticatedError) {
         setErrorMsg(
@@ -59,6 +61,7 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
       }
       onNewPasswordTextChangeValidation("");
       setConfirmPassword("");
+      setIsLoading(false);
     }
   };
 
@@ -120,6 +123,7 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
             submit={true}
             size="md"
             type="primary"
+            isLoading={isLoading}
             fullWidth={true}
             disabled={!formIsValid}
           >
