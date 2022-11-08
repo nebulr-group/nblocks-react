@@ -127,7 +127,7 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
             fullWidth={true}
             disabled={!formIsValid}
           >
-            Set your new password
+            Set a password
           </NblocksButton>
         </div>
       </form>

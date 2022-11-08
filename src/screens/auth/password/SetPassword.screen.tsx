@@ -32,8 +32,8 @@ const SetPasswordScreen: FunctionComponent = () => {
       heading={passwordReset ? "Password reset" : "Set new password"}
       subHeading={
         passwordReset
-          ? "Your password has been successfully reset. Click below to log in."
-          : "Your new password must be different to your previously used passwords."
+          ? "Your new password has been successfully set. Click below to log in."
+          : "Set a password to use when you sign in."
       }
     >
       {renderChild()}
