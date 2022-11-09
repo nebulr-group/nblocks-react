@@ -15,7 +15,7 @@ input CreateTenantInput {
   logo: String
   name: String
   owner: TenantOwnerInput!
-  plan: String!
+  plan: String
 }
 
 type Mutation {
@@ -88,6 +88,7 @@ input TenantInput {
   locale: String
   mfa: Boolean
   name: String
+  plan: String
 }
 
 input TenantOwnerInput {

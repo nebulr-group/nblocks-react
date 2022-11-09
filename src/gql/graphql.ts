@@ -28,7 +28,7 @@ export type CreateTenantInput = {
   logo?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   owner: TenantOwnerInput;
-  plan: Scalars['String'];
+  plan?: InputMaybe<Scalars['String']>;
 };
 
 export type Mutation = {
@@ -112,6 +112,7 @@ export type TenantInput = {
   locale?: InputMaybe<Scalars['String']>;
   mfa?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
+  plan?: InputMaybe<Scalars['String']>;
 };
 
 export type TenantOwnerInput = {
