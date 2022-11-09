@@ -11,6 +11,27 @@ type App {
   websiteUrl: String
 }
 
+type AppConfig {
+  apiUrl: String
+  businessModel: BusinessModelGraphql
+  defaultRole: String
+  emailSenderEmail: String
+  emailSenderName: String
+  id: String
+  logo: String
+  name: String
+  privacyPolicyUrl: String
+  roles: [String!]
+  termsOfServiceUrl: String
+  uiUrl: String
+  websiteUrl: String
+}
+
+type BusinessModelGraphql {
+  plans: [PlanGraphql!]!
+  taxes: [TaxGraphql!]!
+}
+
 input CreateTenantInput {
   logo: String
   name: String
@@ -35,11 +56,27 @@ type Mutation {
   updateUser(user: UserInput!): User!
 }
 
+type PlanGraphql {
+  name: String!
+  prices: [PriceGraphql!]!
+}
+
+type PriceGraphql {
+  amount: Float!
+  currency: String!
+  region: String!
+}
+
 type Query {
   """
   Gets useful App configs for the UI to consume
   """
   getAppAnonymous: App!
+
+  """
+  A bunch of more secret properties to render for the app config screen used by developer during quickstart
+  """
+  getAppConfig: AppConfig!
 
   """
   Obtain an short lived session url to redirect or present the user its Stripe subscription panel for updating payment or subscription data.
@@ -66,6 +103,12 @@ type Query {
   List all users in this tenant.
   """
   listUsers: [User!]!
+}
+
+type TaxGraphql {
+  name: String!
+  percentage: Float!
+  region: String!
 }
 
 type Tenant {

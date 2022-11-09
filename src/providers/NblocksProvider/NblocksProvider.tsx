@@ -18,6 +18,7 @@ import { AuthRoutes } from "../../routes/AuthRoutes";
 import { OnboardRoutes } from "../../routes/OnboardRoutes";
 import { SetupRoutes } from "../../routes/SetupRoutes";
 import { UserRoutes } from "../../routes/UserRoutes";
+import { BrandExpoScreen } from "../../screens/BrandExpo.screen";
 
 /**
  * Wrap your code into this Provider to get access to the Nblocks world
@@ -82,6 +83,7 @@ const DevRouterWrapper: FunctionComponent<{
               </AuthGuard>
             }
           />
+          <Route path="/brandExpo" element={<BrandExpoScreen />} />
           <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
       </BrowserRouter>

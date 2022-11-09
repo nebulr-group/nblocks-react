@@ -24,6 +24,29 @@ export type App = {
   websiteUrl?: Maybe<Scalars['String']>;
 };
 
+export type AppConfig = {
+  __typename?: 'AppConfig';
+  apiUrl?: Maybe<Scalars['String']>;
+  businessModel?: Maybe<BusinessModelGraphql>;
+  defaultRole?: Maybe<Scalars['String']>;
+  emailSenderEmail?: Maybe<Scalars['String']>;
+  emailSenderName?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  logo?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  privacyPolicyUrl?: Maybe<Scalars['String']>;
+  roles?: Maybe<Array<Scalars['String']>>;
+  termsOfServiceUrl?: Maybe<Scalars['String']>;
+  uiUrl?: Maybe<Scalars['String']>;
+  websiteUrl?: Maybe<Scalars['String']>;
+};
+
+export type BusinessModelGraphql = {
+  __typename?: 'BusinessModelGraphql';
+  plans: Array<PlanGraphql>;
+  taxes: Array<TaxGraphql>;
+};
+
 export type CreateTenantInput = {
   logo?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
@@ -73,10 +96,25 @@ export type MutationUpdateUserArgs = {
   user: UserInput;
 };
 
+export type PlanGraphql = {
+  __typename?: 'PlanGraphql';
+  name: Scalars['String'];
+  prices: Array<PriceGraphql>;
+};
+
+export type PriceGraphql = {
+  __typename?: 'PriceGraphql';
+  amount: Scalars['Float'];
+  currency: Scalars['String'];
+  region: Scalars['String'];
+};
+
 export type Query = {
   __typename?: 'Query';
   /** Gets useful App configs for the UI to consume */
   getAppAnonymous: App;
+  /** A bunch of more secret properties to render for the app config screen used by developer during quickstart */
+  getAppConfig: AppConfig;
   /** Obtain an short lived session url to redirect or present the user its Stripe subscription panel for updating payment or subscription data. */
   getCustomerPortal: Scalars['String'];
   /** Gets a single tenant */
@@ -88,6 +126,13 @@ export type Query = {
   listUserRoles: Array<Scalars['String']>;
   /** List all users in this tenant. */
   listUsers: Array<User>;
+};
+
+export type TaxGraphql = {
+  __typename?: 'TaxGraphql';
+  name: Scalars['String'];
+  percentage: Scalars['Float'];
+  region: Scalars['String'];
 };
 
 export type Tenant = {
@@ -147,6 +192,11 @@ export type CreateTenantAnonymousMutationVariables = Exact<{
 
 export type CreateTenantAnonymousMutation = { __typename?: 'Mutation', createTenantAnonymous: { __typename?: 'Tenant', id: string, name: string, locale?: string | null, logo: string, plan?: string | null, mfa?: boolean | null, createdAt?: string | null } };
 
+export type GetAppConfigQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAppConfigQuery = { __typename?: 'Query', getAppConfig: { __typename?: 'AppConfig', apiUrl?: string | null, defaultRole?: string | null, emailSenderEmail?: string | null, emailSenderName?: string | null, id?: string | null, logo?: string | null, name?: string | null, privacyPolicyUrl?: string | null, roles?: Array<string> | null, termsOfServiceUrl?: string | null, uiUrl?: string | null, websiteUrl?: string | null, businessModel?: { __typename?: 'BusinessModelGraphql', taxes: Array<{ __typename?: 'TaxGraphql', name: string, percentage: number, region: string }>, plans: Array<{ __typename?: 'PlanGraphql', name: string, prices: Array<{ __typename?: 'PriceGraphql', amount: number, currency: string, region: string }> }> } | null } };
+
 export type CreateUsersMutationVariables = Exact<{
   userNames: Array<Scalars['String']> | Scalars['String'];
 }>;
@@ -192,6 +242,7 @@ export type GetAppAnonymousQuery = { __typename?: 'Query', getAppAnonymous: { __
 
 
 export const CreateTenantAnonymousDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateTenantAnonymous"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tenant"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateTenantInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createTenantAnonymous"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"tenant"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tenant"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"locale"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"plan"}},{"kind":"Field","name":{"kind":"Name","value":"mfa"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<CreateTenantAnonymousMutation, CreateTenantAnonymousMutationVariables>;
+export const GetAppConfigDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAppConfig"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAppConfig"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"apiUrl"}},{"kind":"Field","name":{"kind":"Name","value":"defaultRole"}},{"kind":"Field","name":{"kind":"Name","value":"emailSenderEmail"}},{"kind":"Field","name":{"kind":"Name","value":"emailSenderName"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"businessModel"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"taxes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"percentage"}},{"kind":"Field","name":{"kind":"Name","value":"region"}}]}},{"kind":"Field","name":{"kind":"Name","value":"plans"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"prices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"currency"}},{"kind":"Field","name":{"kind":"Name","value":"region"}},{"kind":"Field","name":{"kind":"Name","value":"currency"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"privacyPolicyUrl"}},{"kind":"Field","name":{"kind":"Name","value":"roles"}},{"kind":"Field","name":{"kind":"Name","value":"termsOfServiceUrl"}},{"kind":"Field","name":{"kind":"Name","value":"uiUrl"}},{"kind":"Field","name":{"kind":"Name","value":"websiteUrl"}}]}}]}}]} as unknown as DocumentNode<GetAppConfigQuery, GetAppConfigQueryVariables>;
 export const CreateUsersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateUsers"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userNames"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createUsers"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userNames"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userNames"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fullName"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"onboarded"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"teams"}}]}}]}}]} as unknown as DocumentNode<CreateUsersMutation, CreateUsersMutationVariables>;
 export const DeleteUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}]}}]} as unknown as DocumentNode<DeleteUserMutation, DeleteUserMutationVariables>;
 export const ListUserRolesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListUserRoles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"listUserRoles"}}]}}]} as unknown as DocumentNode<ListUserRolesQuery, ListUserRolesQueryVariables>;

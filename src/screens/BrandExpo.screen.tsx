@@ -1,24 +1,19 @@
-import React, { useState, useMemo } from "react";
-import {
-  NblocksButton,
-  InputComponent,
-  LinkComponent,
-  HeadingComponent,
-  SubHeadingComponent,
-  ImageComponent,
-  FormComponent,
-  TextComponent,
-  TogglerComponent,
-  ModalComponent,
-  HorizontalEllipsisMenu,
-  UserListTableComponent,
-  AlertComponent,
-} from "nblocks-react";
-import icon from "../../assets/input-icon.svg";
-import iconWarning from "../../assets/input-warning-icon.svg";
-import keySvg from "../../assets/key-icon.svg";
-import image from "../../assets/demo-image.jpg";
+import React, { useState } from "react";
 import { XMarkIcon } from "@heroicons/react/24/solid";
+import { AlertComponent } from "../components/shared/AlertComponent";
+import { FormComponent } from "../components/shared/FormComponent";
+import { HeadingComponent } from "../components/shared/HeadingComponent";
+import { HorizontalEllipsisMenu } from "../components/shared/HorizontalEllipsisMenu";
+import { ImageComponent } from "../components/shared/ImageComponent";
+import { InputComponent } from "../components/shared/InputComponent";
+import { LinkComponent } from "../components/shared/LinkComponent";
+import { ModalComponent } from "../components/shared/ModalComponent";
+import { NblocksButton } from "../components/shared/NblocksButton";
+import { SubHeadingComponent } from "../components/shared/SubHeadingComponent";
+import { TextComponent } from "../components/shared/TextComponent";
+import { TogglerComponent } from "../components/shared/TogglerComponent";
+import { UserListTableComponent } from "../components/shared/UserListTableComponent";
+import { CheckCircleIcon, KeyIcon } from "@heroicons/react/20/solid";
 
 export function BrandExpoScreen() {
   const [password, setPassword] = useState("");
@@ -26,6 +21,9 @@ export function BrandExpoScreen() {
 
   const [enabled, setEnabled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
+  const image =
+    "https://cdn.shopify.com/s/files/1/0980/9736/articles/jessica-felicio-_cvwXhGqG-o-unsplash.jpg?v=1595591981";
 
   return (
     <>
@@ -51,7 +49,7 @@ export function BrandExpoScreen() {
             name="email1"
             infoLabel={{
               position: "left",
-              src: `${icon}`,
+              node: <CheckCircleIcon className="text-purple-600 h-5 w-5" />,
               alt: "Tool tip icon.",
             }}
             labelClassName={"mt-4"}
@@ -66,7 +64,7 @@ export function BrandExpoScreen() {
             name="password1"
             errorLabel={{
               position: "right",
-              src: `${iconWarning}`,
+              node: <CheckCircleIcon className="text-purple-600 h-5 w-5" />,
               alt: "Tool tip icon.",
             }}
             inputError={true}
@@ -83,7 +81,7 @@ export function BrandExpoScreen() {
             labelClassName={"mt-4"}
             infoLabel={{
               position: "right",
-              src: `${icon}`,
+              node: <CheckCircleIcon className="text-purple-600 h-5 w-5" />,
               alt: "Tool tip icon.",
             }}
           />
@@ -97,7 +95,7 @@ export function BrandExpoScreen() {
             labelClassName={"mt-4"}
             infoLabel={{
               position: "right",
-              src: `${icon}`,
+              node: <CheckCircleIcon className="text-purple-600 h-5 w-5" />,
               alt: "Tool tip icon.",
             }}
           />
@@ -109,7 +107,7 @@ export function BrandExpoScreen() {
             labelClassName={"mt-4"}
             infoLabel={{
               position: "right",
-              src: `${icon}`,
+              node: <CheckCircleIcon className="text-purple-600 h-5 w-5" />,
               alt: "Tool tip icon.",
             }}
           />
@@ -132,7 +130,7 @@ export function BrandExpoScreen() {
             target={"_blank"}
             className={"mt-5"}
           >
-            Go to Google
+            Go to Google (new tab)
           </LinkComponent>
           <LinkComponent
             to={"/"}
@@ -141,15 +139,15 @@ export function BrandExpoScreen() {
             className={"mt-5"}
             disabled={true}
           >
-            Back to home
+            Back to home (disabled)
           </LinkComponent>
           <LinkComponent
-            to={"/home"}
+            to={"/"}
             type={"secondary"}
             className={"mt-5"}
             size={"lg"}
           >
-            Back to home
+            Back to home (secondary)
           </LinkComponent>
         </div>
         <div className="grid">
@@ -207,7 +205,7 @@ export function BrandExpoScreen() {
           <h1 className="mt-5 text-3xl">Image Component</h1>
           <div className="flex flex-column items-baseline mt-5">
             <div style={{ width: 32, height: 32 }}>
-              <ImageComponent src={image}></ImageComponent>
+              <ImageComponent src={"image"}></ImageComponent>
             </div>
             <div style={{ width: 64, height: 64 }} className="ml-5">
               <ImageComponent src={image}></ImageComponent>
@@ -352,7 +350,7 @@ export function BrandExpoScreen() {
               description={
                 "Do you want to send a reset password link to Candice Wu?"
               }
-              icon={keySvg}
+              icon={<KeyIcon />}
             >
               <div className="flex flex-col-reverse md:flex-row md:justify-between mt-5 gap-3">
                 <NblocksButton
@@ -384,7 +382,7 @@ export function BrandExpoScreen() {
             options={[
               {
                 label: "button1",
-                icon: keySvg,
+                icon: <KeyIcon />,
                 type: "danger",
                 onClick: () => alert("Option 1 was clicked!"),
               },

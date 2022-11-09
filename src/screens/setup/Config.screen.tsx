@@ -1,12 +1,12 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent } from "react";
+import { ConfigComponent } from "../../components/setup/ConfigComponent";
 
 const ConfigScreen: FunctionComponent<{}> = () => {
-
   return (
     <>
-      <span>ConfigScreen</span>
+      <ConfigComponent />
     </>
-  )
-}
+  );
+};
 
-export {ConfigScreen};
+export { ConfigScreen };

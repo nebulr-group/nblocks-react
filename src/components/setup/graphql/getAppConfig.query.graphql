@@ -1,0 +1,32 @@
+query GetAppConfig {
+  getAppConfig {
+    apiUrl
+    defaultRole
+    emailSenderEmail
+    emailSenderName
+    id
+    logo
+    name
+    businessModel {
+      taxes {
+        name
+        percentage
+        region
+      }
+      plans {
+        name
+        prices {
+          amount
+          currency
+          region
+          currency
+        }
+      }
+    }
+    privacyPolicyUrl
+    roles
+    termsOfServiceUrl
+    uiUrl
+    websiteUrl
+  }
+}
