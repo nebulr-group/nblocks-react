@@ -8,6 +8,7 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
  */
 type ConfigObject = {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  onClickCapture?: React.MouseEventHandler<HTMLButtonElement>;
   type?:
     | "primary"
     | "secondary"
@@ -57,6 +58,7 @@ type ConfigObject = {
  */
 const NblocksButton: FunctionComponent<ConfigObject> = ({
   onClick,
+  onClickCapture,
   type,
   className = "",
   submit,
@@ -78,6 +80,7 @@ const NblocksButton: FunctionComponent<ConfigObject> = ({
       }
       disabled={disabled}
       onClick={onClick}
+      onClickCapture={onClickCapture}
       type={submit ? "submit" : "button"}
     >
       {isLoading !== undefined && (
