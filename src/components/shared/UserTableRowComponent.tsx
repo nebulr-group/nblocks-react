@@ -83,7 +83,7 @@ const UserTableRowComponent: FunctionComponent<ConfigObject> = ({
       cell.column.id === "enabled" && setEnabled(cell.getValue() as boolean);
       return null;
     });
-  }, []);
+  }, [edit]);
 
   const getCellContext = (cellId: string, cell: Cell<User, unknown>) => {
     switch (cellId) {
@@ -166,7 +166,7 @@ const UserTableRowComponent: FunctionComponent<ConfigObject> = ({
             <div className="flex items-center">
               {edit && (
                 <NblocksButton
-                  onClick={() => setEdit(false)}
+                  onClickCapture={() => setEdit(false)}
                   className="mr-3"
                   type={"tertiary"}
                   size={"sm"}
@@ -175,7 +175,7 @@ const UserTableRowComponent: FunctionComponent<ConfigObject> = ({
                 </NblocksButton>
               )}
               <NblocksButton
-                onClick={() => (edit ? updateUser() : setEdit(true))}
+                onClickCapture={() => (edit ? updateUser() : setEdit(true))}
                 className={`${!edit && "text-purple-700 mr-3"}`}
                 type={edit ? "primary" : undefined}
                 size={edit ? "sm" : undefined}
@@ -194,7 +194,14 @@ const UserTableRowComponent: FunctionComponent<ConfigObject> = ({
   };
 
   return (
-    <tr key={row.id} className={"border-t border-b text-gray-600"}>
+    <tr
+      key={row.id}
+      className={"border-t border-b text-gray-600"}
+      onClick={(event) => {
+        setEdit(true);
+      }}
+      tabIndex={row.index}
+    >
       {row.getVisibleCells().map((cell) => {
         return (
           <td className={"relative"} key={cell.id}>
