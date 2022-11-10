@@ -5,28 +5,30 @@ import {
   ExclamationCircleIcon,
   CheckCircleIcon,
 } from "@heroicons/react/20/solid";
+import { classNameFilter } from "../../utils/ComponentHelpers";
 import { TextComponent } from "./TextComponent";
+import { XCircleIcon } from "@heroicons/react/24/outline";
 
-type ComponentProps = {
+export type ComponentProps = {
   title: string;
   messages: string[];
-  type?:
-    | "primary"
-    | "secondary"
-    | "tertiary"
-    | "success"
-    | "warning"
-    | "danger";
+  closable?: boolean;
+  onCloseClick?: React.MouseEventHandler<HTMLDivElement>;
+  className?: string;
+  type?: "primary" | "secondary" | "success" | "warning" | "danger";
 };
 
 const AlertComponent: FunctionComponent<ComponentProps> = ({
   title,
   messages,
   type,
+  className,
+  closable,
+  onCloseClick,
 }) => {
   return (
-    <div className={getContainerStyle(type)}>
-      <div className="flex">
+    <div className={classNameFilter(className, getContainerStyle(type))}>
+      <div className="flex relative">
         <div className="flex-shrink-0">{renderTypeIcon(type)}</div>
         <div className="ml-3">
           <TextComponent
@@ -44,6 +46,14 @@ const AlertComponent: FunctionComponent<ComponentProps> = ({
             ))}
           </div>
         </div>
+        {closable && (
+          <div
+            className="absolute right-0 h-5 w-5 cursor-pointer"
+            onClick={onCloseClick}
+          >
+            <XCircleIcon className={classNameFilter(getIconStyle(type))} />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -64,6 +74,23 @@ const getContainerStyle = (type: string | null = null) => {
       return ` bg-green-50 ${baseStyle}`;
     default:
       return ` bg-purple-50 ${baseStyle}`;
+  }
+};
+
+const getIconStyle = (type: ComponentProps["type"]) => {
+  switch (type) {
+    case "danger":
+      return "text-red-500";
+    case "primary":
+      return "text-purple-500";
+    case "secondary":
+      return "text-gray-500";
+    case "success":
+      return "text-green-500";
+    case "warning":
+      return "text-orange-500";
+    default:
+      return "text-purple-500";
   }
 };
 

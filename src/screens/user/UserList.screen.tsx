@@ -10,20 +10,26 @@ import {
 } from "../..";
 import { CreateUsersDocument, ListUsersDocument } from "../../gql/graphql";
 import { UserPlusIcon } from "@heroicons/react/24/outline";
+import {
+  ComponentProps,
+  AlertComponent,
+} from "../../components/shared/AlertComponent";
 
 const UserListScreen: FunctionComponent<{}> = () => {
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="flex justify-between items-center py-5 mx-6">
-        <HeadingComponent type={"h1"} size={"3xl"} className={"inline-block"}>
-          Users
-        </HeadingComponent>
-        <InviteUserBtn />
+    <>
+      <div className="min-h-screen flex flex-col">
+        <div className="flex justify-between items-center py-5 mx-6">
+          <HeadingComponent type={"h1"} size={"3xl"} className={"inline-block"}>
+            Users
+          </HeadingComponent>
+          <InviteUserBtn />
+        </div>
+        <div className="grow flex flex-col justify-between">
+          <UserListTableComponent />
+        </div>
       </div>
-      <div className="grow flex flex-col justify-between">
-        <UserListTableComponent />
-      </div>
-    </div>
+    </>
   );
 };
 
@@ -32,6 +38,17 @@ const InviteUserBtn: FunctionComponent<{}> = () => {
   const [usernames, setUsernames] = useState<string[]>([""]);
   const [inviteUserMutation, inviteUserMutationData] =
     useMutation(CreateUsersDocument);
+  const [alert, setAlert] = useState<ComponentProps & { show: boolean }>({
+    title: "",
+    type: "primary",
+    messages: [""],
+    onCloseClick: (event) => {
+      setAlert((value) => {
+        return { ...value, show: false };
+      });
+    },
+    show: false,
+  });
 
   const inviteUsers = async () => {
     await inviteUserMutation({
@@ -48,6 +65,15 @@ const InviteUserBtn: FunctionComponent<{}> = () => {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (alert.show) {
+      setTimeout(() => {
+        setAlert((value) => {
+          return { ...value, show: false };
+        });
+      }, 5000);
+    }
+  }, [alert.show]);
   return (
     <>
       <div>
@@ -117,12 +143,36 @@ const InviteUserBtn: FunctionComponent<{}> = () => {
             onClick={() => {
               inviteUsers();
               setIsOpen(false);
+              setAlert((value) => {
+                return {
+                  ...value,
+                  title: "Invite has been sent!",
+                  show: true,
+                  type: "success",
+                  messages: [
+                    `Workspace invatation has been sent to users: ${usernames
+                      .filter(Boolean)
+                      .join(" ")}`,
+                  ],
+                };
+              });
             }}
           >
             Add
           </NblocksButton>
         </div>
       </ModalComponent>
+      {/* Alert component logic should be moved to context provider or root component which will expose the state setter and context */}
+      {alert.show && (
+        <AlertComponent
+          title={alert.title}
+          type={alert.type}
+          className="fixed bottom-4 right-4 z-50 max-w-md w-full"
+          messages={alert.messages}
+          closable={true}
+          onCloseClick={alert.onCloseClick}
+        ></AlertComponent>
+      )}
     </>
   );
 };
