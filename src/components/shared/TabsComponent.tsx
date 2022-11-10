@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from "react";
 import { Tab } from "@headlessui/react";
+import { className } from "../../utils/ComponentHelpers";
 
 type ConfigObject = {
   categories: string[];
@@ -36,11 +37,6 @@ const TabsComponent: FunctionComponent<ConfigObject> = ({
       {/* Add panels */}
     </Tab.Group>
   );
-};
-
-// Make this a utility to subsidize the logic in other components for checking the className type
-const className = (...classes: any[]) => {
-  return classes.filter(Boolean).join(" ");
 };
 
 export { TabsComponent };
