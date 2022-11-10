@@ -52,11 +52,15 @@ export class AuthHttpClient {
 
       if (this.debug) {
         console.log(
-          `${request.method?.toUpperCase()} ${request.baseURL}/${request.url}`,
+          `[HTTP request]: ${request.method?.toUpperCase()} ${
+            request.baseURL
+          }/${request.url}`,
           "Headers",
           JSON.stringify(request.headers)
         );
-        console.log("Body:", request.data);
+        if (request.data) {
+          console.log("[HTTP Body]:", request.data);
+        }
       }
       return request;
     });
@@ -64,7 +68,7 @@ export class AuthHttpClient {
     httpClient.interceptors.response.use(
       (response) => {
         if (debug) {
-          console.log("Response:", response.status, response.data);
+          console.log("[HTTP Response]:", response.status, response.data);
         }
         return response;
       },

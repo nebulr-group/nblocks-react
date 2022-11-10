@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from "react";
 import { useAuth } from "../../hooks/auth-context";
+import { RouteConfig } from "../../routes/AuthRoutes";
 import { HeadingComponent } from "./HeadingComponent";
 import { LinkComponent } from "./LinkComponent";
 import { SubHeadingComponent } from "./SubHeadingComponent";
@@ -58,6 +59,13 @@ const InstallationCompleteComponent: FunctionComponent<{}> = ({}) => {
             nativeBehavior={true}
           >
             Read the documentation
+          </LinkComponent>
+          <LinkComponent
+            to={RouteConfig.login.LogoutScreen}
+            type={"primary"}
+            nativeBehavior={true}
+          >
+            <span className="mr-2">&#x1F6AA;</span> Logout
           </LinkComponent>
         </div>
       </div>
