@@ -39,7 +39,6 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({ didLogin }) => {
           "There was an error when logging in. Try again, otherwise contact support."
         );
       }
-      setUsername("");
       setPassword("");
     }
   };

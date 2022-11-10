@@ -1,5 +1,6 @@
 import { useMutation } from "@apollo/client";
 import React, { FormEvent, FunctionComponent, useState } from "react";
+import { useParams } from "react-router-dom";
 import { CreateTenantAnonymousDocument } from "../../gql/graphql";
 import { useApp } from "../../hooks/app-context";
 import { RouteConfig } from "../../routes/AuthRoutes";
@@ -24,6 +25,8 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({ didSignup }) => {
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const { plan } = useParams();
+
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
@@ -33,7 +36,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({ didSignup }) => {
         variables: {
           tenant: {
             owner: { email, firstName, lastName },
-            plan: "BASIC",
+            plan: plan ? plan : undefined,
             logo,
             name: "",
           },
