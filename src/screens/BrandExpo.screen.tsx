@@ -14,6 +14,8 @@ import { TextComponent } from "../components/shared/TextComponent";
 import { TogglerComponent } from "../components/shared/TogglerComponent";
 import { UserListTableComponent } from "../components/shared/UserListTableComponent";
 import { CheckCircleIcon, KeyIcon } from "@heroicons/react/20/solid";
+import { RoleAccessControllComponent } from "../components/shared/RoleAccessControllComponent";
+import { PlanAccessControllComponent } from "../components/shared/PlanAccessControllComponent";
 
 export function BrandExpoScreen() {
   const [password, setPassword] = useState("");
@@ -404,6 +406,114 @@ export function BrandExpoScreen() {
           <UserListTableComponent />
         </div>
       </div>
+      <h1 className="mt-5 text-3xl">Role Access control</h1>
+      <table>
+        <thead>
+          <th>OWNER</th>
+          <th>ADMIN</th>
+          <th>MANAGER</th>
+          <th>VIEWER</th>
+          <th>OWNER or ADMIN</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <RoleAccessControllComponent
+                roles={["OWNER"]}
+                hiddenChildren={<h1>Hidden</h1>}
+              >
+                <h1 className="font-semibold">Visible</h1>
+              </RoleAccessControllComponent>
+            </td>
+            <td>
+              <RoleAccessControllComponent
+                roles={["ADMIN"]}
+                hiddenChildren={<h1>Hidden</h1>}
+              >
+                <h1 className="font-semibold">Visible</h1>
+              </RoleAccessControllComponent>
+            </td>
+            <td>
+              <RoleAccessControllComponent
+                roles={["MANAGER"]}
+                hiddenChildren={<h1>Hidden</h1>}
+              >
+                <h1 className="font-semibold">Visible</h1>
+              </RoleAccessControllComponent>
+            </td>
+            <td>
+              <RoleAccessControllComponent
+                roles={["VIEWER"]}
+                hiddenChildren={<h1>Hidden</h1>}
+              >
+                <h1 className="font-semibold">Visible</h1>
+              </RoleAccessControllComponent>
+            </td>
+            <td>
+              <RoleAccessControllComponent
+                roles={["OWNER", "ADMIN"]}
+                hiddenChildren={<h1>Hidden</h1>}
+              >
+                <h1 className="font-semibold">Visible</h1>
+              </RoleAccessControllComponent>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h1 className="mt-5 text-3xl">Plan Access control</h1>
+      <table>
+        <thead>
+          <th>FREEMIUM</th>
+          <th>ESSENTIAL</th>
+          <th>TEAM</th>
+          <th>BASIC</th>
+          <th>TEAM or BASIC</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <PlanAccessControllComponent
+                plans={["FREEMIUM"]}
+                hiddenChildren={<h1>Hidden</h1>}
+              >
+                <h1 className="font-semibold">Visible</h1>
+              </PlanAccessControllComponent>
+            </td>
+            <td>
+              <PlanAccessControllComponent
+                plans={["ESSENTIAL"]}
+                hiddenChildren={<h1>Hidden</h1>}
+              >
+                <h1 className="font-semibold">Visible</h1>
+              </PlanAccessControllComponent>
+            </td>
+            <td>
+              <PlanAccessControllComponent
+                plans={["TEAM"]}
+                hiddenChildren={<h1>Hidden</h1>}
+              >
+                <h1 className="font-semibold">Visible</h1>
+              </PlanAccessControllComponent>
+            </td>
+            <td>
+              <PlanAccessControllComponent
+                plans={["BASIC"]}
+                hiddenChildren={<h1>Hidden</h1>}
+              >
+                <h1 className="font-semibold">Visible</h1>
+              </PlanAccessControllComponent>
+            </td>
+            <td>
+              <PlanAccessControllComponent
+                plans={["TEAM", "BASIC"]}
+                hiddenChildren={<h1>Hidden</h1>}
+              >
+                <h1 className="font-semibold">Visible</h1>
+              </PlanAccessControllComponent>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </>
   );
 }

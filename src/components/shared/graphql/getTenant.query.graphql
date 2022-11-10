@@ -5,6 +5,8 @@ query GetTenant {
     logo
     locale
     mfa
+    paymentsEnabled
+    paymentsRequired
     name
     plan
   }

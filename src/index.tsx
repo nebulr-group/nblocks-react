@@ -13,7 +13,7 @@ import { FormComponent } from "./components/shared/FormComponent";
 import { TextComponent } from "./components/shared/TextComponent";
 import { UserRoutes } from "./routes/UserRoutes";
 import { AuthGuard } from "./routes/AuthGuard";
-import { AccessControllComponent } from "./components/helpers/AccessControllComponent";
+import { RoleAccessControllComponent } from "./components/shared/RoleAccessControllComponent";
 import { LibConfig } from "./models/lib-config";
 import { useConfig } from "./hooks/config-context";
 import { OnboardRoutes } from "./routes/OnboardRoutes";
@@ -26,6 +26,7 @@ import "./index.css";
 import { AlertComponent } from "./components/shared/AlertComponent";
 import { SkeletonLoader } from "./components/shared/SkeletonLoader";
 import { InstallationCompleteComponent } from "./components/shared/InstallationCompleteComponent";
+import { PlanAccessControllComponent } from "./components/shared/PlanAccessControllComponent";
 
 export {
   useConfig,
@@ -37,7 +38,8 @@ export {
   useAuth,
   useApp,
   NblocksProvider,
-  AccessControllComponent,
+  RoleAccessControllComponent,
+  PlanAccessControllComponent,
   NblocksButton,
   InputComponent,
   LinkComponent,
