@@ -19,6 +19,7 @@ import { OnboardRoutes } from "../../routes/OnboardRoutes";
 import { SetupRoutes } from "../../routes/SetupRoutes";
 import { UserRoutes } from "../../routes/UserRoutes";
 import { BrandExpoScreen } from "../../screens/BrandExpo.screen";
+import { GraphqlExpoScreen } from "../../screens/GraphqlExpo.screen";
 
 /**
  * Wrap your code into this Provider to get access to the Nblocks world
@@ -86,6 +87,7 @@ const DevRouterWrapper: FunctionComponent<{
             }
           />
           <Route path="/brandExpo" element={<BrandExpoScreen />} />
+          <Route path="/graphqlExpo" element={<GraphqlExpoScreen />} />
           <Route path="/" element={<AuthGuard>{children}</AuthGuard>} />
         </Routes>
       </BrowserRouter>
