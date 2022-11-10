@@ -12,12 +12,14 @@ import {
   useConfig,
 } from "../../hooks/config-context";
 import { LibConfig } from "../../models/lib-config";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AuthGuard } from "../../routes/AuthGuard";
 import { AuthRoutes } from "../../routes/AuthRoutes";
 import { OnboardRoutes } from "../../routes/OnboardRoutes";
 import { SetupRoutes } from "../../routes/SetupRoutes";
 import { UserRoutes } from "../../routes/UserRoutes";
+import { BrandExpoScreen } from "../../screens/BrandExpo.screen";
+import { GraphqlExpoScreen } from "../../screens/GraphqlExpo.screen";
 
 /**
  * Wrap your code into this Provider to get access to the Nblocks world
@@ -34,6 +36,9 @@ const NblocksProvider: FunctionComponent<{
   // Children.map(children, (child, index) => {
   //   console.log(child.type.toString());
   // });
+
+  console.log("Nblocks: Beta");
+
   return (
     <NblocksConfigContextProvider config={config}>
       <NblocksSecureContextProvider>
@@ -65,12 +70,11 @@ const DevRouterWrapper: FunctionComponent<{
 
   if (spa) {
     if (debug) {
-      console.log("Resorting to built-in Routing");
+      console.log("DevRouterWrapper: Resorting to built-in Routing");
     }
     return (
       <BrowserRouter>
         <Routes>
-          <Route path="/home" element={<AuthGuard>{children}</AuthGuard>} />
           <Route path="/auth/*" element={<AuthRoutes />} />
           <Route path="/onboard/*" element={<OnboardRoutes />} />
           <Route path="/setup/*" element={<SetupRoutes />} />
@@ -82,7 +86,9 @@ const DevRouterWrapper: FunctionComponent<{
               </AuthGuard>
             }
           />
-          <Route path="*" element={<Navigate to="/home" replace />} />
+          <Route path="/brandExpo" element={<BrandExpoScreen />} />
+          <Route path="/graphqlExpo" element={<GraphqlExpoScreen />} />
+          <Route path="/" element={<AuthGuard>{children}</AuthGuard>} />
         </Routes>
       </BrowserRouter>
     );

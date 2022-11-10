@@ -15,7 +15,8 @@ type InputType = "text" | "password" | "email" | "number" | "tel" | "username";
  */
 type LabelType = {
   position: "left" | "right";
-  src: string;
+  src?: string;
+  node?: React.ReactNode;
   srcset?: string;
   alt: string;
 };
@@ -135,11 +136,14 @@ const InputComponent: FunctionComponent<ConfigObject> = ({
             getIconPositionStyle(errorLabel.position)
           }
         >
-          <img
-            src={errorLabel.src}
-            alt={errorLabel.alt}
-            srcSet={errorLabel.srcset}
-          />
+          {errorLabel.node && <div>{errorLabel.node}</div>}
+          {errorLabel.src && (
+            <img
+              src={errorLabel.src}
+              alt={errorLabel.alt}
+              srcSet={errorLabel.srcset}
+            />
+          )}
         </div>
       );
     } else if ((!inputError || inputError === undefined) && infoLabel) {
@@ -150,12 +154,15 @@ const InputComponent: FunctionComponent<ConfigObject> = ({
             getIconPositionStyle(infoLabel.position)
           }
         >
-          <img
-            src={infoLabel.src}
-            alt={infoLabel.alt}
-            srcSet={infoLabel.srcset}
-            className="fill-red-500"
-          />
+          {infoLabel.node && <div>{infoLabel.node}</div>}
+          {infoLabel.src && (
+            <img
+              src={infoLabel.src}
+              alt={infoLabel.alt}
+              srcSet={infoLabel.srcset}
+              className="fill-red-500"
+            />
+          )}
         </div>
       );
     } else {

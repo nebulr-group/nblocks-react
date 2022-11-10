@@ -4,7 +4,6 @@ import {
   TabsComponent,
 } from "nblocks-react";
 import React from "react";
-import { HomeScreen } from "./screens/Home.screen";
 
 function App() {
   return (

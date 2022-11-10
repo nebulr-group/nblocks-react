@@ -33,20 +33,23 @@ export class AuthService {
   private static TENANT_USER_ID_KEY = "TENANT_USER_ID";
   private static MFA_TOKEN_KEY = "MFA_TOKEN";
 
-  userAuthenticated: boolean;
-
-  // private readonly _currentUserSource = new BehaviorSubject<CurrentUser>(new CurrentUser());
-  // readonly currentUser$ = this._currentUserSource.asObservable();
-
   constructor(httpClient: AxiosInstance, debug: boolean) {
     this.debug = debug;
     this.httpClient = httpClient;
-    this.userAuthenticated = false;
   }
 
+  /**
+   * Application boot should start by calling this method
+   * @returns
+   */
   async checkCurrentUserAuthenticated(): Promise<boolean> {
-    if (await AuthService.hasFullAuthContext())
-      if (await this.authenticated()) return true;
+    const hasFullAuthContext = await AuthService.hasFullAuthContext();
+    if (hasFullAuthContext) {
+      const authenticated = await this.authenticated();
+      if (authenticated) {
+        return true;
+      }
+    }
 
     return false;
   }

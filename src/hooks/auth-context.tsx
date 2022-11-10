@@ -36,20 +36,20 @@ const NblocksAuthContextProvider: FunctionComponent<NblocksContextProps> = ({
   } = useSecureContext();
   const [currentUser, setCurrentUser] = useState(new CurrentUser());
 
-  //TODO async
   const logout = async () => {
-    await AuthService.clearAuthStorage();
     await authApolloClient.client.resetStore();
+    AuthService.clearAuthStorage();
     didAuthenticate(false);
-    if (debug) console.log("DidLogout");
+    log(`Did logout`);
   };
 
-  //TODO async
   const switchUser = async (userId: string) => {
     await authApolloClient.client.resetStore();
-    await AuthService.setTenantUserId(userId!);
-    if (authenticated) refreshCurrentUser();
-    if (debug) console.log("DidSwitchUser");
+    AuthService.setTenantUserId(userId!);
+    if (authenticated) {
+      refreshCurrentUser();
+    }
+    log(`Did switch user to: ${userId}`);
   };
 
   // Attach listners to events in http/graphql clients
@@ -66,11 +66,18 @@ const NblocksAuthContextProvider: FunctionComponent<NblocksContextProps> = ({
     )
   );
 
+  const log = (msg: string) => {
+    if (debug) {
+      console.log(`NblocksAuthContextProvider: ${msg}`);
+    }
+  };
+
   const refreshCurrentUser = () => {
-    authService
-      .currentUser()
-      .then((user) => setCurrentUser(new CurrentUser(user)));
-    if (debug) console.log("refreshCurrentUser");
+    log("Will refresh currentUser");
+    authService.currentUser().then((user) => {
+      setCurrentUser(new CurrentUser(user));
+      log("Did refresh currentUser");
+    });
   };
 
   useEffect(() => {

@@ -1,0 +1,15 @@
+query GetAppPlans {
+  getAppConfig {
+    businessModel {
+      plans {
+        name
+        prices {
+          amount
+          currency
+          region
+          currency
+        }
+      }
+    }
+  }
+}
