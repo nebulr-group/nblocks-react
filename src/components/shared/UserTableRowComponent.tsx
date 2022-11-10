@@ -197,9 +197,13 @@ const UserTableRowComponent: FunctionComponent<ConfigObject> = ({
     <tr
       key={row.id}
       className={"border-t border-b text-gray-600"}
-      onClick={(event) => {
-        setEdit(true);
-      }}
+      onClick={
+        row.original.id === currentUser.user?.id
+          ? undefined
+          : (event) => {
+              setEdit(true);
+            }
+      }
       tabIndex={row.index}
     >
       {row.getVisibleCells().map((cell) => {
