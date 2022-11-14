@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react";
 import { Tab } from "@headlessui/react";
-import { className } from "../../utils/ComponentHelpers";
+import { classNameFilter } from "../../utils/ComponentHelpers";
 
 type ConfigObject = {
   categories: string[];
@@ -22,7 +22,7 @@ const TabsComponent: FunctionComponent<ConfigObject> = ({
           <Tab
             key={type}
             className={({ selected }) =>
-              className(
+              classNameFilter(
                 "py-2.5 px-3.5 font-semibold rounded-md",
                 selected
                   ? "bg-white hover:bg-white shadow-sm text-gray-900"
