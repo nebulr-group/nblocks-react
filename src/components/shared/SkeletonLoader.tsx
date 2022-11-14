@@ -1,12 +1,16 @@
 import React, { FunctionComponent } from "react";
+import { classNameFilter } from "../../utils/ComponentHelpers";
 
 type ConfigObject = {
   className?: string;
 };
 
 const SkeletonLoader: FunctionComponent<ConfigObject> = ({ className }) => {
-  className = className ? className + " " : "";
-  return <div className={`${className}grow animate-pulse bg-gray-300`}></div>;
+  return (
+    <div
+      className={classNameFilter(className, "grow animate-pulse bg-gray-300")}
+    ></div>
+  );
 };
 
 export { SkeletonLoader };
