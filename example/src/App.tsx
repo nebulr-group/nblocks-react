@@ -1,4 +1,8 @@
-import { NblocksProvider, InstallationCompleteComponent } from "nblocks-react";
+import {
+  NblocksProvider,
+  InstallationCompleteComponent,
+  TabsComponent,
+} from "nblocks-react";
 import React from "react";
 
 function App() {

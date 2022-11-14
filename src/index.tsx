@@ -26,6 +26,8 @@ import "./index.css";
 import { AlertComponent } from "./components/shared/AlertComponent";
 import { SkeletonLoader } from "./components/shared/SkeletonLoader";
 import { InstallationCompleteComponent } from "./components/shared/InstallationCompleteComponent";
+import { TabsComponent } from "./components/shared/TabsComponent";
+import { PricingCards } from "./components/shared/PricingCards";
 import { PlanAccessControllComponent } from "./components/shared/PlanAccessControllComponent";
 
 export {
@@ -56,6 +58,8 @@ export {
   AlertComponent,
   SkeletonLoader,
   InstallationCompleteComponent,
+  TabsComponent,
+  PricingCards,
 };
 
 export type { LibConfig };
