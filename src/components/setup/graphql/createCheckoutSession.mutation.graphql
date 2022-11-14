@@ -1,0 +1,6 @@
+mutation CreateCheckoutSession($args: CreateCheckoutSessionInput!) {
+  createCheckoutSession(args: $args) {
+    id
+    publicKey
+  }
+}

@@ -63,7 +63,7 @@ export function GraphqlExpoScreen() {
         <HeadingComponent type="h2" size="2xl">
           getAppPlans.query.graphql (GetAppPlansDocument (light))
         </HeadingComponent>
-        {renderJson(getAppPlansQuery.data?.getAppConfig)}
+        {renderJson(getAppPlansQuery.data?.getAppPlans)}
       </div>
       <div>
         <HeadingComponent type="h2" size="2xl">

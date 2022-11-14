@@ -14,7 +14,7 @@ const ChoosePlanComponent: FunctionComponent = () => {
     const regions: string[] = [];
 
     if (!loading) {
-      data?.getAppConfig.businessModel?.plans.forEach(({ prices }) => {
+      data?.getAppPlans.forEach(({ prices }) => {
         prices.forEach(({ region }) => {
           !regions.includes(region) && regions.push(region);
         });
@@ -41,7 +41,7 @@ const ChoosePlanComponent: FunctionComponent = () => {
         </div>
       </div>
       <PricingCards
-        plans={data?.getAppConfig.businessModel?.plans}
+        plans={data?.getAppPlans}
         loading={loading}
         className={"mt-24"}
         region={region}
