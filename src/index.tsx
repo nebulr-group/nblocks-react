@@ -27,6 +27,7 @@ import { AlertComponent } from "./components/shared/AlertComponent";
 import { SkeletonLoader } from "./components/shared/SkeletonLoader";
 import { InstallationCompleteComponent } from "./components/shared/InstallationCompleteComponent";
 import { TabsComponent } from "./components/shared/TabsComponent";
+import { PricingCards } from "./components/shared/PricingCards";
 
 export {
   useConfig,
@@ -56,6 +57,7 @@ export {
   SkeletonLoader,
   InstallationCompleteComponent,
   TabsComponent,
+  PricingCards,
 };
 
 export type { LibConfig };
