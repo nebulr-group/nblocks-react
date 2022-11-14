@@ -20,6 +20,7 @@ import { SetupRoutes } from "../../routes/SetupRoutes";
 import { UserRoutes } from "../../routes/UserRoutes";
 import { BrandExpoScreen } from "../../screens/BrandExpo.screen";
 import { GraphqlExpoScreen } from "../../screens/GraphqlExpo.screen";
+import { TenantRoutes } from "../../routes/TenantRoutes";
 
 /**
  * Wrap your code into this Provider to get access to the Nblocks world
@@ -78,6 +79,7 @@ const DevRouterWrapper: FunctionComponent<{
           <Route path="/auth/*" element={<AuthRoutes />} />
           <Route path="/onboard/*" element={<OnboardRoutes />} />
           <Route path="/setup/*" element={<SetupRoutes />} />
+          <Route path="/tenant/*" element={<TenantRoutes />} />
           <Route
             path="/user/*"
             element={
