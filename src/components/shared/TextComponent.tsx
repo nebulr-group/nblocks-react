@@ -80,8 +80,10 @@ const getTextSizeStyle = (size: ConfigObject["size"]) => {
   switch (size) {
     case "sm":
       return "text-sm";
-    default:
+    case "base":
       return "text-base";
+    default:
+      return undefined;
   }
 };
 
