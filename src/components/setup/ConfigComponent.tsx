@@ -50,6 +50,8 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
     });
     // Toast & Loading logic
     setCredentialsModalOpen(false);
+    setStripePublicKey("");
+    setStripePrivateKey("");
     setAlert((value) => {
       return {
         ...value,
