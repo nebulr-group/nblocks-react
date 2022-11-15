@@ -9,8 +9,10 @@ import { TextComponent } from "../shared/TextComponent";
 import { InputComponent } from "../shared/InputComponent";
 import { UpdateAppCredentialsDocument } from "../../gql/graphql";
 import { AlertComponent, ComponentProps } from "../shared/AlertComponent";
+import { SkeletonLoader } from "../shared/SkeletonLoader";
 
 const ConfigComponent: FunctionComponent<{}> = ({}) => {
+  const [stripeFormIsValid, setStripeFormIsValid] = useState<boolean>(false);
   const [alert, setAlert] = useState<ComponentProps & { show: boolean }>({
     title: "",
     type: "primary",
@@ -52,6 +54,7 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
     setCredentialsModalOpen(false);
     setStripePublicKey("");
     setStripePrivateKey("");
+    setStripeFormIsValid(false);
     setAlert((value) => {
       return {
         ...value,
@@ -62,6 +65,7 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
       };
     });
   };
+
   return (
     <div>
       <div className="flex justify-between items-center py-5">
@@ -74,50 +78,74 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
           <HeadingComponent type={"h2"} size="xl">
             Application ID
           </HeadingComponent>
-          <TextComponent className="mt-2">
-            {data?.getAppConfig.id}
-          </TextComponent>
+          {data ? (
+            <TextComponent className="mt-2">
+              {data.getAppConfig.id}
+            </TextComponent>
+          ) : (
+            <SkeletonLoader className="h-6 w-40 rounded-lg mt-2" />
+          )}
         </div>
         <hr />
         <div>
           <HeadingComponent type={"h2"} size="xl">
             Name
           </HeadingComponent>
-          <TextComponent className="mt-2">
-            {data?.getAppConfig.name}
-          </TextComponent>
+          {data ? (
+            <TextComponent className="mt-2">
+              {data?.getAppConfig.name}
+            </TextComponent>
+          ) : (
+            <SkeletonLoader className="h-6 w-40 rounded-lg mt-2" />
+          )}
         </div>
         <hr />
         <div>
           <HeadingComponent type={"h2"} size="xl">
             User roles
           </HeadingComponent>
-          <ul className="list-none inline-block mt-2">
-            {data?.getAppConfig.roles?.map((role, index) => (
-              <li className="py-3" key={index}>
-                {role}{" "}
-                {role === data.getAppConfig.defaultRole ? "(Default)" : ""}
-              </li>
-            ))}
-          </ul>
+          {data ? (
+            <ul className="list-none inline-block mt-2">
+              {data?.getAppConfig.roles?.map((role, index) => (
+                <li className="py-3" key={index}>
+                  {role}{" "}
+                  {role === data.getAppConfig.defaultRole ? "(Default)" : ""}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <>
+              <SkeletonLoader className="h-6 w-40 rounded-lg mt-2" />
+              <SkeletonLoader className="h-6 w-40 rounded-lg mt-2" />
+              <SkeletonLoader className="h-6 w-40 rounded-lg mt-2" />
+            </>
+          )}
         </div>
         <hr />
         <div>
           <HeadingComponent type={"h2"} size="xl">
             Plans
           </HeadingComponent>
-          <ul className="list-none mt-2">
-            {data?.getAppConfig.businessModel?.plans.map((plan, i) => (
-              <li key={i}>
-                {plan.name} -{" "}
-                {plan.prices.map((price, j) => (
-                  <i key={j}>
-                    {price.currency} {price.amount} ({price.region}),{" "}
-                  </i>
-                ))}
-              </li>
-            ))}
-          </ul>
+          {data ? (
+            <ul className="list-none mt-2">
+              {data?.getAppConfig.businessModel?.plans.map((plan, i) => (
+                <li key={i}>
+                  {plan.name} -{" "}
+                  {plan.prices.map((price, j) => (
+                    <i key={j}>
+                      {price.currency} {price.amount} ({price.region}),{" "}
+                    </i>
+                  ))}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <>
+              <SkeletonLoader className="h-6 w-40 rounded-lg mt-2" />
+              <SkeletonLoader className="h-6 w-40 rounded-lg mt-2" />
+              <SkeletonLoader className="h-6 w-40 rounded-lg mt-2" />
+            </>
+          )}
         </div>
       </div>
 
@@ -148,6 +176,12 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
                 type={"password"}
                 label={"Stripe Publishable Key"}
                 onChange={(event) => {
+                  if (event.target.value.length > 0) {
+                    setStripeFormIsValid(true);
+                  } else {
+                    setStripeFormIsValid(false);
+                  }
+
                   setStripePublicKey(event.target.value);
                 }}
                 value={stripePublicKey}
@@ -156,6 +190,12 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
                 type={"password"}
                 label={"Stripe Secret Key"}
                 onChange={(event) => {
+                  if (event.target.value.length > 0) {
+                    setStripeFormIsValid(true);
+                  } else {
+                    setStripeFormIsValid(false);
+                  }
+
                   setStripePrivateKey(event.target.value);
                 }}
                 value={stripeSecretKey}
@@ -166,7 +206,9 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
                 size="md"
                 className="w-full"
                 type="tertiary"
-                onClick={() => setCredentialsModalOpen(false)}
+                onClick={() => {
+                  setCredentialsModalOpen(false);
+                }}
               >
                 Cancel
               </NblocksButton>
@@ -176,6 +218,7 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
                 isLoading={updateAppCredentialsData.loading}
                 className="w-full"
                 type="primary"
+                disabled={!stripeFormIsValid}
               >
                 Save changes
               </NblocksButton>
