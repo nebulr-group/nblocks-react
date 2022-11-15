@@ -22,4 +22,8 @@ export interface NavigationConfig {
     signup: string;
     config: string;
   };
+  tenant: {
+    plan: string;
+    payment: string;
+  },
 }

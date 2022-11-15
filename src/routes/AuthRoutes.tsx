@@ -34,6 +34,10 @@ const RouteConfig: NavigationConfig = {
     signup: "/setup/signup",
     config: "/setup/config",
   },
+  tenant: {
+    plan: "/tenant/plan",
+    payment: "/tenant/payment",
+  },
 };
 
 const AuthRoutes = () => {
