@@ -11,7 +11,7 @@ import { RouteConfig } from "../../routes/AuthRoutes";
 
 const PlanScreen: FunctionComponent<{}> = () => {
   const navigate = useNavigate();
-  const { handoverRoute } = useConfig();
+  const { handoverRoute, debug } = useConfig();
   const { data, loading, error } = useQuery(GetTenantDocument);
   const planSelectHandler = () => {
     if (data) {
@@ -26,6 +26,18 @@ const PlanScreen: FunctionComponent<{}> = () => {
     }
   };
 
+  // If there's no plans to show, redirect back to app
+  const onDidRecieveNoPlans = () => {
+    log(`No plans configured. Redirecting back to ${handoverRoute} `);
+    navigate(handoverRoute);
+  };
+
+  const log = (msg: string) => {
+    if (debug) {
+      console.log(msg);
+    }
+  };
+
   return (
     <TenantLayoutWrapperComponent
       heading={"Pricing plans"}
@@ -33,7 +45,10 @@ const PlanScreen: FunctionComponent<{}> = () => {
         "We belive Nblocks should be available to all companies, no matter the size."
       }
     >
-      <ChoosePlanComponent planSelectHandler={planSelectHandler} />
+      <ChoosePlanComponent
+        planSelectHandler={planSelectHandler}
+        didRecieveNoPlans={() => onDidRecieveNoPlans()}
+      />
     </TenantLayoutWrapperComponent>
   );
 };

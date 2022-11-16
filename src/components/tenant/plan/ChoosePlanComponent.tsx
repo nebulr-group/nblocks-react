@@ -7,7 +7,8 @@ import { SkeletonLoader } from "../../shared/SkeletonLoader";
 
 const ChoosePlanComponent: FunctionComponent<{
   planSelectHandler: () => void;
-}> = ({ planSelectHandler }) => {
+  didRecieveNoPlans?: () => void;
+}> = ({ planSelectHandler, didRecieveNoPlans }) => {
   const [region, setRegion] = useState<string>("");
   const { data, loading } = useQuery(GetAppPlansDocument);
   const [regions, setRegions] = useState<string[]>([]);
@@ -16,13 +17,19 @@ const ChoosePlanComponent: FunctionComponent<{
     const regions: string[] = [];
 
     if (!loading) {
-      data?.getAppPlans.forEach(({ prices }) => {
-        prices.forEach(({ region }) => {
-          !regions.includes(region) && regions.push(region);
+      if (data && data?.getAppPlans.length > 0) {
+        data?.getAppPlans.forEach(({ prices }) => {
+          prices.forEach(({ region }) => {
+            !regions.includes(region) && regions.push(region);
+          });
         });
-      });
-      setRegion(regions[0]);
-      setRegions(regions);
+        setRegion(regions[0]);
+        setRegions(regions);
+      } else {
+        if (didRecieveNoPlans) {
+          didRecieveNoPlans();
+        }
+      }
     }
   }, [loading]);
 
