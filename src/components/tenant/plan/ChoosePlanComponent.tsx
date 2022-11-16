@@ -1,11 +1,13 @@
 import { useQuery } from "@apollo/client";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { PricingCards } from "../../shared/PricingCards";
-import { GetAppPlansDocument } from "../../../gql/graphql";
+import { GetAppPlansDocument, GetTenantQuery } from "../../../gql/graphql";
 import { ListBoxComponent } from "../../shared/ListBoxComponent";
 import { SkeletonLoader } from "../../shared/SkeletonLoader";
 
-const ChoosePlanComponent: FunctionComponent = () => {
+const ChoosePlanComponent: FunctionComponent<{
+  planSelectHandler: () => void;
+}> = ({ planSelectHandler }) => {
   const [region, setRegion] = useState<string>("");
   const { data, loading } = useQuery(GetAppPlansDocument);
   const [regions, setRegions] = useState<string[]>([]);
@@ -42,10 +44,11 @@ const ChoosePlanComponent: FunctionComponent = () => {
       </div>
       <PricingCards
         plans={data?.getAppPlans}
-        loading={loading}
+        loadingCardsData={loading}
         className={"mt-24"}
         region={region}
         cardPlaceholderCount={2}
+        planSelectHandler={planSelectHandler}
       ></PricingCards>
     </>
   );

@@ -4,38 +4,62 @@ import { HeadingComponent } from "./HeadingComponent";
 import { NblocksButton } from "./NblocksButton";
 import { TextComponent } from "./TextComponent";
 import { SkeletonLoader } from "./SkeletonLoader";
-import { PlanGraphql } from "../../gql/graphql";
+import {
+  GetTenantDocument,
+  GetTenantQuery,
+  PlanGraphql,
+  UpdateTenantDocument,
+} from "../../gql/graphql";
 import {
   classNameFilter,
   getCurrencySymbol,
 } from "../../utils/ComponentHelpers";
-import { useParams } from "react-router-dom";
+import { useMutation, useQuery } from "@apollo/client";
 
 type ConfigObject = {
   plans?: PlanGraphql[];
-  loading: boolean;
+  loadingCardsData: boolean;
   cardPlaceholderCount?: number;
   className?: string;
   region: string;
+  planSelectHandler: () => void;
 };
 
 const PricingCards: FunctionComponent<ConfigObject> = ({
   plans,
-  loading,
+  loadingCardsData,
   cardPlaceholderCount,
   className,
   region,
+  planSelectHandler,
 }) => {
   cardPlaceholderCount = cardPlaceholderCount ? cardPlaceholderCount : 3;
-  const { planName } = useParams();
 
+  // Getting Tenat instance
+  const { data, loading, error } = useQuery(GetTenantDocument);
+
+  // Updating Tenant instance
+  const [updateTenantMutation, updateTenantData] =
+    useMutation(UpdateTenantDocument);
+
+  // Checking the selected plan against the tenant picked plan
   const checkPlan = (plan: PlanGraphql) => {
-    return plan.name === planName;
+    return plan.name === data?.getTenant.plan;
+  };
+
+  const updatePlan = async (plan: PlanGraphql["name"]) => {
+    const result = await updateTenantMutation({
+      variables: { tenant: { plan: plan } },
+    });
+    if (data) {
+      planSelectHandler();
+    }
   };
 
   return (
     <div className={classNameFilter(className, "flex gap-4 justify-center")}>
-      {loading &&
+      {loadingCardsData &&
+        loading &&
         [...Array(cardPlaceholderCount).keys()].map((_, i) => {
           return (
             <div className="min-h-8 border min-w-8 p-8 rounded-xl" key={i}>
@@ -57,7 +81,8 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
             </div>
           );
         })}
-      {!loading &&
+      {!loadingCardsData &&
+        !loading &&
         plans &&
         plans?.map(({ name, prices }, index) => {
           return (
@@ -84,12 +109,13 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
               <div className="mt-6">
                 <NblocksButton
                   type={
-                    planName === name || !plans.some(checkPlan) || !planName
+                    data?.getTenant.plan === name && plans.some(checkPlan)
                       ? "primary"
                       : "secondary"
                   }
                   size={"md"}
                   fullWidth={true}
+                  onClick={() => updatePlan(name)}
                 >
                   Get Started
                 </NblocksButton>

@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from "react";
+import { classNameFilter } from "../../utils/ComponentHelpers";
 
 /**
  * Defines the type of configuration object
@@ -34,11 +35,14 @@ const TextComponent: FunctionComponent<ConfigObject> = ({
   className = className ? className : "";
   return (
     <p
-      className={`${className}${getTextSizeStyle(size)}${getTextBreakType(
-        breakType
-      )}${getWhitespaceType(whitespaceType)}${getTextOverflowType(
-        overflowType
-      )} ${getTextColor(colorName)}`}
+      className={classNameFilter(
+        className,
+        getTextSizeStyle(size),
+        getTextBreakType(breakType),
+        getWhitespaceType(whitespaceType),
+        getTextOverflowType(overflowType),
+        getTextColor(colorName)
+      )}
       style={style}
     >
       {children}
@@ -57,13 +61,13 @@ const getTextColor = (colorName?: ConfigObject["colorName"]) => {
 const getTextOverflowType = (overflowType: ConfigObject["overflowType"]) => {
   switch (overflowType) {
     case "clip":
-      return " text-clip";
+      return "text-clip";
     case "ellipsis":
-      return " text-ellipsis";
+      return "text-ellipsis";
     case "turnicate":
-      return " turnicate";
+      return "turnicate";
     default:
-      return "";
+      return undefined;
   }
 };
 
@@ -75,11 +79,11 @@ const getTextOverflowType = (overflowType: ConfigObject["overflowType"]) => {
 const getTextSizeStyle = (size: ConfigObject["size"]) => {
   switch (size) {
     case "sm":
-      return " text-sm";
+      return "text-sm";
     case "base":
-      return " text-base";
+      return "text-base";
     default:
-      return "";
+      return undefined;
   }
 };
 
@@ -91,17 +95,17 @@ const getTextSizeStyle = (size: ConfigObject["size"]) => {
 const getWhitespaceType = (whitespaceType: ConfigObject["whitespaceType"]) => {
   switch (whitespaceType) {
     case "normal":
-      return " whitespace-normal";
+      return "whitespace-normal";
     case "nowrap":
-      return " whitespace-nowrap";
+      return "whitespace-nowrap";
     case "pre":
-      return " whitespace-pre";
+      return "whitespace-pre";
     case "pre-line":
-      return " whitespace-pre-line";
+      return "whitespace-pre-line";
     case "pre-wrap":
-      return " whitespace-wrap";
+      return "whitespace-wrap";
     default:
-      return "";
+      return undefined;
   }
 };
 
@@ -113,13 +117,13 @@ const getWhitespaceType = (whitespaceType: ConfigObject["whitespaceType"]) => {
 const getTextBreakType = (breakType: ConfigObject["breakType"]) => {
   switch (breakType) {
     case "normal":
-      return " break-normal";
+      return "break-normal";
     case "words":
-      return " break-words";
+      return "break-words";
     case "all":
-      return " break-all";
+      return "break-all";
     default:
-      return "";
+      return undefined;
   }
 };
 
