@@ -1,0 +1,7 @@
+query GetTenantAnonymous {
+  getTenantAnonymous {
+    id
+    locale
+    name
+  }
+}

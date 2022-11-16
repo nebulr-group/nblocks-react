@@ -15,6 +15,7 @@ import { SkeletonLoader } from "../../shared/SkeletonLoader";
 
 type ComponentProps = {
   didSelectUser: (user: AuthTenantUserResponseDto) => void;
+  didFinishedInitialLoading?: () => void;
 };
 
 const convertToOption = (user: AuthTenantUserResponseDto): Option => {
@@ -31,6 +32,7 @@ const convertToOption = (user: AuthTenantUserResponseDto): Option => {
 
 const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
   didSelectUser,
+  didFinishedInitialLoading: finishedInitialLoading,
 }) => {
   const { switchUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -66,6 +68,9 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
     if (!users) {
       authService.listUsers().then((users) => {
         setUsers(users);
+        if (finishedInitialLoading) {
+          finishedInitialLoading();
+        }
       });
     }
   }, []);

@@ -1,0 +1,11 @@
+query GetAppPlans {
+  getAppPlans {
+    name
+    prices {
+      amount
+      currency
+      region
+      currency
+    }
+  }
+}

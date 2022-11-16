@@ -1,6 +1,7 @@
 import React, { FunctionComponent, ReactNode } from "react";
 import { Transition } from "@headlessui/react";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import { classNameFilter } from "../../utils/ComponentHelpers";
 
 /**
  * Object type with specific fields for type checking props that are passed to NblocksButton.
@@ -72,12 +73,13 @@ const NblocksButton: FunctionComponent<ConfigObject> = ({
   const buttonPadding = getPadding(size);
   return (
     <button
-      className={
-        className +
-        buttonTypeStyle +
-        buttonPadding +
-        `${fullWidth ? " w-full" : ""} flex items-center justify-center`
-      }
+      className={classNameFilter(
+        className,
+        buttonTypeStyle,
+        buttonPadding,
+        `${fullWidth ? " w-full" : ""}`,
+        "flex items-center justify-center"
+      )}
       disabled={disabled}
       onClick={onClick}
       onClickCapture={onClickCapture}
