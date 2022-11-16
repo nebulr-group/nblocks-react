@@ -56,9 +56,8 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
 
   const columnHelper = createColumnHelper<PlanGraphql>();
 
-  const buildCloudLink = (row: Row<PlanGraphql>) => {
+  const buildCloudLink = (row: Row<PlanGraphql>, regionName: string) => {
     const planName = row.getValue<string>("name");
-    const regionName = row.getValue<PriceGraphql[]>("region")[0].region;
     return `https://account-api-stage.nebulr-core.com/app/${data?.getAppConfig.id}/checkoutView?plan=${planName}&region=${regionName}`;
   };
 
@@ -81,12 +80,11 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
           header: "Amount",
           id: "amount",
           cell: (info) => {
-            console.log(info.cell.getValue());
             return info.cell.getValue<PriceGraphql[]>().map((price) => {
               return (
-                <tr>
-                  <td>{price.amount}</td>
-                </tr>
+                <div className="pt-2 first:pt-0 border-b last:border-b-0">
+                  {price.amount}
+                </div>
               );
             });
           },
@@ -97,9 +95,9 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
           cell: (info) => {
             return info.cell.getValue<PriceGraphql[]>().map((price) => {
               return (
-                <tr>
-                  <td>{price.currency}</td>
-                </tr>
+                <div className="pt-2 first:pt-0 border-b last:border-b-0">
+                  {price.currency}
+                </div>
               );
             });
           },
@@ -110,9 +108,9 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
           cell: (info) => {
             return info.cell.getValue<PriceGraphql[]>().map((price) => {
               return (
-                <tr>
-                  <td>{price.region}</td>
-                </tr>
+                <div className="pt-2 first:pt-0 border-b last:border-b-0">
+                  {price.region}
+                </div>
               );
             });
           },
@@ -127,9 +125,23 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
           id: "in-app-link",
           cell: (info) => {
             return (
-              <LinkComponent to={buildLocalLink(info.row)} type={"primary"}>
-                {buildLocalLink(info.row)}
-              </LinkComponent>
+              <>
+                {info.row.getValue<PriceGraphql[]>("region").map((price) => {
+                  return (
+                    <div className="pt-2 first:pt-0 border-b last:border-b-0 text-center">
+                      <LinkComponent
+                        to={buildLocalLink(info.row)}
+                        target={"_blank"}
+                        nativeBehavior={true}
+                        type={"primary"}
+                        className={"block"}
+                      >
+                        {buildLocalLink(info.row)}
+                      </LinkComponent>
+                    </div>
+                  );
+                })}
+              </>
             );
           },
         }),
@@ -138,15 +150,23 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
           id: "nblocks-cloud-link",
           cell: (info) => {
             return (
-              <LinkComponent
-                to={buildCloudLink(info.row)}
-                type={"primary"}
-                nativeBehavior={true}
-                target={"_blank"}
-                className={"block text-center"}
-              >
-                Link
-              </LinkComponent>
+              <>
+                {info.row.getValue<PriceGraphql[]>("region").map((price) => {
+                  return (
+                    <div className="pt-2 first:pt-0 border-b last:border-b-0 text-center">
+                      <LinkComponent
+                        to={buildCloudLink(info.row, price.region)}
+                        type={"primary"}
+                        nativeBehavior={true}
+                        target={"_blank"}
+                        className={"block"}
+                      >
+                        Link
+                      </LinkComponent>
+                    </div>
+                  );
+                })}
+              </>
             );
           },
         }),
@@ -289,7 +309,12 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
                     <tr key={row.id}>
                       {row.getVisibleCells().map((cell) => {
                         return (
-                          <td key={cell.id} className={"border-b p-4 pl-8"}>
+                          <td
+                            key={cell.id}
+                            className={
+                              "border-b pt-4 pb-4 pl-0 pr-0 first:pl-4 first:border-r"
+                            }
+                          >
                             {flexRender(
                               cell.column.columnDef.cell,
                               cell.getContext()
@@ -406,6 +431,19 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
             </div>
           </form>
         </ModalComponent>
+      </div>
+      <div>
+        <AlertComponent
+          title={"Tip!"}
+          messages={[
+            "To change any of the above properties head over to your backend project and make your changes directly within the `app-configuration.json` file located in `nblocks/config` folder.",
+            "- Run `npx @nebulr-group/nblocks-plugin-tool push-app` to persist the changes.",
+            "- Run `npx @nebulr-group/nblocks-plugin-tool get-app` to download a new copy.",
+            "- Use `npx @nebulr-group/nblocks-plugin-tool help` to see available commands.",
+          ]}
+          type={"primary"}
+          className={"mt-4"}
+        ></AlertComponent>
       </div>
       {/* Alert component logic should be moved to context provider or root component which will expose the state setter and context */}
       {alert.show && (
