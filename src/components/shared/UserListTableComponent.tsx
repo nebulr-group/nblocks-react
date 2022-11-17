@@ -137,7 +137,7 @@ const UserListTableComponent: FunctionComponent<ConfigObject> = () => {
   });
   return (
     <>
-      <div className="w-full h-full overflow-x-auto">
+      <div className="w-full h-full overflow-x-auto grow">
         <table className="w-full text-left">
           <thead className="h-11 bg-gray-50 border-t border-b border-gray-200">
             {table.getHeaderGroups().map((headerGroup) => (
