@@ -1,27 +1,14 @@
 import { useMutation, useQuery } from "@apollo/client";
 import React, { FunctionComponent, useEffect, useState } from "react";
-import {
-  GetAppConfigDocument,
-  GetTenantDocument,
-  PlanGraphql,
-  PriceGraphql,
-} from "../../gql/graphql";
+import { GetAppConfigDocument, GetTenantDocument } from "../../gql/graphql";
 import { HeadingComponent } from "../shared/HeadingComponent";
 import { ModalComponent } from "../shared/ModalComponent";
 import { NblocksButton } from "../shared/NblocksButton";
-import { KeyIcon } from "@heroicons/react/20/solid";
 import { TextComponent } from "../shared/TextComponent";
 import { InputComponent } from "../shared/InputComponent";
 import { UpdateAppCredentialsDocument } from "../../gql/graphql";
 import { AlertComponent, ComponentProps } from "../shared/AlertComponent";
 import { SkeletonLoader } from "../shared/SkeletonLoader";
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  Row,
-  useReactTable,
-} from "@tanstack/react-table";
 import { RouteConfig } from "../../routes/AuthRoutes";
 import { LinkComponent } from "../shared/LinkComponent";
 import { ChipComponent } from "../shared/ChipComponent";
@@ -61,141 +48,20 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
     UpdateAppCredentialsDocument
   );
 
-  const columnHelper = createColumnHelper<PlanGraphql>();
-
-  const buildCloudLink = (row: Row<PlanGraphql>, regionName: string) => {
-    const planName = row.getValue<string>("name");
+  const buildCloudLink = (planName: string, regionName: string) => {
     return `https://account-api-stage.nebulr-core.com/app/${data?.getAppConfig.id}/checkoutView?plan=${planName}&region=${regionName}`;
   };
 
-  const buildLocalLink = (row: Row<PlanGraphql>) => {
+  const buildLocalLink = (planName: string) => {
     const appUiURL = data?.getAppConfig.uiUrl;
     const signupRoute = RouteConfig.setup.signup;
-    return `${appUiURL}${signupRoute}/${row.getValue("name")}`;
+    return `${appUiURL}${signupRoute}/${planName}`;
   };
-
-  const columns = [
-    columnHelper.group({
-      header: "Plan Name",
-      columns: [
-        columnHelper.accessor("name", {
-          header: "",
-          cell: (info) => info.getValue(),
-        }),
-      ],
-    }),
-    columnHelper.group({
-      header: "Prices",
-
-      columns: [
-        columnHelper.accessor("prices", {
-          header: "Amount",
-          id: "amount",
-          cell: (info) => {
-            return info.cell.getValue<PriceGraphql[]>().map((price) => {
-              return (
-                <div className="pt-2 first:pt-0 border-b last:border-b-0">
-                  {price.amount}
-                </div>
-              );
-            });
-          },
-        }),
-        columnHelper.accessor("prices", {
-          header: "Currency",
-          id: "currency",
-          cell: (info) => {
-            return info.cell.getValue<PriceGraphql[]>().map((price) => {
-              return (
-                <div className="pt-2 first:pt-0 border-b last:border-b-0">
-                  {price.currency}
-                </div>
-              );
-            });
-          },
-        }),
-        columnHelper.accessor("prices", {
-          header: "Region",
-          id: "region",
-          cell: (info) => {
-            return info.cell.getValue<PriceGraphql[]>().map((price) => {
-              return (
-                <div className="pt-2 first:pt-0 border-b last:border-b-0">
-                  {price.region}
-                </div>
-              );
-            });
-          },
-        }),
-      ],
-    }),
-    columnHelper.group({
-      header: "Quick Links",
-      columns: [
-        columnHelper.display({
-          header: "In-app Plan Sign Up",
-          id: "in-app-link",
-          cell: (info) => {
-            return (
-              <>
-                {info.row.getValue<PriceGraphql[]>("region").map((price) => {
-                  return (
-                    <div className="pt-2 first:pt-0 border-b last:border-b-0 text-center">
-                      <LinkComponent
-                        to={buildLocalLink(info.row)}
-                        target={"_blank"}
-                        nativeBehavior={true}
-                        type={"primary"}
-                        className={"block"}
-                      >
-                        {buildLocalLink(info.row)}
-                      </LinkComponent>
-                    </div>
-                  );
-                })}
-              </>
-            );
-          },
-        }),
-        columnHelper.display({
-          header: "Nblocks Cloud Plan Sign Up",
-          id: "nblocks-cloud-link",
-          cell: (info) => {
-            return (
-              <>
-                {info.row.getValue<PriceGraphql[]>("region").map((price) => {
-                  return (
-                    <div className="pt-2 first:pt-0 border-b last:border-b-0 text-center">
-                      <LinkComponent
-                        to={buildCloudLink(info.row, price.region)}
-                        type={"primary"}
-                        nativeBehavior={true}
-                        target={"_blank"}
-                        className={"block"}
-                      >
-                        Link
-                      </LinkComponent>
-                    </div>
-                  );
-                })}
-              </>
-            );
-          },
-        }),
-      ],
-    }),
-  ];
 
   let planData = data?.getAppConfig
     ? data.getAppConfig.businessModel?.plans
     : [];
-
-  const table = useReactTable({
-    data: planData ? planData : [],
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
+  console.log(planData);
   const onSubmitStripeCredentialsHandler: React.FormEventHandler<
     HTMLFormElement
   > = async (event) => {
@@ -304,85 +170,106 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
           )}
         </div>
         <div className="bg-white mt-12">
-          <div className="w-fit">
+          <div className="w-full">
             <HeadingComponent type={"h2"} size="xl" className="font-bold mt-6">
               Plans
             </HeadingComponent>
-            <table className="table-auto mt-6">
-              <thead className="bg-gray-50 border-b-2">
-                {table.getHeaderGroups().map((headerGroup) => {
-                  return (
-                    <tr key={headerGroup.id}>
-                      {headerGroup.headers.map((header) => (
-                        <th
-                          key={header.id}
-                          colSpan={header.colSpan}
-                          className={"pl-6 py-3"}
-                        >
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
-                        </th>
-                      ))}
-                    </tr>
-                  );
-                })}
+            <table className="table-auto mt-6 w-full">
+              <thead className="bg-gray-50 border-b-2 w-full">
+                <tr className="text-start">
+                  <th className="pl-6 py-3 font-semibold text-start">
+                    Plan Name
+                  </th>
+                  <th className="pl-6 py-3 font-semibold text-start">Amount</th>
+                  <th className="pl-6 py-3 font-semibold text-start">
+                    Currency
+                  </th>
+                  <th className="pl-6 py-3 font-semibold text-start">Region</th>
+                  <th className="pl-6 py-3 font-semibold text-start">
+                    Quick link to In-app Plan Sign Up
+                  </th>
+                  <th className="pl-6 py-3 font-semibold text-start">
+                    Quick link to Nblocks Cloud Cloud Plan Sign Up
+                  </th>
+                </tr>
               </thead>
               <tbody className="bg-white">
-                {table.getRowModel().rows.map((row) => {
+                {planData?.map((plan) => {
                   return (
-                    <tr key={row.id}>
-                      {row.getVisibleCells().map((cell) => {
-                        return (
-                          <td
-                            key={cell.id}
-                            className={
-                              "border-b pt-4 pb-4 pl-0 pr-0 first:pl-4 first:border-r"
-                            }
-                          >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </td>
-                        );
-                      })}
+                    <tr className="border-b">
+                      <td className="font-semibold align-top text-start">
+                        <div className="py-7">{plan.name}</div>
+                      </td>
+                      <td>
+                        {plan.prices.map((price) => {
+                          return (
+                            <div className="py-7 text-gray-600">
+                              {price.amount}
+                            </div>
+                          );
+                        })}
+                      </td>
+                      <td>
+                        {plan.prices.map((price) => {
+                          return (
+                            <div className="py-7 text-gray-600">
+                              {price.currency}
+                            </div>
+                          );
+                        })}
+                      </td>
+                      <td>
+                        {plan.prices.map((price) => {
+                          return (
+                            <div className="py-7 text-gray-600">
+                              {price.region}
+                            </div>
+                          );
+                        })}
+                      </td>
+                      <td>
+                        {plan.prices.map((price) => {
+                          return (
+                            <div className="py-7">
+                              <LinkComponent
+                                type={"primary"}
+                                to={buildLocalLink(plan.name)}
+                                className={"block font-semibold"}
+                                nativeBehavior={true}
+                                target={"_blank"}
+                              >
+                                Link
+                              </LinkComponent>
+                            </div>
+                          );
+                        })}
+                      </td>
+                      <td>
+                        {plan.prices.map((price) => {
+                          return (
+                            <div className="py-7">
+                              <LinkComponent
+                                type={"primary"}
+                                to={buildCloudLink(plan.name, price.region)}
+                                className={"block font-semibold"}
+                                nativeBehavior={true}
+                                target={"_blank"}
+                              >
+                                Link
+                              </LinkComponent>
+                            </div>
+                          );
+                        })}
+                      </td>
                     </tr>
                   );
                 })}
               </tbody>
             </table>
           </div>
-
-          {/* {data ? (
-            <ul className="list-none mt-2">
-              {data?.getAppConfig.businessModel?.plans.map((plan, i) => (
-                <li
-                  key={i}
-                  className="py-3 px-4 border-b last:border-b-0 block"
-                >
-                  {plan.name} -{" "}
-                  {plan.prices.map((price, j) => (
-                    <i key={j}>
-                      {price.currency} {price.amount} ({price.region}),{" "}
-                    </i>
-                  ))}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <>
-              <SkeletonLoader className="h-6 w-40 rounded-lg mt-2" />
-              <SkeletonLoader className="h-6 w-40 rounded-lg mt-2" />
-              <SkeletonLoader className="h-6 w-40 rounded-lg mt-2" />
-            </>
-          )} */}
         </div>
       </div>
-      <div className="mt-6">
+      <div className="mt-12">
         <HeadingComponent type="h2" size="2xl" className="font-bold">
           Stripe Credentials
         </HeadingComponent>
