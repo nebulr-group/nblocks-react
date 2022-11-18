@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import {
   GetAppConfigDocument,
+  GetTenantDocument,
   PlanGraphql,
   PriceGraphql,
 } from "../../gql/graphql";
@@ -23,6 +24,7 @@ import {
 } from "@tanstack/react-table";
 import { RouteConfig } from "../../routes/AuthRoutes";
 import { LinkComponent } from "../shared/LinkComponent";
+import { ChipComponent } from "../shared/ChipComponent";
 
 const ConfigComponent: FunctionComponent<{}> = ({}) => {
   const [stripeFormIsValid, setStripeFormIsValid] = useState<boolean>(false);
@@ -50,6 +52,11 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
     }
   }, [alert.show]);
   const { data, loading, error } = useQuery(GetAppConfigDocument);
+  const {
+    data: userData,
+    loading: loadingUserData,
+    error: userError,
+  } = useQuery(GetTenantDocument);
   const [updateCredentialsMutation, updateAppCredentialsData] = useMutation(
     UpdateAppCredentialsDocument
   );
@@ -68,9 +75,14 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
   };
 
   const columns = [
-    columnHelper.accessor("name", {
+    columnHelper.group({
       header: "Plan Name",
-      cell: (info) => info.getValue(),
+      columns: [
+        columnHelper.accessor("name", {
+          header: "",
+          cell: (info) => info.getValue(),
+        }),
+      ],
     }),
     columnHelper.group({
       header: "Prices",
@@ -208,52 +220,74 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center py-5">
-        <HeadingComponent type="h1" size="4xl">
+    <div className="container pb-11 pt-6">
+      <div>
+        <HeadingComponent type="h1" size="2xl" className="font-bold">
           Application Details
         </HeadingComponent>
+        <div>
+          <TextComponent className="inline-block text-gray-500 mr-2 mt-1">
+            Change any of the properties on this page in your backend projec in
+            the <b>'app-configuration.json'</b> file located in the{" "}
+            <b>'nblocks/config'</b> folder.
+          </TextComponent>
+          <LinkComponent
+            type={"primary"}
+            to={
+              "https://nebulr-group.github.io/nblocks-docs/docs/examples/first-branding"
+            }
+            nativeBehavior={true}
+            className={"font-bold inline-block"}
+            target={"_blank"}
+          >
+            Read more in docs
+          </LinkComponent>
+        </div>
       </div>
-      <div className="space-y-4 py-8">
-        <div>
-          <HeadingComponent type={"h2"} size="xl">
-            Application ID
-          </HeadingComponent>
-          {data ? (
-            <TextComponent className="mt-2">
-              {data.getAppConfig.id}
-            </TextComponent>
-          ) : (
-            <SkeletonLoader className="h-6 w-40 rounded-lg mt-2" />
-          )}
-        </div>
-        <hr />
-        <div>
-          <HeadingComponent type={"h2"} size="xl">
-            Name
-          </HeadingComponent>
-          {data ? (
-            <TextComponent className="mt-2">
-              {data?.getAppConfig.name}
-            </TextComponent>
-          ) : (
-            <SkeletonLoader className="h-6 w-40 rounded-lg mt-2" />
-          )}
-        </div>
-        <hr />
-        <div className="bg-white w-80 border rounded-tr-md rounded-tl-md">
+      <div className="mt-8">
+        <div className="flex items-baseline">
           <HeadingComponent
             type={"h2"}
             size="xl"
-            className="bg-gray-50 p-4 border-b"
+            className="font-semibold mr-2"
           >
+            Application ID
+          </HeadingComponent>
+          {data ? (
+            <TextComponent>{data.getAppConfig.id}</TextComponent>
+          ) : (
+            <SkeletonLoader className="h-6 w-40 rounded-lg mt-2" />
+          )}
+        </div>
+        <div className="flex items-baseline mt-5">
+          <HeadingComponent
+            type={"h2"}
+            size="xl"
+            className="font-semibold mr-2"
+          >
+            Name
+          </HeadingComponent>
+          {data ? (
+            <TextComponent>{data?.getAppConfig.name}</TextComponent>
+          ) : (
+            <SkeletonLoader className="h-6 w-40 rounded-lg mt-2" />
+          )}
+        </div>
+        <div className="mt-12">
+          <HeadingComponent type={"h2"} size="xl" className="font-semibold">
             User roles
           </HeadingComponent>
+          <TextComponent
+            className="font-semibold mt-6 py-3 pl-4 border-b-2 bg-gray-50"
+            size="sm"
+          >
+            Role Name
+          </TextComponent>
           {data ? (
             <ul className="list-none inline-block mt-2 w-full">
               {data?.getAppConfig.roles?.map((role, index) => (
                 <li
-                  className="py-3 px-4 border-b last:border-b-0 block"
+                  className="py-6 px-4 border-b last:border-b-0 block"
                   key={index}
                 >
                   {role}{" "}
@@ -269,19 +303,13 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
             </>
           )}
         </div>
-        <hr />
-        <div className="bg-white">
+        <div className="bg-white mt-12">
           <div className="w-fit">
-            <HeadingComponent
-              type={"h2"}
-              size="xl"
-              className="bg-gray-50 p-4 border-t border-l border-r rounded-tr-md rounded-tl-md"
-            >
+            <HeadingComponent type={"h2"} size="xl" className="font-bold mt-6">
               Plans
             </HeadingComponent>
-
-            <table className="table-auto border">
-              <thead>
+            <table className="table-auto mt-6">
+              <thead className="bg-gray-50 border-b-2">
                 {table.getHeaderGroups().map((headerGroup) => {
                   return (
                     <tr key={headerGroup.id}>
@@ -289,7 +317,7 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
                         <th
                           key={header.id}
                           colSpan={header.colSpan}
-                          className={"border p-4"}
+                          className={"pl-6 py-3"}
                         >
                           {header.isPlaceholder
                             ? null
@@ -354,15 +382,33 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
           )} */}
         </div>
       </div>
-
-      <div>
-        <HeadingComponent type="h2" size="2xl">
+      <div className="mt-6">
+        <HeadingComponent type="h2" size="2xl" className="font-bold">
           Stripe Credentials
         </HeadingComponent>
+        <div className="flex mt-5">
+          <TextComponent className="font-semibold mr-2">Status</TextComponent>
+          <ChipComponent
+            type={userData?.getTenant.paymentsEnabled ? "success" : "tertiary"}
+            icon={
+              <span
+                className={`rounded-full mr-1 w-1.5 h-1.5${
+                  userData?.getTenant.paymentsEnabled
+                    ? " bg-green-500"
+                    : " bg-gray-500"
+                }`}
+              ></span>
+            }
+          >
+            {userData?.getTenant.paymentsEnabled
+              ? "Credentials up to date"
+              : "No Credentials"}
+          </ChipComponent>
+        </div>
         <NblocksButton
           type={"primary"}
           size={"lg"}
-          className={"mt-2"}
+          className={"mt-6"}
           onClick={() => {
             setCredentialsModalOpen(true);
           }}
@@ -372,9 +418,10 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
         <ModalComponent
           isOpen={credentialsModalOpen}
           setIsOpen={setCredentialsModalOpen}
-          heading={"Stripe Credentials"}
-          description={"Enter your Stripe keys."}
-          icon={<KeyIcon />}
+          heading={"Update credentials"}
+          description={
+            "Add your Strie credentials to be able to connect your Stripe account to Nblocks."
+          }
         >
           <form className="mt-5" onSubmit={onSubmitStripeCredentialsHandler}>
             <div className="space-y-2.5">
@@ -391,6 +438,7 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
                   setStripePublicKey(event.target.value);
                 }}
                 value={stripePublicKey}
+                placeholder={"Enter your Stripe key."}
               />
               <InputComponent
                 type={"password"}
@@ -405,6 +453,7 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
                   setStripePrivateKey(event.target.value);
                 }}
                 value={stripeSecretKey}
+                placeholder={"Enter your Stripe key."}
               />
             </div>
             <div className="flex flex-col-reverse md:flex-row md:justify-between mt-8 gap-3">
@@ -431,19 +480,6 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
             </div>
           </form>
         </ModalComponent>
-      </div>
-      <div>
-        <AlertComponent
-          title={"Tip!"}
-          messages={[
-            "To change any of the above properties head over to your backend project and make your changes directly within the `app-configuration.json` file located in `nblocks/config` folder.",
-            "- Run `npx @nebulr-group/nblocks-plugin-tool push-app` to persist the changes.",
-            "- Run `npx @nebulr-group/nblocks-plugin-tool get-app` to download a new copy.",
-            "- Use `npx @nebulr-group/nblocks-plugin-tool help` to see available commands.",
-          ]}
-          type={"primary"}
-          className={"mt-4"}
-        ></AlertComponent>
       </div>
       {/* Alert component logic should be moved to context provider or root component which will expose the state setter and context */}
       {alert.show && (
