@@ -10,8 +10,8 @@ const TenantRoutes = () => {
     <Routes>
       <Route path="/plan" element={<PlanScreen />}></Route>
       <Route path="/payment/success" element={<PaymentSuccessScreen />}></Route>
-      <Route path="/payment/cancel" element={<PlanScreen />}></Route>
-      <Route path="/payment" element={<PaymentCancel />}></Route>
+      <Route path="/payment/cancel" element={<PaymentCancel />}></Route>
+      <Route path="/*" element={<PlanScreen />}></Route>
     </Routes>
   );
 };
