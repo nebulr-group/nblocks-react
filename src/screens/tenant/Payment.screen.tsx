@@ -14,14 +14,16 @@ import { useConfig } from "../../hooks/config-context";
 
 const PaymentScreen: FunctionComponent = () => {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  const [mountIteration, setMountIteration] = useState<number>(0);
   const { data, loading, error } = useQuery(GetTenantDocument);
-
   const { handoverRoute } = useConfig();
 
   const [createCheckoutMutation, checkoutMutationData] = useMutation(
     CreateCheckoutSessionDocument
   );
+
   useEffect(() => {
+    setMountIteration((value) => value + 1);
     const createCheckout = async () => {
       if (data?.getTenant.paymentsRequired && data?.getTenant.plan) {
         const result = await createCheckoutMutation({
@@ -36,6 +38,10 @@ const PaymentScreen: FunctionComponent = () => {
             sessionId: result.data.createCheckoutSession.id,
           });
         }
+      }
+
+      if (!data?.getTenant.paymentsRequired) {
+        setModalIsOpen(true);
       }
     };
 
