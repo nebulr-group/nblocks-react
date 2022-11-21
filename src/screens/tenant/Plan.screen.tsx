@@ -21,6 +21,9 @@ const PlanScreen: FunctionComponent<{}> = () => {
         case false:
           return navigate(handoverRoute);
         case true:
+          log(
+            `The plan selected requires payment to be setup. Redirecting to ${RouteConfig.tenant.payment} `
+          );
           return navigate(RouteConfig.tenant.payment);
       }
     }

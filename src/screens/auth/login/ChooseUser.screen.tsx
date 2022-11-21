@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthLayoutWrapperComponent } from "../../../components/auth/AuthLayoutWrapperComponent";
 import { ChooseUserComponent } from "../../../components/auth/login/ChooseUserComponent";
-import { GetTenantDocument } from "../../../gql/graphql";
+import { GetTenantDocument, Tenant } from "../../../gql/graphql";
 import { useConfig } from "../../../hooks/config-context";
 import { AuthTenantUserResponseDto } from "../../../models/auth-tenant-user-response.dto";
 import { RouteConfig } from "../../../routes/AuthRoutes";
@@ -28,10 +28,10 @@ export function ChooseUserScreen() {
         state: { targetUrl: targetUrl },
       });
     } else {
-      const tenant = await tenantQuery();
-      if (tenant.data?.getTenant.paymentsRequired) {
+      const query = await tenantQuery();
+      if (shouldShowChoosePlanScreen(query.data?.getTenant)) {
         log(
-          `User did authenticate. Tenant is required to setup payment. Redirecting to tenant plan selection: ${RouteConfig.tenant.plan}`
+          `User did authenticate but tenant is required to pick a plan or setup payment. Redirecting to tenant plan selection: ${RouteConfig.tenant.plan}`
         );
         navigate(RouteConfig.tenant.plan);
       } else {
@@ -41,6 +41,10 @@ export function ChooseUserScreen() {
         navigate(targetUrl);
       }
     }
+  };
+
+  const shouldShowChoosePlanScreen = (tenant?: Tenant) => {
+    return !tenant?.plan || tenant?.paymentsRequired;
   };
 
   const log = (msg: string) => {
