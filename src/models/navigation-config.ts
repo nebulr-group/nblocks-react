@@ -19,11 +19,16 @@ export interface NavigationConfig {
     OnboardTenantScreen: string;
   };
   setup: {
-    signup: string;
-    config: string;
+    signupScreen: string;
+    configScreen: string;
   };
   tenant: {
-    plan: string;
+    planScreen: string;
     payment: string;
-  },
+    paymentCancel: string;
+    paymentSuccess: string;
+  };
+  user: {
+    list: string;
+  };
 }

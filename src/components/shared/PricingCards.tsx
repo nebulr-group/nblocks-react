@@ -6,7 +6,6 @@ import { TextComponent } from "./TextComponent";
 import { SkeletonLoader } from "./SkeletonLoader";
 import {
   GetTenantDocument,
-  GetTenantQuery,
   PlanGraphql,
   UpdateTenantDocument,
 } from "../../gql/graphql";
@@ -22,7 +21,7 @@ type ConfigObject = {
   cardPlaceholderCount?: number;
   className?: string;
   region: string;
-  planSelectHandler: () => void;
+  planSelectHandler: (paymentsRequired?: boolean) => void;
 };
 
 const PricingCards: FunctionComponent<ConfigObject> = ({
@@ -47,12 +46,12 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
     return plan.name === data?.getTenant.plan;
   };
 
-  const updatePlan = async (plan: PlanGraphql["name"]) => {
+  const updatePlan = async (plan: string) => {
     const result = await updateTenantMutation({
       variables: { tenant: { plan: plan } },
     });
-    if (data) {
-      planSelectHandler();
+    if (result.data?.updateTenant) {
+      planSelectHandler(result.data.updateTenant.paymentsRequired!);
     }
   };
 

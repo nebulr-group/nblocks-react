@@ -102,7 +102,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({ didLogin }) => {
           <TextComponent size="sm">
             Don't have an account?&nbsp;
             <LinkComponent
-              to={RouteConfig.setup.signup}
+              to={RouteConfig.setup.signupScreen}
               type="primary"
               size="sm"
               className="font-semibold"

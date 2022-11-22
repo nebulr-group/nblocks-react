@@ -31,9 +31,9 @@ export function ChooseUserScreen() {
       const query = await tenantQuery();
       if (shouldShowChoosePlanScreen(query.data?.getTenant)) {
         log(
-          `User did authenticate but tenant is required to pick a plan or setup payment. Redirecting to tenant plan selection: ${RouteConfig.tenant.plan}`
+          `User did authenticate but tenant is required to pick a plan or setup payment. Redirecting to tenant plan selection: ${RouteConfig.tenant.planScreen}`
         );
-        navigate(RouteConfig.tenant.plan);
+        navigate(RouteConfig.tenant.planScreen);
       } else {
         log(
           `User did authenticate. No payments required from Tenant. Redirecting back to: ${targetUrl}`

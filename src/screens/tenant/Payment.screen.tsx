@@ -1,33 +1,28 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { loadStripe } from "@stripe/stripe-js";
-import { ModalComponent } from "../../components/shared/ModalComponent";
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import {
   CreateCheckoutSessionDocument,
   GetTenantDocument,
+  Tenant,
 } from "../../gql/graphql";
-import { NblocksButton } from "../../components/shared/NblocksButton";
-import { Navigate } from "react-router-dom";
-import { LinkComponent } from "../../components/shared/LinkComponent";
+import { useNavigate } from "react-router-dom";
 import { useConfig } from "../../hooks/config-context";
 
 const PaymentScreen: FunctionComponent = () => {
-  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-  const [mountIteration, setMountIteration] = useState<number>(0);
+  const navigate = useNavigate();
   const { data, loading, error } = useQuery(GetTenantDocument);
-  const { handoverRoute } = useConfig();
+  const { handoverRoute, debug } = useConfig();
 
   const [createCheckoutMutation, checkoutMutationData] = useMutation(
     CreateCheckoutSessionDocument
   );
 
   useEffect(() => {
-    setMountIteration((value) => value + 1);
     const createCheckout = async () => {
-      if (data?.getTenant.paymentsRequired && data?.getTenant.plan) {
+      if (shouldShowStripeCheckout(data?.getTenant)) {
         const result = await createCheckoutMutation({
-          variables: { args: { plan: data.getTenant.plan } },
+          variables: { args: { plan: data?.getTenant.plan! } },
         });
 
         if (result.data) {
@@ -38,33 +33,28 @@ const PaymentScreen: FunctionComponent = () => {
             sessionId: result.data.createCheckoutSession.id,
           });
         }
-      }
-
-      if (!data?.getTenant.paymentsRequired) {
-        setModalIsOpen(true);
+      } else {
+        log(
+          `Tenant is not required to setup payments. Redirecting to ${handoverRoute}`
+        );
+        navigate(handoverRoute);
       }
     };
 
     createCheckout();
   }, [data]);
-  return (
-    <ModalComponent
-      isOpen={modalIsOpen}
-      setIsOpen={setModalIsOpen}
-      heading={
-        "Oops, seems like you already met the requirements for payments."
-      }
-      iconType={"warning"}
-      icon={<ExclamationTriangleIcon />}
-    >
-      <div className="flex flex-col-reverse md:flex-row md:justify-between mt-8 gap-3">
-        {/* Make the button disabled when both inputs are undefined, and when one is undefined make it possible to send */}
-        <LinkComponent to={handoverRoute} className="w-full" type="primary">
-          Back to home
-        </LinkComponent>
-      </div>
-    </ModalComponent>
-  );
+
+  const shouldShowStripeCheckout = (tenant?: Tenant) => {
+    return tenant?.plan && tenant?.paymentsRequired;
+  };
+
+  const log = (msg: string) => {
+    if (debug) {
+      console.log(msg);
+    }
+  };
+
+  return <></>;
 };
 
 export { PaymentScreen };
