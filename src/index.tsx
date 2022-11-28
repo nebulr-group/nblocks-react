@@ -29,6 +29,7 @@ import { InstallationCompleteComponent } from "./components/shared/InstallationC
 import { TabsComponent } from "./components/shared/TabsComponent";
 import { PricingCards } from "./components/shared/PricingCards";
 import { PlanAccessControllComponent } from "./components/shared/PlanAccessControllComponent";
+import { PlanAccessGuard } from "./routes/PlanAccessGuard";
 
 export {
   useConfig,
@@ -60,6 +61,7 @@ export {
   InstallationCompleteComponent,
   TabsComponent,
   PricingCards,
+  PlanAccessGuard,
 };
 
 export type { LibConfig };
