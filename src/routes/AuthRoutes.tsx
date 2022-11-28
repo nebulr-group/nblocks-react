@@ -31,12 +31,17 @@ const RouteConfig: NavigationConfig = {
     OnboardTenantScreen: "/onboard/tenant",
   },
   setup: {
-    signup: "/setup/signup",
-    config: "/setup/config",
+    signupScreen: "/setup/signup",
+    configScreen: "/setup/config",
   },
   tenant: {
-    plan: "/tenant/plan",
+    planScreen: "/tenant/plan",
     payment: "/tenant/payment",
+    paymentCancel: "/tenant/payment/cancel",
+    paymentSuccess: "/tenant/payment/success",
+  },
+  user: {
+    list: "/user/list",
   },
 };
 
@@ -55,7 +60,7 @@ const AuthRoutes = () => {
       </Route>
       <Route
         path="*"
-        element={<Navigate to={RouteConfig.login.LoginScreen} replace />}
+        element={<Navigate to={RouteConfig.login.LoginScreen} replace={true} />}
       />
     </Routes>
   );

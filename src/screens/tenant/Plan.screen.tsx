@@ -1,28 +1,24 @@
-import { useQuery } from "@apollo/client";
-import React, { FunctionComponent, useContext, useEffect } from "react";
+import React, { FunctionComponent } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChoosePlanComponent } from "../../components/tenant/plan/ChoosePlanComponent";
 import { TenantLayoutWrapperComponent } from "../../components/tenant/TenantLayoutWrapperComponent";
-import { GetTenantDocument, GetTenantQuery } from "../../gql/graphql";
 import { useConfig } from "../../hooks/config-context";
 import { RouteConfig } from "../../routes/AuthRoutes";
-
-// import { TabsComponent } from "../../components/shared/TabsComponent";
 
 const PlanScreen: FunctionComponent<{}> = () => {
   const navigate = useNavigate();
   const { handoverRoute, debug } = useConfig();
-  const { data, loading, error } = useQuery(GetTenantDocument);
-  const planSelectHandler = () => {
-    if (data) {
-      const paymentsRequired = data.getTenant.paymentsRequired;
 
-      switch (paymentsRequired) {
-        case false:
-          return navigate(handoverRoute);
-        case true:
-          return navigate(RouteConfig.tenant.payment);
-      }
+  const planSelectHandler = (paymentsRequired?: boolean) => {
+    switch (paymentsRequired) {
+      case true:
+        log(
+          `The plan selected requires payment to be setup. Redirecting to ${RouteConfig.tenant.payment} `
+        );
+        return navigate(RouteConfig.tenant.payment);
+      case false:
+      default:
+        return navigate(handoverRoute);
     }
   };
 

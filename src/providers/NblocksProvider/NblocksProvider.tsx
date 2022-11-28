@@ -12,7 +12,7 @@ import {
   useConfig,
 } from "../../hooks/config-context";
 import { LibConfig } from "../../models/lib-config";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthGuard } from "../../routes/AuthGuard";
 import { AuthRoutes } from "../../routes/AuthRoutes";
 import { OnboardRoutes } from "../../routes/OnboardRoutes";
@@ -91,6 +91,7 @@ const DevRouterWrapper: FunctionComponent<{
           <Route path="/brandExpo" element={<BrandExpoScreen />} />
           <Route path="/graphqlExpo" element={<GraphqlExpoScreen />} />
           <Route path="/" element={<AuthGuard>{children}</AuthGuard>} />
+          <Route path="*" element={<Navigate to={"/"} replace={true} />} />
         </Routes>
       </BrowserRouter>
     );

@@ -49,6 +49,9 @@ const InstallationCompleteComponent: FunctionComponent<{}> = ({}) => {
           <LinkComponent to={"/user/list"} type={"primary"}>
             Manage your users
           </LinkComponent>
+          <LinkComponent to={"/tenant/plan"} type={"primary"}>
+            Change plan
+          </LinkComponent>
           <LinkComponent to={"/setup/config"} type={"primary"}>
             Configure your app
           </LinkComponent>

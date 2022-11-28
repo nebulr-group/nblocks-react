@@ -1,12 +1,12 @@
 import { useQuery } from "@apollo/client";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { PricingCards } from "../../shared/PricingCards";
-import { GetAppPlansDocument, GetTenantQuery } from "../../../gql/graphql";
+import { GetAppPlansDocument } from "../../../gql/graphql";
 import { ListBoxComponent } from "../../shared/ListBoxComponent";
 import { SkeletonLoader } from "../../shared/SkeletonLoader";
 
 const ChoosePlanComponent: FunctionComponent<{
-  planSelectHandler: () => void;
+  planSelectHandler: (paymentsRequired?: boolean) => void;
   didRecieveNoPlans?: () => void;
 }> = ({ planSelectHandler, didRecieveNoPlans }) => {
   const [region, setRegion] = useState<string>("");
