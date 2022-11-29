@@ -30,6 +30,7 @@ import { TabsComponent } from "./components/shared/TabsComponent";
 import { PricingCards } from "./components/shared/PricingCards";
 import { PlanAccessControllComponent } from "./components/shared/PlanAccessControllComponent";
 import { PlanAccessGuard } from "./routes/PlanAccessGuard";
+import { TenantRoutes } from "./routes/TenantRoutes";
 
 export {
   useConfig,
@@ -38,6 +39,7 @@ export {
   OnboardRoutes,
   SetupRoutes,
   UserRoutes,
+  TenantRoutes,
   useAuth,
   useApp,
   NblocksProvider,
