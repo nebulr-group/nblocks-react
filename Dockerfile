@@ -21,5 +21,27 @@ COPY --link "example/tsconfig.json" "./example/"
 
 # Refering to base, and adding new build stage labeled 'dev'
 FROM base as dev
+# Installing prod and dev dependencies
+RUN yarn install
 # Copy rest of the projects source code to container env
 COPY . .
+# Run build with installed dep
+RUN yarn bootstrap
+
+# Refering to base, and adding new build stage label 'test'
+FROM base as test
+# Installing prod and dev dependencies
+RUN yarn install
+# Copy rest of the projects source code to container env
+COPY . .
+# Run build with installed dep
+RUN yarn bootstrap
+
+# Refering to base, and adding new build stage label 'prod'
+FROM base as prod
+# Installing prod dependencies
+RUN yarn install --production
+# Copy rest of the projects source code to container env
+COPY . .
+# Run build with installed dep
+RUN yarn bootstrap
