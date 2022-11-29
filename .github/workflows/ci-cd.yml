@@ -36,8 +36,31 @@ jobs:
         with:
           name: ${{ env.BUILD_IMAGE_NAME }}
           path: /tmp/${{ env.BUILD_IMAGE_NAME }}.tar
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout Github Repository
+      - name: Step 1 - Checkout Github Repository
+        uses: actions/checkout@v3
+      # The BuildKit Cache
+      - name: Step 2 - Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      # Download the Artifact Image
+      - name: Step 3 - Downloading Image Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ env.BUILD_IMAGE_NAME }}
+          path: /tmp
+      # For Unit tests (npm test, etc)
+      - name: Step 4 - Unit Testing in Docker
+        run: |
+          docker load --input /tmp/${{ env.BUILD_IMAGE_NAME }}.tar
+          docker run --rm ${{ env.BUILD_IMAGE_NAME }}:latest yarn generate
+
   deploy:
-    needs: [build]
+    needs: [build, test]
     if: ${{ github.ref_name == 'master' && github.event_name == 'push' }}
     runs-on: ubuntu-latest
     steps:
@@ -69,7 +92,7 @@ jobs:
           docker run -e NPM_TOKEN=${{ secrets.NPM_TOKEN }} --rm ${{ github.run_id }} /bin/bash -c "./npm-config-setter.sh; yarn publish"
 
   deploy-beta:
-    needs: [build]
+    needs: [build, test]
     if: ${{ github.ref_name == 'stage' && github.event_name == 'push' }}
     runs-on: ubuntu-latest
     steps:
