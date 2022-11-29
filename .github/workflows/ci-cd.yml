@@ -37,7 +37,7 @@ jobs:
           name: ${{ env.BUILD_IMAGE_NAME }}
           path: /tmp/${{ env.BUILD_IMAGE_NAME }}.tar
   deploy:
-    needs: [build, test]
+    needs: [build]
     if: ${{ github.ref_name == 'master' && github.event_name == 'push' }}
     runs-on: ubuntu-latest
     steps:
@@ -69,7 +69,7 @@ jobs:
           docker run -e NPM_TOKEN=${{ secrets.NPM_TOKEN }} --rm ${{ github.run_id }} /bin/bash -c "./npm-config-setter.sh; yarn publish"
 
   deploy-beta:
-    needs: [build, test]
+    needs: [build]
     if: ${{ github.ref_name == 'stage' && github.event_name == 'push' }}
     runs-on: ubuntu-latest
     steps:
