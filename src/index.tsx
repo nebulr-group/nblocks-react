@@ -31,9 +31,11 @@ import { PricingCards } from "./components/shared/PricingCards";
 import { PlanAccessControllComponent } from "./components/shared/PlanAccessControllComponent";
 import { PlanAccessGuard } from "./routes/PlanAccessGuard";
 import { TenantRoutes } from "./routes/TenantRoutes";
+import { useSecureContext } from "./hooks/secure-http-context";
 
 export {
   useConfig,
+  useSecureContext,
   AuthGuard,
   AuthRoutes,
   OnboardRoutes,
