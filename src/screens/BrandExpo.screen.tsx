@@ -16,6 +16,7 @@ import { UserListTableComponent } from "../components/shared/UserListTableCompon
 import { CheckCircleIcon, KeyIcon } from "@heroicons/react/20/solid";
 import { NBPlanAccessControlComponent } from "../components/shared/access-control/PlanAccessControllComponent";
 import { NBRoleAccessControlComponent } from "../components/shared/access-control/RoleAccessControllComponent";
+import { NBAccessControlComponent } from "../components/shared/access-control/AccessControllComponent";
 
 export function BrandExpoScreen() {
   const [password, setPassword] = useState("");
@@ -514,6 +515,10 @@ export function BrandExpoScreen() {
           </tr>
         </tbody>
       </table>
+      <h1 className="mt-5 text-3xl">Multi access controll</h1>
+      <NBAccessControlComponent plans={["ESSENTIAL"]} roles={["OWNER"]}>
+        <span>You'll just see this content if your and OWNER in ESSENTIAL</span>
+      </NBAccessControlComponent>
     </>
   );
 }
