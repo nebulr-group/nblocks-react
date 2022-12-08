@@ -11,13 +11,12 @@ WORKDIR "/nblocks-react"
 
 
 # Makes use of docker caching for faster re-builds.
-# Using --link is equivalent or better than the default behaviour
-# it creates a much better conditions for cache reuse.
 RUN mkdir example
-COPY --link "package.json" "./"
-COPY --link [ "example/package.json", "./example/"]
-COPY --link ["tsconfig.json", "./"]
-COPY --link "example/tsconfig.json" "./example/"
+COPY package.json ./
+COPY ["example/package.json", "./example/yarn.lock", "./example/"]
+COPY ["tsconfig.json", "tsconfig.build.json", "./"]
+COPY yarn.lock ./
+COPY example/tsconfig.json ./example/
 
 # Refering to base, and adding new build stage labeled 'dev'
 FROM base as dev

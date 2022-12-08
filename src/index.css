@@ -3,6 +3,113 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+@layer base {
+  :root {
+    /* Spacing/Sizing scale */
+    --px-space: 1px;
+    --space-0: 0;
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+    --space-20: 5rem;
+    --space-24: 6rem;
+    --space-32: 8rem;
+    /* Fonts */
+    --font-body: Inter, sans-serif;
+    --font-paragraph: Inter, sans-serif;
+    --font-heading: Inter, sans-serif;
+    /* White */
+    --color-white: #ffffff;
+    /* Primary */
+    --color-primary-50: #faf5ff;
+    --color-primary-100: #f3e8ff;
+    --color-primary-200: #e9d5ff;
+    --color-primary-300: #f3e8ff;
+    --color-primary-400: #c084fc;
+    --color-primary-500: #a855f7;
+    --color-primary-600: #9333ea;
+    --color-primary-700: #7e22ce;
+    --color-primary-800: #6b21a8;
+    --color-primary-900: #581c87;
+    /* Secondary */
+    --color-tertiary-50: #f9fafb;
+    --color-tertiary-100: #f3f4f6;
+    --color-tertiary-200: #e5e7eb;
+    --color-tertiary-300: #d1d5db;
+    --color-tertiary-400: #9ca3af;
+    --color-tertiary-500: #6b7280;
+    --color-tertiary-600: #4b5563;
+    --color-tertiary-700: #374151;
+    --color-tertiary-800: #1f2937;
+    --color-tertiary-900: #111827;
+    /* Success */
+    --color-success-50: #f0fdf4;
+    --color-success-100: #dcfce7;
+    --color-success-200: #bbf7d0;
+    --color-success-300: #86efac;
+    --color-success-400: #4ade80;
+    --color-success-500: #22c55e;
+    --color-success-600: #16a34a;
+    --color-success-700: #15803d;
+    --color-success-800: #166534;
+    --color-success-900: #14532d;
+    /* Warning */
+    --color-warning-50: #fefce8;
+    --color-warning-100: #fef9c3;
+    --color-warning-200: #fef08a;
+    --color-warning-300: #fde047;
+    --color-warning-400: #facc15;
+    --color-warning-500: #eab308;
+    --color-warning-600: #ca8a04;
+    --color-warning-700: #a16207;
+    --color-warning-800: #854d0e;
+    --color-warning-900: #713f12;
+    /* Danger */
+    --color-danger-50: #fef2f2;
+    --color-danger-100: #fee2e2;
+    --color-danger-200: #fecaca;
+    --color-danger-300: #fca5a5;
+    --color-danger-400: #f87171;
+    --color-danger-500: #ef4444;
+    --color-danger-600: #dc2626;
+    --color-danger-700: #b91c1c;
+    --color-danger-800: #991b1b;
+    --color-danger-900: #7f1d1d;
+    /* Info */
+    --color-info-50: #eff6ff;
+    --color-info-100: #dbeafe;
+    --color-info-200: #bfdbfe;
+    --color-info-300: #93c5fd;
+    --color-info-400: #60a5fa;
+    --color-info-500: #3b82f6;
+    --color-info-600: #2563eb;
+    --color-info-700: #1d4ed8;
+    --color-info-800: #1e40af;
+    --color-info-900: #1e3a8a;
+  }
+}
+
+body {
+ font-family: var(--font-body); 
+}
+
+p {
+  font-family: var(--font-paragraph);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-paragraph);
+}
+
 thead th {
   padding: 0.75rem 0rem 0.75rem 1.5rem ; 
 }
