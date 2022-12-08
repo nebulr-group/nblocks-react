@@ -4,7 +4,11 @@ import { useConfig } from "../hooks/config-context";
 import { useSecureContext } from "../hooks/secure-http-context";
 import { RouteConfig } from "./AuthRoutes";
 
-function AuthGuard({ children }: { children: JSX.Element }) {
+/**
+ * This is a route guard that checks if current user is authenticated or not.
+ * If not, the user will be redirected to login screen.
+ */
+function NBAuthGuard({ children }: { children: JSX.Element }) {
   const { authenticated } = useSecureContext();
   const { debug } = useConfig();
   let location = useLocation();
@@ -29,4 +33,4 @@ function AuthGuard({ children }: { children: JSX.Element }) {
   return children;
 }
 
-export { AuthGuard };
+export { NBAuthGuard };

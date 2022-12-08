@@ -1,13 +1,13 @@
 import { useQuery } from "@apollo/client";
 import React, { FunctionComponent } from "react";
-import { GetTenantDocument } from "../../gql/graphql";
+import { GetTenantDocument } from "../../../gql/graphql";
 
 /**
  * This component shows or hides its children if a tenant has certain role
  * @param param0
  * @returns
  */
-const PlanAccessControllComponent: FunctionComponent<{
+const NBPlanAccessControlComponent: FunctionComponent<{
   plans: string[];
   children?: React.ReactNode;
   hiddenChildren?: React.ReactNode;
@@ -18,4 +18,4 @@ const PlanAccessControllComponent: FunctionComponent<{
   else return hiddenChildren ? <>{hiddenChildren}</> : null;
 };
 
-export { PlanAccessControllComponent };
+export { NBPlanAccessControlComponent };

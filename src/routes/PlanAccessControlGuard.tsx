@@ -1,14 +1,14 @@
 import { useQuery } from "@apollo/client";
 import React from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { GetTenantDocument } from "../gql/graphql";
 import { useConfig } from "../hooks/config-context";
 
 /**
  * This is a route guard that checks if current user belongs to a tenant with a given subscription plan.
- * If not, the user will be redirected back.
+ * If not, the user will be redirected back to handover route.
  */
-function PlanAccessGuard({
+function NBPlanAccessControlGuard({
   children,
   plans,
 }: {
@@ -30,4 +30,4 @@ function PlanAccessGuard({
   return children;
 }
 
-export { PlanAccessGuard };
+export { NBPlanAccessControlGuard };
