@@ -1,19 +1,17 @@
 import { useMutation } from "@apollo/client";
 import React, { FunctionComponent, useEffect, useState } from "react";
-import {
-  HeadingComponent,
-  InputComponent,
-  ModalComponent,
-  NblocksButton,
-  TextComponent,
-  UserListTableComponent,
-} from "../..";
 import { CreateUsersDocument, ListUsersDocument } from "../../gql/graphql";
 import { UserPlusIcon } from "@heroicons/react/24/outline";
 import {
   ComponentProps,
   AlertComponent,
 } from "../../components/shared/AlertComponent";
+import { HeadingComponent } from "../../components/shared/HeadingComponent";
+import { InputComponent } from "../../components/shared/InputComponent";
+import { ModalComponent } from "../../components/shared/ModalComponent";
+import { NblocksButton } from "../../components/shared/NblocksButton";
+import { TextComponent } from "../../components/shared/TextComponent";
+import { UserListTableComponent } from "../../components/shared/UserListTableComponent";
 
 const UserListScreen: FunctionComponent<{}> = () => {
   return (

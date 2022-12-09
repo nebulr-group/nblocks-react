@@ -45,6 +45,10 @@ const RouteConfig: NavigationConfig = {
   },
 };
 
+/**
+ * This is a combination of all the auth related routes Nblocks has to offer
+ * @returns
+ */
 const AuthRoutes = () => {
   return (
     <Routes>

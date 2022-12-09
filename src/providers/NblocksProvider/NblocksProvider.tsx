@@ -13,7 +13,7 @@ import {
 } from "../../hooks/config-context";
 import { LibConfig } from "../../models/lib-config";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { AuthGuard } from "../../routes/AuthGuard";
+import { NBAuthGuard } from "../../routes/AuthGuard";
 import { AuthRoutes } from "../../routes/AuthRoutes";
 import { OnboardRoutes } from "../../routes/OnboardRoutes";
 import { SetupRoutes } from "../../routes/SetupRoutes";
@@ -83,14 +83,14 @@ const DevRouterWrapper: FunctionComponent<{
           <Route
             path="/user/*"
             element={
-              <AuthGuard>
+              <NBAuthGuard>
                 <UserRoutes />
-              </AuthGuard>
+              </NBAuthGuard>
             }
           />
           <Route path="/brandExpo" element={<BrandExpoScreen />} />
           <Route path="/graphqlExpo" element={<GraphqlExpoScreen />} />
-          <Route path="/" element={<AuthGuard>{children}</AuthGuard>} />
+          <Route path="/" element={<NBAuthGuard>{children}</NBAuthGuard>} />
           <Route path="*" element={<Navigate to={"/"} replace={true} />} />
         </Routes>
       </BrowserRouter>

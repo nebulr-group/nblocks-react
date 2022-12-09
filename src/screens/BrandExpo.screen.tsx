@@ -14,8 +14,9 @@ import { TextComponent } from "../components/shared/TextComponent";
 import { TogglerComponent } from "../components/shared/TogglerComponent";
 import { UserListTableComponent } from "../components/shared/UserListTableComponent";
 import { CheckCircleIcon, KeyIcon } from "@heroicons/react/20/solid";
-import { RoleAccessControllComponent } from "../components/shared/RoleAccessControllComponent";
-import { PlanAccessControllComponent } from "../components/shared/PlanAccessControllComponent";
+import { NBPlanAccessControlComponent } from "../components/shared/access-control/PlanAccessControllComponent";
+import { NBRoleAccessControlComponent } from "../components/shared/access-control/RoleAccessControllComponent";
+import { NBAccessControlComponent } from "../components/shared/access-control/AccessControllComponent";
 
 export function BrandExpoScreen() {
   const [password, setPassword] = useState("");
@@ -418,44 +419,44 @@ export function BrandExpoScreen() {
         <tbody>
           <tr>
             <td>
-              <RoleAccessControllComponent
+              <NBRoleAccessControlComponent
                 roles={["OWNER"]}
                 hiddenChildren={<h1>Hidden</h1>}
               >
                 <h1 className="font-semibold">Visible</h1>
-              </RoleAccessControllComponent>
+              </NBRoleAccessControlComponent>
             </td>
             <td>
-              <RoleAccessControllComponent
+              <NBRoleAccessControlComponent
                 roles={["ADMIN"]}
                 hiddenChildren={<h1>Hidden</h1>}
               >
                 <h1 className="font-semibold">Visible</h1>
-              </RoleAccessControllComponent>
+              </NBRoleAccessControlComponent>
             </td>
             <td>
-              <RoleAccessControllComponent
+              <NBRoleAccessControlComponent
                 roles={["MANAGER"]}
                 hiddenChildren={<h1>Hidden</h1>}
               >
                 <h1 className="font-semibold">Visible</h1>
-              </RoleAccessControllComponent>
+              </NBRoleAccessControlComponent>
             </td>
             <td>
-              <RoleAccessControllComponent
+              <NBRoleAccessControlComponent
                 roles={["VIEWER"]}
                 hiddenChildren={<h1>Hidden</h1>}
               >
                 <h1 className="font-semibold">Visible</h1>
-              </RoleAccessControllComponent>
+              </NBRoleAccessControlComponent>
             </td>
             <td>
-              <RoleAccessControllComponent
+              <NBRoleAccessControlComponent
                 roles={["OWNER", "ADMIN"]}
                 hiddenChildren={<h1>Hidden</h1>}
               >
                 <h1 className="font-semibold">Visible</h1>
-              </RoleAccessControllComponent>
+              </NBRoleAccessControlComponent>
             </td>
           </tr>
         </tbody>
@@ -472,48 +473,52 @@ export function BrandExpoScreen() {
         <tbody>
           <tr>
             <td>
-              <PlanAccessControllComponent
+              <NBPlanAccessControlComponent
                 plans={["FREEMIUM"]}
                 hiddenChildren={<h1>Hidden</h1>}
               >
                 <h1 className="font-semibold">Visible</h1>
-              </PlanAccessControllComponent>
+              </NBPlanAccessControlComponent>
             </td>
             <td>
-              <PlanAccessControllComponent
+              <NBPlanAccessControlComponent
                 plans={["ESSENTIAL"]}
                 hiddenChildren={<h1>Hidden</h1>}
               >
                 <h1 className="font-semibold">Visible</h1>
-              </PlanAccessControllComponent>
+              </NBPlanAccessControlComponent>
             </td>
             <td>
-              <PlanAccessControllComponent
+              <NBPlanAccessControlComponent
                 plans={["TEAM"]}
                 hiddenChildren={<h1>Hidden</h1>}
               >
                 <h1 className="font-semibold">Visible</h1>
-              </PlanAccessControllComponent>
+              </NBPlanAccessControlComponent>
             </td>
             <td>
-              <PlanAccessControllComponent
+              <NBPlanAccessControlComponent
                 plans={["BASIC"]}
                 hiddenChildren={<h1>Hidden</h1>}
               >
                 <h1 className="font-semibold">Visible</h1>
-              </PlanAccessControllComponent>
+              </NBPlanAccessControlComponent>
             </td>
             <td>
-              <PlanAccessControllComponent
+              <NBPlanAccessControlComponent
                 plans={["TEAM", "BASIC"]}
                 hiddenChildren={<h1>Hidden</h1>}
               >
                 <h1 className="font-semibold">Visible</h1>
-              </PlanAccessControllComponent>
+              </NBPlanAccessControlComponent>
             </td>
           </tr>
         </tbody>
       </table>
+      <h1 className="mt-5 text-3xl">Multi access controll</h1>
+      <NBAccessControlComponent plans={["ESSENTIAL"]} roles={["OWNER"]}>
+        <span>You'll just see this content if your and OWNER in ESSENTIAL</span>
+      </NBAccessControlComponent>
     </>
   );
 }
