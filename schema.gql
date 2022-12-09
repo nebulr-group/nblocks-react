@@ -23,6 +23,7 @@ type AppConfig {
   privacyPolicyUrl: String
   roles: [String!]
   termsOfServiceUrl: String
+  stripeEnabled: Boolean
   uiUrl: String
   websiteUrl: String
 }

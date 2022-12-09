@@ -39,11 +39,6 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
     }
   }, [alert.show]);
   const { data, loading, error } = useQuery(GetAppConfigDocument);
-  const {
-    data: userData,
-    loading: loadingUserData,
-    error: userError,
-  } = useQuery(GetTenantDocument);
   const [updateCredentialsMutation, updateAppCredentialsData] = useMutation(
     UpdateAppCredentialsDocument
   );
@@ -276,18 +271,18 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
         <div className="flex mt-5">
           <TextComponent className="font-semibold mr-2">Status</TextComponent>
           <ChipComponent
-            type={userData?.getTenant.paymentsEnabled ? "success" : "tertiary"}
+            type={data?.getAppConfig.stripeEnabled ? "success" : "tertiary"}
             icon={
               <span
                 className={`rounded-full mr-1 w-1.5 h-1.5${
-                  userData?.getTenant.paymentsEnabled
+                  data?.getAppConfig.stripeEnabled
                     ? " bg-green-500"
                     : " bg-gray-500"
                 }`}
               ></span>
             }
           >
-            {userData?.getTenant.paymentsEnabled
+            {data?.getAppConfig.stripeEnabled
               ? "Credentials up to date"
               : "No Credentials"}
           </ChipComponent>
