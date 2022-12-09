@@ -1,12 +1,12 @@
 import React, { FunctionComponent } from "react";
-import { useAuth } from "../../hooks/auth-context";
+import { useAuth } from "../../../hooks/auth-context";
 
 /**
  * This component shows or hides its children if a user has certain role
  * @param param0
  * @returns
  */
-const RoleAccessControllComponent: FunctionComponent<{
+const NBRoleAccessControlComponent: FunctionComponent<{
   roles: string[];
   children?: React.ReactNode;
   hiddenChildren?: React.ReactNode;
@@ -16,4 +16,4 @@ const RoleAccessControllComponent: FunctionComponent<{
   else return hiddenChildren ? <>{hiddenChildren}</> : null;
 };
 
-export { RoleAccessControllComponent };
+export { NBRoleAccessControlComponent };

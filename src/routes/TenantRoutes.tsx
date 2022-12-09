@@ -4,7 +4,7 @@ import { PaymentScreen } from "../screens/tenant/Payment.screen";
 import { PaymentCancel } from "../screens/tenant/PaymentCancel.screen";
 import { PaymentSuccessScreen } from "../screens/tenant/PaymentSuccess.screen";
 import { PlanScreen } from "../screens/tenant/Plan.screen";
-import { AuthGuard } from "./AuthGuard";
+import { NBAuthGuard } from "./AuthGuard";
 import { RouteConfig } from "./AuthRoutes";
 
 const TenantRoutes = () => {
@@ -13,9 +13,9 @@ const TenantRoutes = () => {
       <Route
         path="plan"
         element={
-          <AuthGuard>
+          <NBAuthGuard>
             <PlanScreen />
-          </AuthGuard>
+          </NBAuthGuard>
         }
       ></Route>
       <Route path="payment/success" element={<PaymentSuccessScreen />}></Route>
@@ -23,9 +23,9 @@ const TenantRoutes = () => {
       <Route
         path="payment/"
         element={
-          <AuthGuard>
+          <NBAuthGuard>
             <PaymentScreen />
-          </AuthGuard>
+          </NBAuthGuard>
         }
       ></Route>
       <Route
