@@ -1,14 +1,23 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { AuthLayoutWrapperComponent } from "../../../components/auth/AuthLayoutWrapperComponent";
 import { SetPasswordComponent } from "../../../components/auth/password/SetPasswordComponent";
 import { SetPasswordSuccessComponent } from "../../../components/auth/password/SetPasswordSuccessComponent";
+import { useAuth } from "../../../hooks/auth-context";
 
 const SetPasswordScreen: FunctionComponent = () => {
   const params = useParams();
   const resetToken = params.token!;
+  const { logout, currentUser } = useAuth();
 
   const [passwordReset, setPasswordReset] = useState(false);
+
+  // It's understood we should logout the current user if logged in
+  useEffect(() => {
+    if (currentUser.authenticated) {
+      logout();
+    }
+  }, [currentUser]);
 
   const onDidSetPassword = () => {
     setPasswordReset(true);

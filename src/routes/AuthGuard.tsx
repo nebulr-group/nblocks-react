@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useConfig } from "../hooks/config-context";
 import { useSecureContext } from "../hooks/secure-http-context";
@@ -8,7 +8,7 @@ import { RouteConfig } from "./AuthRoutes";
  * This is a route guard that checks if current user is authenticated or not.
  * If not, the user will be redirected to login screen.
  */
-function NBAuthGuard({ children }: { children: JSX.Element }) {
+function NBAuthGuard({ children }: { children: React.ReactElement }) {
   const { authenticated } = useSecureContext();
   const { debug } = useConfig();
   let location = useLocation();

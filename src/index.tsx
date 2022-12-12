@@ -15,22 +15,26 @@ import { NBAccessControlComponent } from "./components/shared/access-control/Acc
 import { NBRoleAccessControlComponent } from "./components/shared/access-control/RoleAccessControllComponent";
 import { NBAuthGuard } from "./routes/AuthGuard";
 import { NBPlanAccessControlGuard } from "./routes/PlanAccessControlGuard";
+import { NBAccessControlGuard } from "./routes/AccessControlGuard";
+import { NBRoleAccessControlGuard } from "./routes/RoleAccessControlGuard";
 
 export {
+  NblocksProvider,
   useSecureContext,
   useAuth,
   useApp,
+  NBRoleAccessControlComponent,
+  NBPlanAccessControlComponent,
+  NBAccessControlComponent,
   NBAuthGuard,
   NBPlanAccessControlGuard,
+  NBRoleAccessControlGuard,
+  NBAccessControlGuard,
   AuthRoutes,
   OnboardRoutes,
   SetupRoutes,
   UserRoutes,
   TenantRoutes,
-  NblocksProvider,
-  NBRoleAccessControlComponent,
-  NBPlanAccessControlComponent,
-  NBAccessControlComponent,
   InstallationCompleteComponent,
 };
 

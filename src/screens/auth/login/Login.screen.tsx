@@ -13,16 +13,14 @@ export function LoginScreen() {
   const { debug, handoverRoute } = useConfig();
   const location = useLocation();
   const navigate = useNavigate();
-  const { currentUser } = useAuth();
+  const { currentUser, logout } = useAuth();
 
   // Target url when authentication finished
   const targetUrl = location.state?.from?.pathname || handoverRoute;
 
-  // Watch current user. If we got here premature make sure to redirect user back to where it came from
   useEffect(() => {
     if (currentUser.authenticated) {
-      log(`User was already authenticated. Redirecting back to: ${targetUrl}`);
-      navigate(targetUrl);
+      logout();
     }
   }, [currentUser]);
 

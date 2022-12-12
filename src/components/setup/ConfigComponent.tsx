@@ -63,6 +63,7 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
     event.preventDefault();
     await updateCredentialsMutation({
       variables: { credentials: { stripePublicKey, stripeSecretKey } },
+      refetchQueries: [{ query: GetAppConfigDocument }],
     });
     // Toast & Loading logic
     setCredentialsModalOpen(false);

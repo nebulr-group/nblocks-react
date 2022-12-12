@@ -12,7 +12,7 @@ function NBPlanAccessControlGuard({
   children,
   plans,
 }: {
-  children: JSX.Element;
+  children: React.ReactElement;
   plans: string[];
 }) {
   const { debug, handoverRoute } = useConfig();
@@ -21,7 +21,7 @@ function NBPlanAccessControlGuard({
   if (!plans.some((plan) => plan === data?.getTenant.plan)) {
     if (debug) {
       console.log(
-        `PlanAccessGuard: Route is restricted. Redirecting to ${handoverRoute}`
+        `NBPlanAccessControlGuard: Route is restricted. Redirecting to ${handoverRoute}`
       );
     }
     return <Navigate to={handoverRoute} replace />;

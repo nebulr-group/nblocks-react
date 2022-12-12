@@ -9,7 +9,7 @@ type ComponentProps = {
 };
 
 /**
- * This component
+ * This component combine the usage of NBRoleAccessControlComponent and NBPlanAccessControlComponent
  * @param param0
  * @returns
  */

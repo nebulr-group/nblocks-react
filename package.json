@@ -1,6 +1,6 @@
 {
   "name": "@nebulr-group/nblocks-react",
-  "version": "0.1.8-beta.2",
+  "version": "0.1.8-beta.3",
   "main": "lib/index",
   "module": "lib/index",
   "types": "lib/index.d.ts",

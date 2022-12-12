@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+colors = require("tailwindcss/colors");
 
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
