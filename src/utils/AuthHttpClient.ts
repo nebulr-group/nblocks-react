@@ -8,12 +8,15 @@ export class AuthHttpClient {
 
   private readonly BASE_URL: string;
   private readonly debug: boolean;
+  private readonly appId?: string; // App id should only be present when running backendless
+
   private unauthenticatedCallback = () => {};
   private forbiddenCallback = () => {};
 
-  constructor(baseUrl: string, debug: boolean) {
+  constructor(baseUrl: string, debug: boolean, appId?: string) {
     this.BASE_URL = baseUrl;
     this.debug = debug;
+    this.appId = appId;
 
     this.httpClient = axios.create({
       baseURL: this.BASE_URL,
@@ -31,6 +34,7 @@ export class AuthHttpClient {
 
   private _configureHttpClient(httpClient: AxiosInstance): void {
     const debug = this.debug;
+    const appId = this.appId;
 
     httpClient.interceptors.request.use(async (request) => {
       const [authToken, mfaToken, tenantUserId] = await Promise.all([
@@ -50,7 +54,11 @@ export class AuthHttpClient {
         if (request.headers) request.headers["x-tenant-user-id"] = tenantUserId;
       }
 
-      if (this.debug) {
+      if (appId !== null) {
+        if (request.headers) request.headers["x-app-id"] = appId;
+      }
+
+      if (debug) {
         console.log(
           `[HTTP request]: ${request.method?.toUpperCase()} ${
             request.baseURL

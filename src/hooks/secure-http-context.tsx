@@ -24,16 +24,17 @@ const useSecureContext = () => useContext(SecureContext);
 const NblocksSecureContextProvider: FunctionComponent<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const { apiHost, graphqlPath, debug } = useConfig();
+  const { apiHost, graphqlPath, debug, appId } = useConfig();
+
   const [authenticated, setAuthenticated] = useState<boolean>(true); // Optimistic approach
   const [authHttpClient] = useState<AuthHttpClient>(
-    new AuthHttpClient(apiHost, debug)
+    new AuthHttpClient(apiHost, debug, appId)
   );
   const [authService] = useState<AuthService>(
     new AuthService(authHttpClient.httpClient, debug)
   );
   const [authApolloClient] = useState<AuthApolloClient>(
-    new AuthApolloClient(`${apiHost}${graphqlPath}`, debug)
+    new AuthApolloClient(`${apiHost}${graphqlPath}`, debug, appId)
   );
 
   const didAuthenticate = (value: boolean) => {

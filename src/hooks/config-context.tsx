@@ -34,7 +34,10 @@ const NblocksConfigContextProvider: FunctionComponent<{
 }> = ({ children, config }) => {
   // Switch to registered backendless domain
   if (config?.backendLess) {
-    config.apiHost = "http://localhost:3000";
+    config.apiHost = "http://localhost:3000"; //TODO change to "https://backendless.nblocks.cloud";
+    if (!config.appId) {
+      throw new Error("You must provide App id when running with backendless");
+    }
   }
 
   // Set some sensible defaults for devMode

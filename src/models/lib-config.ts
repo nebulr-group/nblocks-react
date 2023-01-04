@@ -8,6 +8,9 @@ export interface LibConfig {
   // Switch for backendless use case.
   backendLess: boolean;
 
+  // Must be set if running with backendless
+  appId?: string;
+
   // Allow for simple signup. Part of the developer onboarding and app configuration. Should be disabled before deploying. This property might also be renamed soon.
   signup: boolean;
 

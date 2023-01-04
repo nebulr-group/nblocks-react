@@ -13,11 +13,13 @@ export class AuthApolloClient {
 
     readonly client: ApolloClient<NormalizedCacheObject>;
     private readonly debug: boolean;
+    private readonly appId?: string; // App id should only be present when running backendless
     private unauthenticatedCallback = () => {};
     private forbiddenCallback = () => {};
     
-    constructor(graphqlUrl: string, debug: boolean) {
+    constructor(graphqlUrl: string, debug: boolean, appId?: string) {
       this.debug = debug;
+      this.appId = appId;
 
       const cache = new InMemoryCache();      
 
@@ -37,6 +39,7 @@ export class AuthApolloClient {
 
     private _configureApolloLink(graphqlUrl: string): ApolloLink {
         const debug = this.debug;
+        const appId = this.appId;
 
         const httpLink = createHttpLink({
           uri: graphqlUrl,
@@ -54,6 +57,7 @@ export class AuthApolloClient {
               ...headers,
               'x-auth-token': authToken ? (mfaToken ? `${authToken}_${mfaToken}` : authToken) : "",
               'x-tenant-user-id': tenantUserId ? tenantUserId : "",
+              'x-app-id': appId ? appId : "",
             }
           }
         });
