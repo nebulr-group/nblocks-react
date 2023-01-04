@@ -4,7 +4,9 @@ import React from "react";
 function App() {
   return (
     <div className="App">
-      <NblocksProvider config={{ debug: true, devMode: true }}>
+      <NblocksProvider
+        config={{ debug: true, devMode: true, backendLess: true }}
+      >
         <InstallationCompleteComponent />
       </NblocksProvider>
     </div>

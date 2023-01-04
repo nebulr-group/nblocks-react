@@ -3,6 +3,7 @@ import { LibConfig } from "../models/lib-config";
 
 const initialContext: LibConfig = {
   devMode: false,
+  backendLess: false,
   handoverRoute: "/",
   defaultLocale: "en",
   apiHost: "http://localhost:3000",
@@ -31,6 +32,11 @@ const NblocksConfigContextProvider: FunctionComponent<{
   config?: Partial<LibConfig>;
   children: React.ReactNode;
 }> = ({ children, config }) => {
+  // Switch to registered backendless domain
+  if (config?.backendLess) {
+    config.apiHost = "http://localhost:3000";
+  }
+
   // Set some sensible defaults for devMode
   if (config?.devMode) {
     initialContext.spa = true;
