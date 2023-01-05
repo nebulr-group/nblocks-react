@@ -11,6 +11,9 @@ export interface LibConfig {
   // Must be set if running with backendless
   appId?: string;
 
+  // Switches between the legacy authentication and OAuth 2.0 JWT Bearer Tokens
+  authLegacy: boolean;
+
   // Allow for simple signup. Part of the developer onboarding and app configuration. Should be disabled before deploying. This property might also be renamed soon.
   signup: boolean;
 

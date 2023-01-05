@@ -4,6 +4,7 @@ import { LibConfig } from "../models/lib-config";
 const initialContext: LibConfig = {
   devMode: false,
   backendLess: false,
+  authLegacy: true,
   handoverRoute: "/",
   defaultLocale: "en",
   apiHost: "http://localhost:3000",

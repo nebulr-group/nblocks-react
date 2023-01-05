@@ -9,7 +9,8 @@ function App() {
           debug: true,
           devMode: true,
           backendLess: true,
-          appId: "633402fdf28d8e00252948b1",
+          appId: "63243486feaaae0022865fb2",
+          authLegacy: false,
         }}
       >
         <InstallationCompleteComponent />
