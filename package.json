@@ -90,5 +90,8 @@
       "react-app",
       "react-app/jest"
     ]
+  },
+  "dependencies": {
+    "jose": "^4.11.2"
   }
 }

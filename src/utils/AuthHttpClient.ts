@@ -2,6 +2,7 @@ import axios, { AxiosError, AxiosInstance } from "axios";
 import { ForbiddenError } from "./errors/ForbiddenError";
 import { UnauthenticatedError } from "./errors/UnauthenticatedError";
 import { AuthService } from "./AuthService";
+import { OAuthService } from "./OAuthService";
 
 export class AuthHttpClient {
   readonly httpClient: AxiosInstance;
@@ -37,20 +38,29 @@ export class AuthHttpClient {
     const appId = this.appId;
 
     httpClient.interceptors.request.use(async (request) => {
-      const [authToken, mfaToken, tenantUserId] = await Promise.all([
-        AuthService.getAuthToken(),
-        AuthService.getMfaToken(),
-        AuthService.getTenantUserId(),
-      ]);
+      const [authToken, mfaToken, tenantUserId, oAuthToken] = await Promise.all(
+        [
+          AuthService.getAuthToken(),
+          AuthService.getMfaToken(),
+          AuthService.getTenantUserId(),
+          OAuthService.getOAuthToken(),
+        ]
+      );
 
-      if (authToken !== null) {
+      if (oAuthToken !== null && authToken === null) {
+        if (request.headers) {
+          request.headers["Authorization"] = `Bearer ${oAuthToken}`;
+        }
+      }
+
+      if (authToken !== null && oAuthToken === null) {
         if (request.headers)
           request.headers["x-auth-token"] = mfaToken
             ? `${authToken}_${mfaToken}`
             : authToken;
       }
 
-      if (tenantUserId !== null) {
+      if (tenantUserId !== null && oAuthToken === null) {
         if (request.headers) request.headers["x-tenant-user-id"] = tenantUserId;
       }
 

@@ -3,6 +3,7 @@ import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { AuthService } from './AuthService';
 import { ClientError } from './errors/ClientError';
+import { OAuthService } from './OAuthService';
 
 interface ErrorExtensions {
   code?: string;
@@ -46,11 +47,21 @@ export class AuthApolloClient {
         });
 
         const authLink = setContext(async (_, { headers }) => {
-          const [authToken, mfaToken, tenantUserId] = await Promise.all([
+          const [authToken, mfaToken, tenantUserId, oAuthToken] = await Promise.all([
             AuthService.getAuthToken(),
             AuthService.getMfaToken(),
-            AuthService.getTenantUserId()
+            AuthService.getTenantUserId(),
+            OAuthService.getOAuthToken(),
           ]);
+
+          if (oAuthToken) {
+            return {
+              headers: {
+                ...headers,
+                "Authorization": `Bearer ${oAuthToken}`,
+              }
+            }
+          }
           
           return {
             headers: {
