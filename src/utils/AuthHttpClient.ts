@@ -43,7 +43,7 @@ export class AuthHttpClient {
           AuthService.getAuthToken(),
           AuthService.getMfaToken(),
           AuthService.getTenantUserId(),
-          OAuthService.getOAuthToken(),
+          OAuthService.getAccessToken(),
         ]
       );
 

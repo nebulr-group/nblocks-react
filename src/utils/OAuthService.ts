@@ -45,10 +45,14 @@ export type AccesTokenClaim = {
 };
 
 export class OAuthService {
-  private readonly ENDPOINTS = {
+  private readonly OAUTH_ENDPOINTS = {
     authorize: "/authorize",
     token: "/oauth/token",
     refresh: "/oauth/refresh",
+    jwks: "/.well-known/jwks.json",
+  };
+
+  private readonly ENDPOINTS = {
     password: "/auth-proxy/password",
     user: "/auth-proxy/user",
     tenantUsers: "/auth-proxy/tenantUsers",
@@ -58,20 +62,30 @@ export class OAuthService {
     resetUserMfaSetup: "/auth-proxy/resetUserMfaSetup",
   };
 
+  private _accessTokenExpires: number;
+  private _refreshTokenExpires: number;
+  private _idToken: OpenIDClaim;
+
+  //TODO these variables should come from config
   private readonly oAuthBaseURI = "http://localhost:3070";
+  private readonly issuer = "auth.nblocks.cloud";
+  private readonly appId = "633402fdf28d8e00252948b1";
+  private readonly redirectUri = "http://localhost:8081/auth/login";
+  private readonly scopes = "openid profile email";
 
   private readonly httpClient: AxiosInstance;
   private readonly debug: boolean;
 
-  private static AUTHORIZATION_CODE = "AUTH_CODE";
-  private static AUTHORIZATION_TOKEN = "AUTH_TOKEN";
+  private static ACCCESS_TOKEN = "OAUTH_ACCESS_TOKEN";
   private static OPENID_TOKEN = "OPENID_TOKEN";
   private static MFA_TOKEN_KEY = "MFA_TOKEN";
-  private static REFRESH_TOKEN = "REFRESH_TOKEN";
+  private static REFRESH_TOKEN = "OAUTH_REFRESH_TOKEN";
 
   constructor(httpClient: AxiosInstance, debug: boolean) {
     this.debug = debug;
     this.httpClient = httpClient;
+
+    //TODO add unserialize expirations dates and id token from localStorage.
   }
 
   /**
@@ -91,6 +105,10 @@ export class OAuthService {
     return false;
   }
 
+  getAuthorizeUrl(): string {
+    return `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.authorize}?response_type=code&client_id=${this.appId}&redirect_uri=${this.redirectUri}&scope=${this.scopes}`;
+  }
+
   async authorizeUser(
     username: string,
     password: string,
@@ -104,7 +122,7 @@ export class OAuthService {
       code: string;
       id_token: string;
     }>(
-      this.ENDPOINTS.authorize,
+      this.OAUTH_ENDPOINTS.authorize,
       {
         username,
         password,
@@ -118,26 +136,44 @@ export class OAuthService {
     if (!response.data.id_token && !response.data.code)
       throw new Error("Wrong credentials");
 
+    try {
+      const idTokenVerify = await this._verifyToken(response.data.id_token);
+
+      await this.authorizeClient(
+        this.appId,
+        "authorization_code",
+        response.data.code
+      );
+
+      this._idToken = idTokenVerify.payload as OpenIDClaim;
+      OAuthService.setOpenIDToken(response.data.id_token);
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Authentication failed!");
+    }
+  }
+
+  /**
+   * JOSE methods throws Errors
+   * @param token
+   * @returns
+   */
+  private async _verifyToken(
+    token: string
+  ): Promise<jose.JWTVerifyResult & jose.ResolvedKey> {
     // Check validity of the JWTs received
     const JWKS = jose.createRemoteJWKSet(
-      new URL(this.oAuthBaseURI + "/.well-known/jwks.json")
+      new URL(this.oAuthBaseURI + this.OAUTH_ENDPOINTS.jwks)
     );
 
-    const { payload: openIdClaim } = await jose.jwtVerify(
-      response.data.id_token,
-      JWKS,
-      { issuer: this.oAuthBaseURI, audience: [client_id] }
-    );
-
-    const oAuthCodeVerify = await jose.jwtVerify(response.data.code, JWKS, {
-      issuer: this.oAuthBaseURI,
-      audience: [client_id],
+    const result = await jose.jwtVerify(token, JWKS, {
+      issuer: this.issuer,
+      audience: [this.appId],
     });
 
-    OAuthService.setOAuthCode(response.data.code);
-    OAuthService.setOpenIDToken(response.data.id_token);
-    // OAuthService.setTenantUserId(openIdClaim.tid as string);
-    return true;
+    return result;
   }
 
   async authorizeClient(client_id: string, grant_type: string, code: string) {
@@ -146,11 +182,11 @@ export class OAuthService {
       refresh_token: string;
       token_type: string;
     }>(
-      this.ENDPOINTS.token,
+      this.OAUTH_ENDPOINTS.token,
       {
         client_id,
         grant_type,
-        code: OAuthService.getOAuthCode(),
+        code,
       },
       { baseURL: this.oAuthBaseURI }
     );
@@ -159,34 +195,32 @@ export class OAuthService {
       throw new Error("Wrong credentials!");
     }
 
-    // Check validity of the JWTs received
-    // Check validity of the JWTs received
-    const JWKS = jose.createRemoteJWKSet(
-      new URL(this.oAuthBaseURI + "/.well-known/jwks.json")
-    );
-
     try {
-      const oAuthTokenVerify = await jose.jwtVerify(
-        response.data.access_token,
-        JWKS,
-        { issuer: this.oAuthBaseURI, audience: [client_id] }
-      );
+      // await this._verifyToken(response.data.access_token);
+      // await this._verifyToken(response.data.refresh_token);
+      const decodedAccessToken = jose.decodeJwt(response.data.access_token);
+      this._accessTokenExpires = decodedAccessToken.exp!;
+      OAuthService.setAccessToken(response.data.access_token);
 
-      const refreshTokenVerify = await jose.jwtVerify(
-        response.data.refresh_token,
-        JWKS,
-        {
-          issuer: this.oAuthBaseURI,
-          audience: [client_id],
-        }
-      );
+      const decodedRefreshToken = jose.decodeJwt(response.data.access_token);
+      this._refreshTokenExpires = decodedRefreshToken.exp!;
+      OAuthService.setRefreshToken(response.data.refresh_token);
+
+      // Schedule a future that will refresh the tokens
+      this.setRefreshTokenScheduler();
+
+      return true;
     } catch (error) {
+      console.error(error);
       throw new Error("Authentication failed!");
     }
+  }
 
-    OAuthService.setOAuthToken(response.data.access_token);
-    OAuthService.setRefreshToken(response.data.refresh_token);
-    return true;
+  setRefreshTokenScheduler(): void {
+    setTimeout(async () => {
+      await this.refreshTokens();
+      this.setRefreshTokenScheduler();
+    }, (this._accessTokenExpires - new Date().getUTCSeconds()) * 1000);
   }
 
   async authenticated(): Promise<boolean> {
@@ -199,15 +233,15 @@ export class OAuthService {
     return true;
   }
 
-  async refreshTokens(client_id: string): Promise<boolean> {
+  async refreshTokens(): Promise<boolean> {
     const response = await this.httpClient.post<{
       access_token: string;
       refresh_token: string;
       token_type: string;
     }>(
-      this.ENDPOINTS.refresh,
+      this.OAUTH_ENDPOINTS.refresh,
       {
-        client_id,
+        client_id: this.appId,
         grant_type: "refresh_token",
         refresh_token: OAuthService.getRefreshToken(),
       },
@@ -218,34 +252,16 @@ export class OAuthService {
       throw new Error("Wrong credentials!");
     }
 
-    // Check validity of the JWTs received
-    // Check validity of the JWTs received
-    const JWKS = jose.createRemoteJWKSet(
-      new URL(this.oAuthBaseURI + "/.well-known/jwks.json")
-    );
-
     try {
-      const oAuthTokenVerify = await jose.jwtVerify(
-        response.data.access_token,
-        JWKS,
-        { issuer: this.oAuthBaseURI, audience: [client_id] }
-      );
-
-      const refreshTokenVerify = await jose.jwtVerify(
-        response.data.refresh_token,
-        JWKS,
-        {
-          issuer: this.oAuthBaseURI,
-          audience: [client_id],
-        }
-      );
+      // await this._verifyToken(response.data.access_token);
+      // await this._verifyToken(response.data.refresh_token);
+      OAuthService.setAccessToken(response.data.access_token);
+      OAuthService.setRefreshToken(response.data.refresh_token);
+      return true;
     } catch (error) {
+      console.error(error);
       throw new Error("Authentication failed!");
     }
-
-    OAuthService.setOAuthToken(response.data.access_token);
-    OAuthService.setRefreshToken(response.data.refresh_token);
-    return true;
   }
 
   async sendResetPasswordLink(username: string): Promise<void> {
@@ -254,6 +270,20 @@ export class OAuthService {
 
   async updatePassword(token: string, password: string): Promise<void> {
     await this.httpClient.put(this.ENDPOINTS.password, { token, password });
+  }
+
+  async commitMfaCode(mfaCode: string): Promise<void> {
+    const result = await this.httpClient.post<{ mfaToken: string }>(
+      this.ENDPOINTS.commitMfaCode,
+      { mfaCode }
+    );
+    OAuthService.setMfaToken(result.data.mfaToken);
+  }
+
+  async startMfaUserSetup(phoneNumber: string): Promise<void> {
+    await this.httpClient.post<void>(this.ENDPOINTS.startMfaUserSetup, {
+      phoneNumber,
+    });
   }
 
   /**
@@ -269,6 +299,12 @@ export class OAuthService {
 
     OAuthService.setMfaToken(result.data.mfaToken);
     return result.data.backupCode;
+  }
+
+  async resetUserMfaSetup(backupCode: string): Promise<void> {
+    await this.httpClient.post(this.ENDPOINTS.resetUserMfaSetup, {
+      backupCode,
+    });
   }
 
   async listUsers(): Promise<AuthTenantUserResponseDto[]> {
@@ -301,16 +337,12 @@ export class OAuthService {
   }
 
   static async hasFullAuthContext(): Promise<boolean> {
-    return !!this.getOAuthToken() && !!this.getOpenIDToken();
+    return !!this.getAccessToken() && !!this.getOpenIDToken();
   }
   // Setters
 
-  static setOAuthToken(token: string): void {
-    NblocksStorage.setItem(this.AUTHORIZATION_TOKEN, token);
-  }
-
-  static setOAuthCode(token: string): void {
-    NblocksStorage.setItem(this.AUTHORIZATION_CODE, token);
+  static setAccessToken(token: string): void {
+    NblocksStorage.setItem(this.ACCCESS_TOKEN, token);
   }
 
   static setOpenIDToken(token: string): void {
@@ -334,12 +366,8 @@ export class OAuthService {
     return NblocksStorage.getItem(this.REFRESH_TOKEN);
   }
 
-  static getOAuthToken(): string | null {
-    return NblocksStorage.getItem(this.AUTHORIZATION_TOKEN);
-  }
-
-  static getOAuthCode(): string | null {
-    return NblocksStorage.getItem(this.AUTHORIZATION_CODE);
+  static getAccessToken(): string | null {
+    return NblocksStorage.getItem(this.ACCCESS_TOKEN);
   }
 
   static getOpenIDToken(): string | null {
@@ -350,9 +378,9 @@ export class OAuthService {
   //   return NblocksStorage.getItem(this.TENANT_USER_ID_KEY);
   // }
 
-  static clearOAuthStorage(): void {
-    NblocksStorage.removeItem(this.AUTHORIZATION_CODE);
-    NblocksStorage.removeItem(this.AUTHORIZATION_TOKEN);
+  static clearAuthStorage(): void {
+    NblocksStorage.removeItem(this.ACCCESS_TOKEN);
     NblocksStorage.removeItem(this.OPENID_TOKEN);
+    NblocksStorage.removeItem(this.REFRESH_TOKEN);
   }
 }
