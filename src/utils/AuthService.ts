@@ -125,8 +125,10 @@ export class AuthService {
     return response.data;
   }
 
-  async currentUser(): Promise<any> {
-    const response = await this.httpClient.get<any>(this.ENDPOINTS.currentUser);
+  async currentUser(): Promise<AuthTenantUserResponseDto> {
+    const response = await this.httpClient.get<AuthTenantUserResponseDto>(
+      this.ENDPOINTS.currentUser
+    );
     return response.data;
   }
 

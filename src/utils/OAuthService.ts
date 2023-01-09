@@ -2,6 +2,7 @@ import { AxiosInstance } from "axios";
 import { AuthTenantUserResponseDto } from "../models/auth-tenant-user-response.dto";
 import { NblocksStorage } from "./Storage";
 import * as jose from "jose";
+import { GetKeyFunction } from "jose/dist/types/types";
 
 //FIXME centralize models
 export type UpdateUserProfileArgs = {
@@ -56,15 +57,21 @@ export class OAuthService {
     password: "/auth-proxy/password",
     user: "/auth-proxy/user",
     tenantUsers: "/auth-proxy/tenantUsers",
+    currentUser: "/auth/currentUser",
     startMfaUserSetup: "/auth-proxy/startMfaUserSetup",
     commitMfaCode: "/auth-proxy/commitMfaCode",
     finishMfaUserSetup: "/auth-proxy/finishMfaUserSetup",
     resetUserMfaSetup: "/auth-proxy/resetUserMfaSetup",
   };
 
-  private _accessTokenExpires: number;
-  private _refreshTokenExpires: number;
-  private _idToken: OpenIDClaim;
+  private _accessTokenExpires?: number;
+  private _refreshTokenExpires?: number;
+  private _idToken?: OpenIDClaim;
+
+  private readonly _JWKS: GetKeyFunction<
+    jose.JWSHeaderParameters,
+    jose.FlattenedJWSInput
+  >;
 
   //TODO these variables should come from config
   private readonly oAuthBaseURI = "http://localhost:3070";
@@ -85,7 +92,48 @@ export class OAuthService {
     this.debug = debug;
     this.httpClient = httpClient;
 
-    //TODO add unserialize expirations dates and id token from localStorage.
+    const JWKS = jose.createRemoteJWKSet(
+      new URL(this.oAuthBaseURI + this.OAUTH_ENDPOINTS.jwks)
+    );
+    this._JWKS = JWKS;
+
+    this.restoreTokensFromLocalStorage();
+  }
+
+  log(msg: string): void {
+    if (this.debug) {
+      console.log(`OAuthService: ${msg}`);
+    }
+  }
+
+  private async restoreTokensFromLocalStorage(): Promise<void> {
+    try {
+      const [openIdToken, accessToken, refreshToken] = [
+        OAuthService.getOpenIDToken(),
+        OAuthService.getAccessToken(),
+        OAuthService.getRefreshToken(),
+      ];
+
+      if (openIdToken) {
+        const decoded = await this._verifyToken(openIdToken);
+        this._idToken = decoded.payload as OpenIDClaim;
+      }
+
+      if (accessToken) {
+        const decoded = await this._verifyToken(accessToken);
+        this._accessTokenExpires = decoded.payload.exp;
+      }
+
+      if (refreshToken) {
+        const decoded = await this._verifyToken(refreshToken);
+        this._refreshTokenExpires = decoded.payload.exp;
+      }
+
+      // Start scheduler
+      this.setRefreshTokenScheduler();
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   /**
@@ -164,11 +212,7 @@ export class OAuthService {
     token: string
   ): Promise<jose.JWTVerifyResult & jose.ResolvedKey> {
     // Check validity of the JWTs received
-    const JWKS = jose.createRemoteJWKSet(
-      new URL(this.oAuthBaseURI + this.OAUTH_ENDPOINTS.jwks)
-    );
-
-    const result = await jose.jwtVerify(token, JWKS, {
+    const result = await jose.jwtVerify(token, this._JWKS, {
       issuer: this.issuer,
       audience: [this.appId],
     });
@@ -196,14 +240,16 @@ export class OAuthService {
     }
 
     try {
-      // await this._verifyToken(response.data.access_token);
-      // await this._verifyToken(response.data.refresh_token);
-      const decodedAccessToken = jose.decodeJwt(response.data.access_token);
-      this._accessTokenExpires = decodedAccessToken.exp!;
+      const decodedAccessToken = await this._verifyToken(
+        response.data.access_token
+      );
+      this._accessTokenExpires = decodedAccessToken.payload.exp!;
       OAuthService.setAccessToken(response.data.access_token);
 
-      const decodedRefreshToken = jose.decodeJwt(response.data.access_token);
-      this._refreshTokenExpires = decodedRefreshToken.exp!;
+      const decodedRefreshToken = await this._verifyToken(
+        response.data.refresh_token
+      );
+      this._refreshTokenExpires = decodedRefreshToken.payload.exp!;
       OAuthService.setRefreshToken(response.data.refresh_token);
 
       // Schedule a future that will refresh the tokens
@@ -217,10 +263,19 @@ export class OAuthService {
   }
 
   setRefreshTokenScheduler(): void {
-    setTimeout(async () => {
-      await this.refreshTokens();
-      this.setRefreshTokenScheduler();
-    }, (this._accessTokenExpires - new Date().getUTCSeconds()) * 1000);
+    if (this._accessTokenExpires) {
+      const expiresInMs = this._accessTokenExpires * 1000 - Date.now();
+      const threshold = expiresInMs * 0.8;
+      this.log(
+        `AccessToken rexpires in ${
+          expiresInMs / 1000
+        } seconds. Therefore we refresh it after ${threshold / 1000} seconds`
+      );
+      const timer = setTimeout(async () => {
+        await this.refreshTokens();
+        this.setRefreshTokenScheduler();
+      }, threshold);
+    }
   }
 
   async authenticated(): Promise<boolean> {
@@ -237,7 +292,7 @@ export class OAuthService {
     const response = await this.httpClient.post<{
       access_token: string;
       refresh_token: string;
-      token_type: string;
+      tokenType: string;
     }>(
       this.OAUTH_ENDPOINTS.refresh,
       {
@@ -253,10 +308,18 @@ export class OAuthService {
     }
 
     try {
-      // await this._verifyToken(response.data.access_token);
-      // await this._verifyToken(response.data.refresh_token);
+      const decodedAccessToken = await this._verifyToken(
+        response.data.access_token
+      );
+      this._accessTokenExpires = decodedAccessToken.payload.exp!;
       OAuthService.setAccessToken(response.data.access_token);
+
+      const decodedRefreshToken = await this._verifyToken(
+        response.data.refresh_token
+      );
+      this._refreshTokenExpires = decodedRefreshToken.payload.exp!;
       OAuthService.setRefreshToken(response.data.refresh_token);
+
       return true;
     } catch (error) {
       console.error(error);
@@ -314,18 +377,15 @@ export class OAuthService {
     return response.data;
   }
 
-  async currentUser() {
+  async currentUser(): Promise<AuthTenantUserResponseDto> {
     // In future we can make it possible to obtain claims data from oauth's /userinfo endpoint
     // This is by specification
     // for now it reads data from the id_token if pressent
-    const id_token = OAuthService.getOpenIDToken();
 
-    if (id_token) {
-      const idTokenClaim = jose.decodeJwt(id_token);
-      return idTokenClaim;
-    }
-
-    return null;
+    const response = await this.httpClient.get<AuthTenantUserResponseDto>(
+      this.ENDPOINTS.currentUser
+    );
+    return response.data;
   }
 
   async updateCurrentUser(userProfile: UpdateUserProfileArgs): Promise<any> {
