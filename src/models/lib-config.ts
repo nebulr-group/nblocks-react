@@ -14,6 +14,12 @@ export interface LibConfig {
   // Switches between the legacy authentication and OAuth 2.0 JWT Bearer Tokens
   authLegacy: boolean;
 
+  // URL to Nblocks Auth API. Defaults UI url + /auth/login. You should not change this manually unless your running tests
+  oAuthBaseURI: string;
+
+  // Redirect URI for OAuth 2.0 flow. Defaults to   You should not change this manually unless your running tests
+  oauthRedirectUri: string;
+
   // Allow for simple signup. Part of the developer onboarding and app configuration. Should be disabled before deploying. This property might also be renamed soon.
   signup: boolean;
 

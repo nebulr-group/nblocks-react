@@ -21,10 +21,10 @@ export function LoginScreen() {
   document.title = "Login";
 
   const { debug, handoverRoute, authLegacy } = useConfig();
-  const { authService } = useSecureContext();
+  const { authService, didAuthenticate } = useSecureContext();
   const location = useLocation();
   const navigate = useNavigate();
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout, switchUser } = useAuth();
   const [searchParams] = useSearchParams();
 
   // Target url when authentication finished
@@ -45,7 +45,7 @@ export function LoginScreen() {
   }, []);
 
   // Callback when the LoginComponent completed login
-  const onDidLogin = (mfa: MfaState) => {
+  const onDidLogin = async (mfa: MfaState) => {
     switch (mfa) {
       case "REQUIRED":
         log("Navigating to Require MFA screen");
@@ -63,6 +63,10 @@ export function LoginScreen() {
           log("Navigating to Choose user screen");
           navigate(RouteConfig.login.ChooseUserScreen);
         } else {
+          //TODO this is to simulate what ChooseUserScreen does.
+          //When figuring out how to work with MFA and multi tenancy, this should be removed
+          await switchUser((authService as OAuthService).currentUserId()!);
+          didAuthenticate(true);
           log("Navigating to targetUrl");
           navigate(targetUrl);
         }
@@ -84,6 +88,7 @@ export function LoginScreen() {
         redirectUri: searchParams.get("redirect_uri")!,
         responseType: searchParams.get("response_type")!,
         scope: searchParams.get("scope")!,
+        state: searchParams.get("scope"),
       };
     }
   };

@@ -159,7 +159,7 @@ const UserTableRowComponent: FunctionComponent<ConfigObject> = ({
           },
         ];
 
-        if (currentUser.isSameUser(row.original)) {
+        if (currentUser.authenticated && currentUser.isSameUser(row.original)) {
           return <></>;
         } else {
           return (

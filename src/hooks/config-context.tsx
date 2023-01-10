@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useContext } from "react";
 import { LibConfig } from "../models/lib-config";
+import { useApp } from "./app-context";
 
 const initialContext: LibConfig = {
   devMode: false,
@@ -24,6 +25,8 @@ const initialContext: LibConfig = {
     },
   },
   signup: false,
+  oAuthBaseURI: "http://localhost:3070",
+  oauthRedirectUri: "http://localhost:8081/auth/login",
 };
 
 const Context = React.createContext<LibConfig>(initialContext);
@@ -33,6 +36,12 @@ const NblocksConfigContextProvider: FunctionComponent<{
   config?: Partial<LibConfig>;
   children: React.ReactNode;
 }> = ({ children, config }) => {
+  // This doesn't work??
+  // const app = useApp();
+  // if (config && !config?.oauthRedirectUri) {
+  //   config.oauthRedirectUri = app.uiUrl + "/auth/login";
+  // }
+
   // Switch to registered backendless domain
   if (config?.backendLess) {
     config.apiHost = "http://localhost:3000"; //TODO change to "https://backendless.nblocks.cloud";

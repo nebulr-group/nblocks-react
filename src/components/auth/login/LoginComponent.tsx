@@ -16,6 +16,7 @@ type OauthProps = {
   scope: string;
   redirectUri: string;
   responseType: string;
+  state?: string | null;
 };
 
 type ComponentProps = {
@@ -47,14 +48,14 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
           oauthProps.redirectUri,
           oauthProps.responseType
         );
-        didLogin("DISABLED");
         setIsLoading(false);
+        didLogin("DISABLED");
       }
 
       if (authService instanceof AuthService) {
         const response = await authService.authenticate(username, password);
-        didLogin(response.mfaState);
         setIsLoading(false);
+        didLogin(response.mfaState);
       }
     } catch (error) {
       if (error instanceof UnauthenticatedError) {

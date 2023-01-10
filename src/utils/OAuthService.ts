@@ -3,6 +3,7 @@ import { AuthTenantUserResponseDto } from "../models/auth-tenant-user-response.d
 import { NblocksStorage } from "./Storage";
 import * as jose from "jose";
 import { GetKeyFunction } from "jose/dist/types/types";
+import { LibConfig } from "../models/lib-config";
 
 //FIXME centralize models
 export type UpdateUserProfileArgs = {
@@ -73,12 +74,13 @@ export class OAuthService {
     jose.FlattenedJWSInput
   >;
 
+  private readonly EXPECTED_ISSUER = "auth.nblocks.cloud";
+  private readonly OAUTH_SCOPES = "openid profile email";
+
   //TODO these variables should come from config
-  private readonly oAuthBaseURI = "http://localhost:3070";
-  private readonly issuer = "auth.nblocks.cloud";
-  private readonly appId = "633402fdf28d8e00252948b1";
-  private readonly redirectUri = "http://localhost:8081/auth/login";
-  private readonly scopes = "openid profile email";
+  private readonly oAuthBaseURI: string;
+  private readonly appId: string;
+  private readonly redirectUri: string;
 
   private readonly httpClient: AxiosInstance;
   private readonly debug: boolean;
@@ -88,9 +90,13 @@ export class OAuthService {
   private static MFA_TOKEN_KEY = "MFA_TOKEN";
   private static REFRESH_TOKEN = "OAUTH_REFRESH_TOKEN";
 
-  constructor(httpClient: AxiosInstance, debug: boolean) {
+  constructor(httpClient: AxiosInstance, debug: boolean, config: LibConfig) {
     this.debug = debug;
     this.httpClient = httpClient;
+
+    this.appId = config.appId!;
+    this.oAuthBaseURI = config.oAuthBaseURI;
+    this.redirectUri = config.oauthRedirectUri;
 
     const JWKS = jose.createRemoteJWKSet(
       new URL(this.oAuthBaseURI + this.OAUTH_ENDPOINTS.jwks)
@@ -153,8 +159,9 @@ export class OAuthService {
     return false;
   }
 
-  getAuthorizeUrl(): string {
-    return `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.authorize}?response_type=code&client_id=${this.appId}&redirect_uri=${this.redirectUri}&scope=${this.scopes}`;
+  getAuthorizeUrl(state?: string): string {
+    const url = `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.authorize}?response_type=code&client_id=${this.appId}&redirect_uri=${this.redirectUri}&scope=${this.OAUTH_SCOPES}`;
+    return state ? `${url}&state=${state}` : url;
   }
 
   async authorizeUser(
@@ -213,7 +220,7 @@ export class OAuthService {
   ): Promise<jose.JWTVerifyResult & jose.ResolvedKey> {
     // Check validity of the JWTs received
     const result = await jose.jwtVerify(token, this._JWKS, {
-      issuer: this.issuer,
+      issuer: this.EXPECTED_ISSUER,
       audience: [this.appId],
     });
 
@@ -375,6 +382,14 @@ export class OAuthService {
       this.ENDPOINTS.tenantUsers
     );
     return response.data;
+  }
+
+  /**
+   * This method operates on the ID token and expects sub to be TenantUserId
+   * @returns
+   */
+  currentUserId(): string | undefined {
+    return this._idToken?.sub;
   }
 
   async currentUser(): Promise<AuthTenantUserResponseDto> {

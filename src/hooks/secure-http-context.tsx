@@ -25,7 +25,8 @@ const useSecureContext = () => useContext(SecureContext);
 const NblocksSecureContextProvider: FunctionComponent<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const { apiHost, graphqlPath, debug, appId, authLegacy } = useConfig();
+  const config = useConfig();
+  const { apiHost, graphqlPath, debug, appId, authLegacy } = config;
 
   const [authenticated, setAuthenticated] = useState<boolean>(true); // Optimistic approach
   const [authHttpClient] = useState<AuthHttpClient>(
@@ -33,7 +34,7 @@ const NblocksSecureContextProvider: FunctionComponent<{
   );
   const [authService] = useState<AuthService | OAuthService>(
     !authLegacy
-      ? new OAuthService(authHttpClient.httpClient, debug)
+      ? new OAuthService(authHttpClient.httpClient, debug, config)
       : new AuthService(authHttpClient.httpClient, debug)
   );
   const [authApolloClient] = useState<AuthApolloClient>(
