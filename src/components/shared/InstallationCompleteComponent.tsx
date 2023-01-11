@@ -56,7 +56,9 @@ const InstallationCompleteComponent: FunctionComponent<{}> = ({}) => {
             Configure your app
           </LinkComponent>
           <LinkComponent
-            to={"https://nebulr-group.github.io/nblocks-docs/docs/quickstart"}
+            to={
+              "https://nebulr-group.github.io/nblocks-docs/docs/essentials/quickstart"
+            }
             type={"primary"}
             target={"_blank"}
             nativeBehavior={true}

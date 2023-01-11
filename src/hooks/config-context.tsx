@@ -25,8 +25,8 @@ const initialContext: LibConfig = {
     },
   },
   signup: false,
-  oAuthBaseURI: "http://localhost:3070",
-  oauthRedirectUri: "http://localhost:8081/auth/login",
+  oAuthBaseURI: "https://auth.nblocks.cloud",
+  oauthRedirectUri: "http://localhost:8080/auth/login",
 };
 
 const Context = React.createContext<LibConfig>(initialContext);
@@ -44,7 +44,10 @@ const NblocksConfigContextProvider: FunctionComponent<{
 
   // Switch to registered backendless domain
   if (config?.backendLess) {
-    config.apiHost = "http://localhost:3000"; //TODO change to "https://backendless.nblocks.cloud";
+    config.apiHost =
+      config.apiHost === "http://localhost:3000"
+        ? "https://backendless.nblocks.cloud"
+        : config.apiHost;
     if (!config.appId) {
       throw new Error("You must provide App id when running with backendless");
     }

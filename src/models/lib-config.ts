@@ -11,7 +11,7 @@ export interface LibConfig {
   // Must be set if running with backendless
   appId?: string;
 
-  // Switches between the legacy authentication and OAuth 2.0 JWT Bearer Tokens
+  // Switches between the legacy authentication and OAuth 2.0 JWT Bearer Tokens. Defaults to true
   authLegacy: boolean;
 
   // URL to Nblocks Auth API. Defaults UI url + /auth/login. You should not change this manually unless your running tests
