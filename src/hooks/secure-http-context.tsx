@@ -9,9 +9,10 @@ import { AuthHttpClient } from "../utils/AuthHttpClient";
 import { AuthApolloClient } from "../utils/AuthApolloClient";
 import { ApolloProvider } from "@apollo/client";
 import { useConfig } from "./config-context";
+import { OAuthService } from "../utils/OAuthService";
 
 const initialSecurityContext = {
-  authService: {} as AuthService,
+  authService: {} as AuthService | OAuthService,
   authHttpClient: {} as AuthHttpClient,
   authApolloClient: {} as AuthApolloClient,
   authenticated: true, // Optimistic approach
@@ -24,16 +25,20 @@ const useSecureContext = () => useContext(SecureContext);
 const NblocksSecureContextProvider: FunctionComponent<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const { apiHost, graphqlPath, debug } = useConfig();
+  const config = useConfig();
+  const { apiHost, graphqlPath, debug, appId, authLegacy } = config;
+
   const [authenticated, setAuthenticated] = useState<boolean>(true); // Optimistic approach
   const [authHttpClient] = useState<AuthHttpClient>(
-    new AuthHttpClient(apiHost, debug)
+    new AuthHttpClient(apiHost, debug, appId)
   );
-  const [authService] = useState<AuthService>(
-    new AuthService(authHttpClient.httpClient, debug)
+  const [authService] = useState<AuthService | OAuthService>(
+    !authLegacy
+      ? new OAuthService(authHttpClient.httpClient, debug, config)
+      : new AuthService(authHttpClient.httpClient, debug)
   );
   const [authApolloClient] = useState<AuthApolloClient>(
-    new AuthApolloClient(`${apiHost}${graphqlPath}`, debug)
+    new AuthApolloClient(`${apiHost}${graphqlPath}`, debug, appId)
   );
 
   const didAuthenticate = (value: boolean) => {

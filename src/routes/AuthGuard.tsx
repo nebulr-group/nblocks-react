@@ -2,6 +2,7 @@ import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useConfig } from "../hooks/config-context";
 import { useSecureContext } from "../hooks/secure-http-context";
+import { OAuthService } from "../utils/OAuthService";
 import { RouteConfig } from "./AuthRoutes";
 
 /**
@@ -9,8 +10,8 @@ import { RouteConfig } from "./AuthRoutes";
  * If not, the user will be redirected to login screen.
  */
 function NBAuthGuard({ children }: { children: React.ReactElement }) {
-  const { authenticated } = useSecureContext();
-  const { debug } = useConfig();
+  const { authenticated, authService } = useSecureContext();
+  const { debug, authLegacy } = useConfig();
   let location = useLocation();
 
   if (!authenticated) {
@@ -21,13 +22,18 @@ function NBAuthGuard({ children }: { children: React.ReactElement }) {
     if (debug) {
       console.log("Authguard redirecting user to login");
     }
-    return (
-      <Navigate
-        to={RouteConfig.login.LoginScreen}
-        state={{ from: location }}
-        replace
-      />
-    );
+    if (authLegacy) {
+      return (
+        <Navigate
+          to={RouteConfig.login.LoginScreen}
+          state={{ from: location }}
+          replace
+        />
+      );
+    } else {
+      const oauthUrl = (authService as OAuthService).getAuthorizeUrl();
+      window.location.replace(oauthUrl);
+    }
   }
 
   return children;

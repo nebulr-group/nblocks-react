@@ -2,18 +2,22 @@ import axios, { AxiosError, AxiosInstance } from "axios";
 import { ForbiddenError } from "./errors/ForbiddenError";
 import { UnauthenticatedError } from "./errors/UnauthenticatedError";
 import { AuthService } from "./AuthService";
+import { OAuthService } from "./OAuthService";
 
 export class AuthHttpClient {
   readonly httpClient: AxiosInstance;
 
   private readonly BASE_URL: string;
   private readonly debug: boolean;
+  private readonly appId?: string; // App id should only be present when running backendless
+
   private unauthenticatedCallback = () => {};
   private forbiddenCallback = () => {};
 
-  constructor(baseUrl: string, debug: boolean) {
+  constructor(baseUrl: string, debug: boolean, appId?: string) {
     this.BASE_URL = baseUrl;
     this.debug = debug;
+    this.appId = appId;
 
     this.httpClient = axios.create({
       baseURL: this.BASE_URL,
@@ -31,26 +35,40 @@ export class AuthHttpClient {
 
   private _configureHttpClient(httpClient: AxiosInstance): void {
     const debug = this.debug;
+    const appId = this.appId;
 
     httpClient.interceptors.request.use(async (request) => {
-      const [authToken, mfaToken, tenantUserId] = await Promise.all([
-        AuthService.getAuthToken(),
-        AuthService.getMfaToken(),
-        AuthService.getTenantUserId(),
-      ]);
+      const [authToken, mfaToken, tenantUserId, oAuthToken] = await Promise.all(
+        [
+          AuthService.getAuthToken(),
+          AuthService.getMfaToken(),
+          AuthService.getTenantUserId(),
+          OAuthService.getAccessToken(),
+        ]
+      );
 
-      if (authToken !== null) {
+      if (oAuthToken !== null && authToken === null) {
+        if (request.headers) {
+          request.headers["Authorization"] = `Bearer ${oAuthToken}`;
+        }
+      }
+
+      if (authToken !== null && oAuthToken === null) {
         if (request.headers)
           request.headers["x-auth-token"] = mfaToken
             ? `${authToken}_${mfaToken}`
             : authToken;
       }
 
-      if (tenantUserId !== null) {
+      if (tenantUserId !== null && oAuthToken === null) {
         if (request.headers) request.headers["x-tenant-user-id"] = tenantUserId;
       }
 
-      if (this.debug) {
+      if (appId !== null) {
+        if (request.headers) request.headers["x-app-id"] = appId;
+      }
+
+      if (debug) {
         console.log(
           `[HTTP request]: ${request.method?.toUpperCase()} ${
             request.baseURL

@@ -6,15 +6,28 @@ import { NblocksButton } from "../../shared/NblocksButton";
 import { InputComponent } from "../../shared/InputComponent";
 import { TextComponent } from "../../shared/TextComponent";
 import { useConfig } from "../../../hooks/config-context";
-import { MfaState } from "../../../utils/AuthService";
+import { AuthService, MfaState } from "../../../utils/AuthService";
 import { AlertComponent } from "../../shared/AlertComponent";
 import { UnauthenticatedError } from "../../../utils/errors/UnauthenticatedError";
+import { OAuthService } from "../../../utils/OAuthService";
+
+type OauthProps = {
+  clientId: string;
+  scope: string;
+  redirectUri: string;
+  responseType: string;
+  state?: string | null;
+};
 
 type ComponentProps = {
+  oauthProps?: OauthProps;
   didLogin: (mfa: MfaState) => void;
 };
 
-const LoginComponent: FunctionComponent<ComponentProps> = ({ didLogin }) => {
+const LoginComponent: FunctionComponent<ComponentProps> = ({
+  didLogin,
+  oauthProps,
+}) => {
   const { authService } = useSecureContext();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -26,9 +39,24 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({ didLogin }) => {
     event.preventDefault();
     setIsLoading(true);
     try {
-      const response = await authService.authenticate(username, password);
-      didLogin(response.mfaState);
-      setIsLoading(false);
+      if (!!oauthProps && authService instanceof OAuthService) {
+        await authService.authorizeUser(
+          username,
+          password,
+          oauthProps.scope,
+          oauthProps.clientId,
+          oauthProps.redirectUri,
+          oauthProps.responseType
+        );
+        setIsLoading(false);
+        didLogin("DISABLED");
+      }
+
+      if (authService instanceof AuthService) {
+        const response = await authService.authenticate(username, password);
+        setIsLoading(false);
+        didLogin(response.mfaState);
+      }
     } catch (error) {
       if (error instanceof UnauthenticatedError) {
         setIsLoading(false);
@@ -117,3 +145,4 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({ didLogin }) => {
 };
 
 export { LoginComponent };
+export type { OauthProps };

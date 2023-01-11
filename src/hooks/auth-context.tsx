@@ -8,6 +8,7 @@ import { AuthService } from "../utils/AuthService";
 import { CurrentUser } from "../models/current-user.model";
 import { useSecureContext } from "./secure-http-context";
 import { useConfig } from "./config-context";
+import { OAuthService } from "../utils/OAuthService";
 
 const initialAuthContext = {
   currentUser: new CurrentUser(),
@@ -39,6 +40,7 @@ const NblocksAuthContextProvider: FunctionComponent<NblocksContextProps> = ({
   const logout = async () => {
     await authApolloClient.client.resetStore();
     AuthService.clearAuthStorage();
+    OAuthService.clearAuthStorage();
     didAuthenticate(false);
     log(`Did logout`);
   };

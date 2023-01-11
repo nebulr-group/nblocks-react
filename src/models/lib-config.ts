@@ -5,6 +5,21 @@ export interface LibConfig {
   // Output debug messages from plugin
   debug: boolean;
 
+  // Switch for backendless use case.
+  backendLess: boolean;
+
+  // Must be set if running with backendless
+  appId?: string;
+
+  // Switches between the legacy authentication and OAuth 2.0 JWT Bearer Tokens. Defaults to true
+  authLegacy: boolean;
+
+  // URL to Nblocks Auth API. Defaults UI url + /auth/login. You should not change this manually unless your running tests
+  oAuthBaseURI: string;
+
+  // Redirect URI for OAuth 2.0 flow. Defaults to   You should not change this manually unless your running tests
+  oauthRedirectUri: string;
+
   // Allow for simple signup. Part of the developer onboarding and app configuration. Should be disabled before deploying. This property might also be renamed soon.
   signup: boolean;
 
