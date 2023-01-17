@@ -48,6 +48,7 @@ const NblocksConfigContextProvider: FunctionComponent<{
       config.apiHost === "http://localhost:3000"
         ? "https://backendless.nblocks.cloud"
         : config.apiHost;
+    config.appId = localStorage.getItem("NB_APP_ID") as string;
     if (!config.appId) {
       throw new Error("You must provide App id when running with backendless");
     }
