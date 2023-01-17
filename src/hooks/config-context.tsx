@@ -29,6 +29,8 @@ const initialContext: LibConfig = {
   oauthRedirectUri: "http://localhost:8080/auth/login",
 };
 
+const APP_ID_KEY = "NB_APP_ID";
+
 const Context = React.createContext<LibConfig>(initialContext);
 const useConfig = () => useContext(Context);
 
@@ -48,6 +50,7 @@ const NblocksConfigContextProvider: FunctionComponent<{
       config.apiHost === "http://localhost:3000"
         ? "https://backendless.nblocks.cloud"
         : config.apiHost;
+    config.appId = localStorage.getItem(APP_ID_KEY) as string;
     if (!config.appId) {
       throw new Error("You must provide App id when running with backendless");
     }
