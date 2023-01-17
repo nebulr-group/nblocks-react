@@ -49,19 +49,19 @@ export function LoginScreen() {
     switch (mfa) {
       case "REQUIRED":
         log("Navigating to Require MFA screen");
-        navigate(RouteConfig.mfa.RequireMfaScreen);
+        navigate(RouteConfig.mfa.requireMfaScreen);
         break;
 
       case "SETUP":
         log("Navigating to Setup MFA screen");
-        navigate(RouteConfig.mfa.SetupMfaScreen);
+        navigate(RouteConfig.mfa.setupMfaScreen);
         break;
 
       case "DISABLED":
       default:
         if (authLegacy) {
           log("Navigating to Choose user screen");
-          navigate(RouteConfig.login.ChooseUserScreen);
+          navigate(RouteConfig.login.chooseUserScreen);
         } else {
           //TODO this is to simulate what ChooseUserScreen does.
           //When figuring out how to work with MFA and multi tenancy, this should be removed

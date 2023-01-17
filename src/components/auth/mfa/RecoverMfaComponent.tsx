@@ -77,7 +77,7 @@ const RecoverMfaComponent: FunctionComponent<ComponentProps> = ({
       </form>
       <div className="mt-8">
         <LinkComponent
-          to={RouteConfig.login.LoginScreen}
+          to={RouteConfig.login.loginScreen}
           type="primary"
           className="font-semibold"
           size="sm"

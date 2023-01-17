@@ -11,5 +11,5 @@ export function LogoutScreen() {
     logout();
   }, []);
 
-  return <Navigate to={RouteConfig.login.LoginScreen} replace={true} />;
+  return <Navigate to={RouteConfig.login.loginScreen} replace={true} />;
 }

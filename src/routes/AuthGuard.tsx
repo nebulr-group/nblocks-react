@@ -25,7 +25,7 @@ function NBAuthGuard({ children }: { children: React.ReactElement }) {
     if (authLegacy) {
       return (
         <Navigate
-          to={RouteConfig.login.LoginScreen}
+          to={RouteConfig.login.loginScreen}
           state={{ from: location }}
           replace
         />

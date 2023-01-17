@@ -37,7 +37,7 @@ const SetupMfaRecoverCodeComponent: FunctionComponent<ComponentProps> = ({
 
       <div className="mt-8 text-center">
         <LinkComponent
-          to={RouteConfig.login.LoginScreen}
+          to={RouteConfig.login.loginScreen}
           type="secondary"
           className="font-semibold"
           size="sm"

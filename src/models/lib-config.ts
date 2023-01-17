@@ -17,6 +17,9 @@ export interface LibConfig {
   // URL to Nblocks Auth API. Defaults UI url + /auth/login. You should not change this manually unless your running tests
   oAuthBaseURI: string;
 
+  // URL to Nblocks account API. You should not change this manually unless your running tests
+  accountApiBaseUri: string;
+
   // Redirect URI for OAuth 2.0 flow. Defaults to   You should not change this manually unless your running tests
   oauthRedirectUri: string;
 

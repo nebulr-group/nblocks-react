@@ -2,6 +2,10 @@ import React, { FunctionComponent, useContext } from "react";
 import { LibConfig } from "../models/lib-config";
 import { useApp } from "./app-context";
 
+const backendlessApi = "https://backendless-stage.nblocks.cloud";
+const authApi = "https://auth-stage.nblocks.cloud";
+const accountApi = "https://account-api-stage.nebulr-core.com";
+
 const initialContext: LibConfig = {
   devMode: false,
   backendLess: false,
@@ -25,8 +29,9 @@ const initialContext: LibConfig = {
     },
   },
   signup: false,
-  oAuthBaseURI: "https://auth.nblocks.cloud",
+  oAuthBaseURI: authApi,
   oauthRedirectUri: "http://localhost:8080/auth/login",
+  accountApiBaseUri: accountApi,
 };
 
 const Context = React.createContext<LibConfig>(initialContext);
@@ -44,10 +49,7 @@ const NblocksConfigContextProvider: FunctionComponent<{
 
   // Switch to registered backendless domain
   if (config?.backendLess) {
-    config.apiHost =
-      config.apiHost === "http://localhost:3000"
-        ? "https://backendless.nblocks.cloud"
-        : config.apiHost;
+    initialContext.apiHost = backendlessApi;
     if (!config.appId) {
       throw new Error("You must provide App id when running with backendless");
     }

@@ -137,7 +137,7 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
       <div className="text-center mt-8">
         <TextComponent size="sm">Not seeing your workspace?</TextComponent>
         <LinkComponent
-          to={RouteConfig.login.LoginScreen}
+          to={RouteConfig.login.loginScreen}
           type="primary"
           size="sm"
           className="font-semibold"

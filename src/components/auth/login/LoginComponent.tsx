@@ -104,7 +104,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
         />
         <div className="flex justify-end">
           <LinkComponent
-            to={RouteConfig.password.ResetPasswordScreen}
+            to={RouteConfig.password.resetPasswordScreen}
             type="primary"
             size="sm"
             className="font-semibold"
@@ -130,7 +130,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
           <TextComponent size="sm">
             Don't have an account?&nbsp;
             <LinkComponent
-              to={RouteConfig.setup.signupScreen}
+              to={RouteConfig.tenant.signupScreen}
               type="primary"
               size="sm"
               className="font-semibold"

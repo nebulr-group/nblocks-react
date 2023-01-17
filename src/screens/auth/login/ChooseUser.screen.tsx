@@ -22,9 +22,9 @@ export function ChooseUserScreen() {
   const onDidSelectUser = async (user: AuthTenantUserResponseDto) => {
     if (!user.onboarded) {
       log(
-        `User did authenticate but is not onboarded. Redirecting to user onboarding: ${RouteConfig.onboard.OnboardUserScreen}`
+        `User did authenticate but is not onboarded. Redirecting to user onboarding: ${RouteConfig.onboard.onboardUserScreen}`
       );
-      navigate(RouteConfig.onboard.OnboardUserScreen, {
+      navigate(RouteConfig.onboard.onboardUserScreen, {
         state: { targetUrl: targetUrl },
       });
     } else {

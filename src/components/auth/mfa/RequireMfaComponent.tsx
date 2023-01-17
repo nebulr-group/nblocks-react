@@ -74,7 +74,7 @@ const RequireMfaComponent: FunctionComponent<ComponentProps> = ({
         {!setupMode && (
           <div className="flex justify-end">
             <LinkComponent
-              to={RouteConfig.mfa.RecoverMfaScreen}
+              to={RouteConfig.mfa.recoverMfaScreen}
               type="primary"
               className="font-semibold"
               size="sm"
@@ -98,7 +98,7 @@ const RequireMfaComponent: FunctionComponent<ComponentProps> = ({
       </form>
       <div className="mt-8">
         <LinkComponent
-          to={RouteConfig.login.LoginScreen}
+          to={RouteConfig.login.loginScreen}
           type="secondary"
           size="sm"
           className="font-semibold"

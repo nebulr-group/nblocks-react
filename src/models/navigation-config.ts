@@ -1,28 +1,28 @@
 export interface NavigationConfig {
   login: {
-    LoginScreen: string;
-    LogoutScreen: string;
-    ChooseUserScreen: string;
+    loginScreen: string;
+    logoutScreen: string;
+    chooseUserScreen: string;
   };
-
   password: {
-    ResetPasswordScreen: string;
-    SetPasswordScreen: string;
+    resetPasswordScreen: string;
+    setPasswordScreen: string;
   };
   mfa: {
-    RequireMfaScreen: string;
-    RecoverMfaScreen: string;
-    SetupMfaScreen: string;
+    requireMfaScreen: string;
+    recoverMfaScreen: string;
+    setupMfaScreen: string;
   };
   onboard: {
-    OnboardUserScreen: string;
-    OnboardTenantScreen: string;
+    onboardUserScreen: string;
+    onboardTenantScreen: string;
   };
   setup: {
     signupScreen: string;
     configScreen: string;
   };
   tenant: {
+    signupScreen: string;
     planScreen: string;
     payment: string;
     paymentCancel: string;

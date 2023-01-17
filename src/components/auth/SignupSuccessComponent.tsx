@@ -1,10 +1,10 @@
 import React, { FunctionComponent } from "react";
-import { RouteConfig } from "../../../routes/AuthRoutes";
-import { LinkComponent } from "../../shared/LinkComponent";
+import { RouteConfig } from "../../routes/AuthRoutes";
+import { LinkComponent } from "../shared/LinkComponent";
 
 type ComponentProps = {};
 
-const SetPasswordSuccessComponent: FunctionComponent<ComponentProps> = ({}) => {
+const SignupSuccessComponent: FunctionComponent<ComponentProps> = ({}) => {
   return (
     <>
       <div>
@@ -21,4 +21,4 @@ const SetPasswordSuccessComponent: FunctionComponent<ComponentProps> = ({}) => {
   );
 };
 
-export { SetPasswordSuccessComponent };
+export { SignupSuccessComponent };

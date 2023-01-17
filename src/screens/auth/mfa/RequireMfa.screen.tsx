@@ -9,7 +9,7 @@ const RequireMfaScreen: FunctionComponent<{}> = () => {
 
   // Callback when the Component completed the heavylifting
   const onDidCommitMfaCode = () => {
-    navigate(RouteConfig.login.ChooseUserScreen);
+    navigate(RouteConfig.login.chooseUserScreen);
   };
 
   return (

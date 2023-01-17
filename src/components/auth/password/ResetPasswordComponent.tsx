@@ -73,7 +73,7 @@ const ResetPasswordComponent: FunctionComponent<ComponentProps> = ({
       </form>
       <div className="mt-8">
         <LinkComponent
-          to={RouteConfig.login.LoginScreen}
+          to={RouteConfig.login.loginScreen}
           type={"secondary"}
           size="sm"
           className="font-semibold flex items-center"

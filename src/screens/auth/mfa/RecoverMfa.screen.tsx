@@ -8,7 +8,7 @@ const RecoverMfaScreen: FunctionComponent<{}> = () => {
   const navigate = useNavigate();
 
   const onDidRecoverMfaCode = () => {
-    navigate(RouteConfig.mfa.SetupMfaScreen);
+    navigate(RouteConfig.mfa.setupMfaScreen);
   };
 
   return (

@@ -66,7 +66,7 @@ const InstallationCompleteComponent: FunctionComponent<{}> = ({}) => {
             Read the documentation
           </LinkComponent>
           <LinkComponent
-            to={RouteConfig.login.LogoutScreen}
+            to={RouteConfig.login.logoutScreen}
             type={"primary"}
             nativeBehavior={true}
           >

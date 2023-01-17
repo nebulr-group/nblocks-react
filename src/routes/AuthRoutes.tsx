@@ -9,32 +9,34 @@ import { RequireMfaScreen } from "../screens/auth/mfa/RequireMfa.screen";
 import { RecoverMfaScreen } from "../screens/auth/mfa/RecoverMfa.screen";
 import { SetupMfaScreen } from "../screens/auth/mfa/SetupMfa.screen";
 import { NavigationConfig } from "../models/navigation-config";
+import { SignupScreen } from "../screens/auth/Signup.screen";
 
 //TODO this should be moved to a hook or somewhere more generic
 const RouteConfig: NavigationConfig = {
   login: {
-    LoginScreen: "/auth/login",
-    LogoutScreen: "/auth/logout",
-    ChooseUserScreen: "/auth/choose-user",
+    loginScreen: "/auth/login",
+    logoutScreen: "/auth/logout",
+    chooseUserScreen: "/auth/choose-user",
   },
   password: {
-    ResetPasswordScreen: "/auth/reset-password",
-    SetPasswordScreen: "/auth/set-password/",
+    resetPasswordScreen: "/auth/reset-password",
+    setPasswordScreen: "/auth/set-password/",
   },
   mfa: {
-    RequireMfaScreen: "/auth/mfa/required",
-    RecoverMfaScreen: "/auth/mfa/recover",
-    SetupMfaScreen: "/auth/mfa/setup",
+    requireMfaScreen: "/auth/mfa/required",
+    recoverMfaScreen: "/auth/mfa/recover",
+    setupMfaScreen: "/auth/mfa/setup",
   },
   onboard: {
-    OnboardUserScreen: "/onboard/user",
-    OnboardTenantScreen: "/onboard/tenant",
+    onboardUserScreen: "/onboard/user",
+    onboardTenantScreen: "/onboard/tenant",
   },
   setup: {
     signupScreen: "/setup/signup",
     configScreen: "/setup/config",
   },
   tenant: {
+    signupScreen: "/auth/signup",
     planScreen: "/tenant/plan",
     payment: "/tenant/payment",
     paymentCancel: "/tenant/payment/cancel",
@@ -57,6 +59,8 @@ const AuthRoutes = () => {
       <Route path="reset-password" element={<ResetPasswordScreen />}></Route>
       <Route path="set-password/:token" element={<SetPasswordScreen />}></Route>
       <Route path="choose-user" element={<ChooseUserScreen />}></Route>
+      <Route path="signup/:planName" element={<SignupScreen />}></Route>
+      <Route path="signup/" element={<SignupScreen />}></Route>
       <Route path="mfa">
         <Route path="required" element={<RequireMfaScreen />}></Route>
         <Route path="recover" element={<RecoverMfaScreen />}></Route>
@@ -64,7 +68,7 @@ const AuthRoutes = () => {
       </Route>
       <Route
         path="*"
-        element={<Navigate to={RouteConfig.login.LoginScreen} replace={true} />}
+        element={<Navigate to={RouteConfig.login.loginScreen} replace={true} />}
       />
     </Routes>
   );

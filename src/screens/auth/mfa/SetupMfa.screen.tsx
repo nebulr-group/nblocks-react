@@ -38,7 +38,7 @@ const SetupMfaScreen: FunctionComponent<{}> = () => {
 
       case 3:
       default:
-        return <Navigate to={RouteConfig.login.ChooseUserScreen} />;
+        return <Navigate to={RouteConfig.login.chooseUserScreen} />;
     }
   };
 

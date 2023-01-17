@@ -9,8 +9,8 @@ function App() {
           debug: true,
           devMode: true,
           backendLess: true,
+          apiHost: "http://localhost:3080",
           appId: "633402fdf28d8e00252948b1",
-          authLegacy: false,
         }}
       >
         <InstallationCompleteComponent />

@@ -11,7 +11,7 @@ const ResetPasswordSuccessComponent: FunctionComponent<
   return (
     <>
       <LinkComponent
-        to={RouteConfig.login.LoginScreen}
+        to={RouteConfig.login.loginScreen}
         type={"secondary"}
         size="sm"
         className="font-semibold flex items-center"

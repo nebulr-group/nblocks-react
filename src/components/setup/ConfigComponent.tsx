@@ -49,7 +49,7 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
 
   const buildLocalLink = (planName: string) => {
     const appUiURL = data?.getAppConfig.uiUrl;
-    const signupRoute = RouteConfig.setup.signupScreen;
+    const signupRoute = RouteConfig.tenant.signupScreen;
     return `${appUiURL}${signupRoute}/${planName}`;
   };
 
