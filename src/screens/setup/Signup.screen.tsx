@@ -27,9 +27,13 @@ const SignupScreen: FunctionComponent<{}> = () => {
 
   return (
     <AuthLayoutWrapperComponent
-      heading={didSignup ? "Your new app" : "Create an app"}
+      heading={
+        didSignup ? "A new app has been created" : "Create your Nblocks app"
+      }
       subHeading={
-        didSignup ? `These are your new credentials. Save them for later` : ""
+        didSignup
+          ? `These are your new credentials. Update your configs and create your first tenant.`
+          : ""
       }
     >
       {renderChild()}

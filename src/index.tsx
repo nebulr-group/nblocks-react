@@ -17,6 +17,7 @@ import { NBAuthGuard } from "./routes/AuthGuard";
 import { NBPlanAccessControlGuard } from "./routes/PlanAccessControlGuard";
 import { NBAccessControlGuard } from "./routes/AccessControlGuard";
 import { NBRoleAccessControlGuard } from "./routes/RoleAccessControlGuard";
+import { SpaRouter } from "./routes/SpaRouter";
 
 export {
   NblocksProvider,
@@ -30,6 +31,7 @@ export {
   NBPlanAccessControlGuard,
   NBRoleAccessControlGuard,
   NBAccessControlGuard,
+  SpaRouter,
   AuthRoutes,
   OnboardRoutes,
   SetupRoutes,

@@ -23,8 +23,11 @@ export interface LibConfig {
   // Redirect URI for OAuth 2.0 flow. Defaults to   You should not change this manually unless your running tests
   oauthRedirectUri: string;
 
-  // Allow for simple signup. Part of the developer onboarding and app configuration. Should be disabled before deploying. This property might also be renamed soon.
-  signup: boolean;
+  // Allow for simple app signup. Part of the developer onboarding and app configuration. Should be disabled before deploying
+  appSignup: boolean;
+
+  // Allow for simple tenant signup. Part of the developer onboarding and app configuration. Should be disabled before deploying
+  tenantSignup: boolean;
 
   // The plugin will redirect to this route after a succesful login or completed onboarding. Defaults to `/`
   handoverRoute: string;

@@ -1,10 +1,12 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
+import { useConfig } from "../hooks/config-context";
 import { ConfigScreen } from "../screens/setup/Config.screen";
 import { SignupScreen } from "../screens/setup/Signup.screen";
 import { NBAuthGuard } from "./AuthGuard";
 
 const SetupRoutes = () => {
+  const { appSignup } = useConfig();
   return (
     <Routes>
       <Route
@@ -15,8 +17,7 @@ const SetupRoutes = () => {
           </NBAuthGuard>
         }
       ></Route>
-      <Route path="signup/:planName" element={<SignupScreen />}></Route>
-      <Route path="signup/" element={<SignupScreen />}></Route>
+      {appSignup && <Route path="signup/" element={<SignupScreen />}></Route>}
     </Routes>
   );
 };
