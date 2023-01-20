@@ -12,15 +12,7 @@ import {
   useConfig,
 } from "../../hooks/config-context";
 import { LibConfig } from "../../models/lib-config";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { NBAuthGuard } from "../../routes/AuthGuard";
-import { AuthRoutes } from "../../routes/AuthRoutes";
-import { OnboardRoutes } from "../../routes/OnboardRoutes";
-import { SetupRoutes } from "../../routes/SetupRoutes";
-import { UserRoutes } from "../../routes/UserRoutes";
-import { BrandExpoScreen } from "../../screens/BrandExpo.screen";
-import { GraphqlExpoScreen } from "../../screens/GraphqlExpo.screen";
-import { TenantRoutes } from "../../routes/TenantRoutes";
+import { SpaRouter } from "../../routes/SpaRouter";
 
 /**
  * Wrap your code into this Provider to get access to the Nblocks world
@@ -50,7 +42,7 @@ const NblocksProvider: FunctionComponent<{
               styleOverrides={styleOverrides}
               colorOverrides={colorOverrides}
             >
-              <DevRouterWrapper>{children}</DevRouterWrapper>
+              <ChildrenWrapper>{children}</ChildrenWrapper>
             </NblocksThemeContextProvider>
           </NblocksAppContextProvider>
         </NblocksAuthContextProvider>
@@ -64,7 +56,7 @@ const NblocksProvider: FunctionComponent<{
  * In Spa mode, the children will be restricted using AuthGuard
  * @returns
  */
-const DevRouterWrapper: FunctionComponent<{
+const ChildrenWrapper: FunctionComponent<{
   children: JSX.Element;
 }> = ({ children }) => {
   const { debug, spa } = useConfig();
@@ -73,28 +65,7 @@ const DevRouterWrapper: FunctionComponent<{
     if (debug) {
       console.log("DevRouterWrapper: Resorting to built-in Routing");
     }
-    return (
-      <BrowserRouter>
-        <Routes>
-          <Route path="/auth/*" element={<AuthRoutes />} />
-          <Route path="/onboard/*" element={<OnboardRoutes />} />
-          <Route path="/setup/*" element={<SetupRoutes />} />
-          <Route path="/tenant/*" element={<TenantRoutes />} />
-          <Route
-            path="/user/*"
-            element={
-              <NBAuthGuard>
-                <UserRoutes />
-              </NBAuthGuard>
-            }
-          />
-          <Route path="/brandExpo" element={<BrandExpoScreen />} />
-          <Route path="/graphqlExpo" element={<GraphqlExpoScreen />} />
-          <Route path="/" element={<NBAuthGuard>{children}</NBAuthGuard>} />
-          <Route path="*" element={<Navigate to={"/"} replace={true} />} />
-        </Routes>
-      </BrowserRouter>
-    );
+    return <SpaRouter>{children}</SpaRouter>;
   } else {
     return children;
   }

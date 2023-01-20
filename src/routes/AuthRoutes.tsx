@@ -10,6 +10,7 @@ import { RecoverMfaScreen } from "../screens/auth/mfa/RecoverMfa.screen";
 import { SetupMfaScreen } from "../screens/auth/mfa/SetupMfa.screen";
 import { NavigationConfig } from "../models/navigation-config";
 import { SignupScreen } from "../screens/auth/Signup.screen";
+import { useConfig } from "../hooks/config-context";
 
 //TODO this should be moved to a hook or somewhere more generic
 const RouteConfig: NavigationConfig = {
@@ -52,6 +53,7 @@ const RouteConfig: NavigationConfig = {
  * @returns
  */
 const AuthRoutes = () => {
+  const { tenantSignup } = useConfig();
   return (
     <Routes>
       <Route path="login" element={<LoginScreen />}></Route>
@@ -59,8 +61,12 @@ const AuthRoutes = () => {
       <Route path="reset-password" element={<ResetPasswordScreen />}></Route>
       <Route path="set-password/:token" element={<SetPasswordScreen />}></Route>
       <Route path="choose-user" element={<ChooseUserScreen />}></Route>
-      <Route path="signup/:planName" element={<SignupScreen />}></Route>
-      <Route path="signup/" element={<SignupScreen />}></Route>
+      {tenantSignup && (
+        <Route path="signup/:planName" element={<SignupScreen />}></Route>
+      )}
+      {tenantSignup && (
+        <Route path="signup/" element={<SignupScreen />}></Route>
+      )}
       <Route path="mfa">
         <Route path="required" element={<RequireMfaScreen />}></Route>
         <Route path="recover" element={<RecoverMfaScreen />}></Route>

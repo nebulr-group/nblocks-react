@@ -28,7 +28,8 @@ const initialContext: LibConfig = {
       facebook: false,
     },
   },
-  signup: false,
+  tenantSignup: false,
+  appSignup: false,
   oAuthBaseURI: authApi,
   oauthRedirectUri: "http://localhost:8080/auth/login",
   accountApiBaseUri: accountApi,
@@ -58,7 +59,8 @@ const NblocksConfigContextProvider: FunctionComponent<{
   // Set some sensible defaults for devMode
   if (config?.devMode) {
     initialContext.spa = true;
-    initialContext.signup = true;
+    initialContext.tenantSignup = true;
+    initialContext.appSignup = true;
     initialContext.passwordValidation = false;
   }
 

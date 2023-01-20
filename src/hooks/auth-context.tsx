@@ -74,12 +74,13 @@ const NblocksAuthContextProvider: FunctionComponent<NblocksContextProps> = ({
     }
   };
 
-  const refreshCurrentUser = () => {
-    log("Will refresh currentUser");
-    authService.currentUser().then((user) => {
+  const refreshCurrentUser = async () => {
+    if (await AuthService.hasFullAuthContext()) {
+      log("Will refresh currentUser");
+      const user = await authService.currentUser();
       setCurrentUser(new CurrentUser(user));
       log("Did refresh currentUser");
-    });
+    }
   };
 
   useEffect(() => {

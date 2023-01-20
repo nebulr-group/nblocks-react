@@ -96,7 +96,7 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
           <LinkComponent
             type={"primary"}
             to={
-              "https://nebulr-group.github.io/nblocks-docs/docs/examples/first-branding"
+              "https://nebulr-group.github.io/nblocks-docs/docs/essentials/first-branding"
             }
             nativeBehavior={true}
             className={"font-bold inline-block"}

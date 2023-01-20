@@ -29,7 +29,7 @@ export function ChooseUserScreen() {
       });
     } else {
       const query = await tenantQuery();
-      if (shouldShowChoosePlanScreen(query.data?.getTenant)) {
+      if (shouldShowChoosePlanScreen(user, query.data?.getTenant)) {
         log(
           `User did authenticate but tenant is required to pick a plan or setup payment. Redirecting to tenant plan selection: ${RouteConfig.tenant.planScreen}`
         );
@@ -43,8 +43,9 @@ export function ChooseUserScreen() {
     }
   };
 
-  const shouldShowChoosePlanScreen = (tenant?: Tenant) => {
-    return !tenant?.plan || tenant?.paymentsRequired;
+  // This view should be shown to Owners and in case the tenant needs to setup payment
+  const shouldShowChoosePlanScreen = (user: AuthTenantUserResponseDto, tenant?: Tenant) => {
+    return user.role === 'OWNER' && (!tenant?.plan || tenant?.paymentsRequired);
   };
 
   const log = (msg: string) => {

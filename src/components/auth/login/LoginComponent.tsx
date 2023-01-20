@@ -33,7 +33,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isloading, setIsLoading] = useState(false);
-  const { signup } = useConfig();
+  const { tenantSignup } = useConfig();
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -125,7 +125,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
           </NblocksButton>
         </div>
       </form>
-      {signup && (
+      {tenantSignup && (
         <div className="mt-8">
           <TextComponent size="sm">
             Don't have an account?&nbsp;

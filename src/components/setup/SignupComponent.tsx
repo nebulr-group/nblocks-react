@@ -10,7 +10,7 @@ import { TextComponent } from "../shared/TextComponent";
 
 type CreateAppResponse = {
   apiKey: string;
-  app: Record<string, unknown>;
+  app: Record<string, unknown> & { id: string };
 };
 
 type ComponentProps = {
@@ -91,17 +91,14 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({ didSignup }) => {
         </div>
       </form>
       <div className="mt-8">
-        <TextComponent size="sm">
-          Already have an app?&nbsp;
-          <LinkComponent
-            to={RouteConfig.login.loginScreen}
-            type="primary"
-            size="sm"
-            className="font-semibold"
-          >
-            Log in
-          </LinkComponent>
-        </TextComponent>
+        <LinkComponent
+          to={RouteConfig.login.loginScreen}
+          type={"secondary"}
+          size="sm"
+          className="font-semibold"
+        >
+          Back to login
+        </LinkComponent>
       </div>
     </>
   );
