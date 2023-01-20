@@ -41,7 +41,7 @@ module.exports = {
       96: "var(--space-96)",
     },
     colors: {
-      white: "var(--color-white)",
+      white: "rgb(var(--color-white) / <alpha-value>)",
       purple: {
         50: "rgb(var(--color-primary-50) / <alpha-value>)",
         100: "rgb(var(--color-primary-100) / <alpha-value>)",
