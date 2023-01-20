@@ -56,7 +56,7 @@ module.exports = {
       },
       gray: {
         50: "rgb(var(--color-tertiary-50) / <alpha-value>)",
-        100: "rbg(var(--color-tertiary-100) / <alpha-value>)",
+        100: "rgb(var(--color-tertiary-100) / <alpha-value>)",
         200: "rgb(var(--color-tertiary-200) / <alpha-value>)",
         300: "rgb(var(--color-tertiary-300) / <alpha-value>)",
         400: "rgb(var(--color-tertiary-400) / <alpha-value>)",
