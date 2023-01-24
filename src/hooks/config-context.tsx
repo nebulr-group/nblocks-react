@@ -33,6 +33,7 @@ const initialContext: LibConfig = {
   oAuthBaseURI: authApi,
   oauthRedirectUri: "http://localhost:8080/auth/login",
   accountApiBaseUri: accountApi,
+  copyrightFooter: `©${new Date().getUTCFullYear()} Nblocks. All Rights Reserved.`,
 };
 
 const Context = React.createContext<LibConfig>(initialContext);

@@ -1,26 +1,122 @@
 import { useSecureContext } from "../../../hooks/secure-http-context";
-import React, { FunctionComponent } from "react";
+import React, {
+  FormEvent,
+  FunctionComponent,
+  useEffect,
+  useState,
+} from "react";
+import { useAuth } from "../../../hooks/auth-context";
+import { AlertComponent } from "../../shared/AlertComponent";
+import { InputComponent } from "../../shared/InputComponent";
+import { NblocksButton } from "../../shared/NblocksButton";
 
 type ComponentProps = {
-  didCompleteOnboarding: () => void
-}
+  didCompleteOnboarding: () => void;
+};
 
-const OnboardUserComponent: FunctionComponent<ComponentProps> = ({didCompleteOnboarding}) => {
+const OnboardUserComponent: FunctionComponent<ComponentProps> = ({
+  didCompleteOnboarding,
+}) => {
+  const { authService } = useSecureContext();
+  const { currentUser } = useAuth();
 
-  const {authService} = useSecureContext();
+  const [errorMsg, setErrorMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  //const [phoneNumber, setPhoneNumber] = useState("");
 
-  const submit = async () => {
-    await authService.updateCurrentUser({consentsToPrivacyPolicy: true, firstName: "Oscar", lastName: "Söderlund", phoneNumber: "+46702892820"})
-    didCompleteOnboarding();
-  }
+  useEffect(() => {
+    if (currentUser && currentUser.user) {
+      const names = splitFullName(currentUser.user?.fullName);
+      setFirstName(names.firstName);
+      setLastName(names.lastName);
+      //setPhoneNumber(currentUser.user.)
+    }
+  }, [currentUser]);
+
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+    setIsLoading(true);
+
+    try {
+      await authService.updateCurrentUser({
+        consentsToPrivacyPolicy: true,
+        firstName,
+        lastName,
+      });
+      didCompleteOnboarding();
+      setIsLoading(false);
+    } catch (error) {
+      setErrorMsg(
+        "There was an error when updating your profile. Try again, otherwise contact support."
+      );
+      setIsLoading(false);
+    }
+  };
+
+  /**
+   * We should return firstname and lastname from API but for now we're solving this using split() on fullname.
+   * @param fullName
+   * @returns { firstName: string; lastName: string }
+   */
+  const splitFullName = (
+    fullName?: string
+  ): { firstName: string; lastName: string } => {
+    if (!fullName) {
+      return { firstName: "", lastName: "" };
+    }
+    const names = fullName.split(" ");
+    const firstName = names[0];
+    const lastName = names.length > 1 ? names[1] : "";
+    return { firstName, lastName };
+  };
 
   return (
-    <div>
-      <h1>OnboardUserComponent</h1>
-      <p>Clicking below will simulate onboarding of a user with first name, lastname + phonenumber and accepting privacy policy</p>
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => submit()}>Update info</button>
-    </div>
-  )
-}
+    <>
+      {errorMsg && (
+        <div className="max-w-sm w-full mb-6">
+          <AlertComponent
+            type="danger"
+            title="An error occured"
+            messages={[errorMsg]}
+          />
+        </div>
+      )}
+      <form
+        onSubmit={(event) => submit(event)}
+        className="space-y-6 max-w-sm w-full"
+      >
+        <InputComponent
+          type="text"
+          label="First name"
+          placeholder="Enter your first name"
+          name="firstName"
+          onChange={(event) => setFirstName(event.target.value)}
+          value={firstName}
+        />
+        <InputComponent
+          type="text"
+          label="Last name"
+          placeholder="Enter your last name"
+          name="lastName"
+          onChange={(event) => setLastName(event.target.value)}
+          value={lastName}
+        />
+        <div>
+          <NblocksButton
+            submit={true}
+            size="md"
+            isLoading={isLoading}
+            type="primary"
+            fullWidth={true}
+          >
+            Save
+          </NblocksButton>
+        </div>
+      </form>
+    </>
+  );
+};
 
-export {OnboardUserComponent}
+export { OnboardUserComponent };

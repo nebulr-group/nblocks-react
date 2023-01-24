@@ -9,5 +9,6 @@ query GetTenant {
     paymentsRequired
     name
     plan
+    onboarded
   }
 }

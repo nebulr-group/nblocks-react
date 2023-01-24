@@ -1,22 +1,93 @@
-import React, { FunctionComponent } from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import React, {
+  FormEvent,
+  FunctionComponent,
+  useEffect,
+  useState,
+} from "react";
+import { GetTenantDocument, UpdateTenantDocument } from "../../../gql/graphql";
+import { AlertComponent } from "../../shared/AlertComponent";
+import { InputComponent } from "../../shared/InputComponent";
+import { NblocksButton } from "../../shared/NblocksButton";
 
 type ComponentProps = {
-  didCompleteOnboarding: () => void
-}
+  didCompleteOnboarding: () => void;
+};
 
-const OnboardTenantComponent: FunctionComponent<ComponentProps> = ({didCompleteOnboarding}) => {
+const OnboardTenantComponent: FunctionComponent<ComponentProps> = ({
+  didCompleteOnboarding,
+}) => {
+  const [errorMsg, setErrorMsg] = useState("");
+  const [name, setName] = useState("");
+  const [locale, setLocale] = useState("");
+  const [logo, setLogo] = useState("");
 
-  const submit = async () => {
-    didCompleteOnboarding();
-  }
+  const { data, loading, error } = useQuery(GetTenantDocument);
+  const [updateTenantMutation, updateTenantData] =
+    useMutation(UpdateTenantDocument);
 
+  useEffect(() => {
+    if (data && data.getTenant) {
+      const tenant = data.getTenant;
+      setName(tenant.name);
+      setLocale(tenant.locale ? tenant.locale : "");
+      setLogo(tenant.logo);
+    }
+  }, [data]);
+
+  const isLoading = loading || updateTenantData.loading;
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+
+    try {
+      await updateTenantMutation({
+        variables: { tenant: { name, locale } },
+      });
+      didCompleteOnboarding();
+    } catch (error) {
+      setErrorMsg(
+        "There was an error when updating your workspace. Try again, otherwise contact support."
+      );
+    }
+  };
+  
   return (
-    <div>
-      <h1>OnboardTenantComponent</h1>
-      <p>Clicking below will simulate onboarding of a workspace updating the tenant name and language</p>
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => submit()}>Update info</button>
-    </div>
-  )
-}
+    <>
+      {errorMsg && (
+        <div className="max-w-sm w-full mb-6">
+          <AlertComponent
+            type="danger"
+            title="An error occured"
+            messages={[errorMsg]}
+          />
+        </div>
+      )}
+      <form
+        onSubmit={(event) => submit(event)}
+        className="space-y-6 max-w-sm w-full"
+      >
+        <InputComponent
+          type="text"
+          label="Name"
+          placeholder="Enter a workspace name"
+          name="name"
+          onChange={(event) => setName(event.target.value)}
+          value={name}
+        />
+        <div>
+          <NblocksButton
+            submit={true}
+            size="md"
+            isLoading={isLoading}
+            type="primary"
+            fullWidth={true}
+          >
+            Save
+          </NblocksButton>
+        </div>
+      </form>
+    </>
+  );
+};
 
-export {OnboardTenantComponent}
+export { OnboardTenantComponent };

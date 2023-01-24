@@ -42,8 +42,10 @@ const NblocksSecureContextProvider: FunctionComponent<{
   );
 
   const didAuthenticate = (value: boolean) => {
-    setAuthenticated(value);
-    log(`Did authenticate: ${value}`);
+    if (value !== authenticated) {
+      setAuthenticated(value);
+      log(`Did authenticate: ${value}`);
+    }
   };
 
   useEffect(() => {

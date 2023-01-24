@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from "react";
 import { useApp } from "../../hooks/app-context";
+import { useConfig } from "../../hooks/config-context";
 import { HeadingComponent } from "../shared/HeadingComponent";
 import { ImageComponent } from "../shared/ImageComponent";
 import { LinkComponent } from "../shared/LinkComponent";
@@ -18,6 +19,7 @@ const AuthLayoutWrapperComponent: FunctionComponent<ComponentProps> = ({
   subHeading,
 }) => {
   const app = useApp();
+  const { copyrightFooter } = useConfig();
 
   return (
     <div className="flex flex-col pt-12 md:pt-24 min-h-screen">
@@ -41,9 +43,7 @@ const AuthLayoutWrapperComponent: FunctionComponent<ComponentProps> = ({
       <div className="mt-6 flex items-center flex-col">{children}</div>
       <div className="mt-auto mx-auto text-center mb-6">
         <div>
-          <TextComponent size="sm">
-            ©2022 Nebulr AB. All Rights Reserved.
-          </TextComponent>
+          <TextComponent size="sm">{copyrightFooter}</TextComponent>
         </div>
         <div>
           <LinkComponent

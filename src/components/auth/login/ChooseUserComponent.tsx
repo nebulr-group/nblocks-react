@@ -60,7 +60,7 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
 
   const log = (msg: string) => {
     if (debug) {
-      console.log(msg);
+      console.log(`ChooseUserComponent: ${msg}`);
     }
   };
 

@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ChoosePlanComponent } from "../../components/tenant/plan/ChoosePlanComponent";
 import { TenantLayoutWrapperComponent } from "../../components/tenant/TenantLayoutWrapperComponent";
 import { useConfig } from "../../hooks/config-context";
@@ -7,7 +7,10 @@ import { RouteConfig } from "../../routes/AuthRoutes";
 
 const PlanScreen: FunctionComponent<{}> = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { handoverRoute, debug } = useConfig();
+
+  const targetUrl = location.state?.targetUrl?.pathname || handoverRoute;
 
   const planSelectHandler = (paymentsRequired?: boolean) => {
     switch (paymentsRequired) {
@@ -18,14 +21,14 @@ const PlanScreen: FunctionComponent<{}> = () => {
         return navigate(RouteConfig.tenant.payment);
       case false:
       default:
-        return navigate(handoverRoute);
+        return navigate(targetUrl);
     }
   };
 
   // If there's no plans to show, redirect back to app
   const onDidRecieveNoPlans = () => {
-    log(`No plans configured. Redirecting back to ${handoverRoute} `);
-    navigate(handoverRoute);
+    log(`No plans configured. Redirecting back to ${targetUrl} `);
+    navigate(targetUrl);
   };
 
   const log = (msg: string) => {

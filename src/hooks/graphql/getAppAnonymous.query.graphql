@@ -4,5 +4,6 @@ query GetAppAnonymous {
     logo
     privacyPolicyUrl
     termsOfServiceUrl
+    onboardingFlow
   }
 }
