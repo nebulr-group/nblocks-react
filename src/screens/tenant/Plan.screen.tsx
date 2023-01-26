@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ChoosePlanComponent } from "../../components/tenant/plan/ChoosePlanComponent";
 import { TenantLayoutWrapperComponent } from "../../components/tenant/TenantLayoutWrapperComponent";
@@ -6,6 +6,8 @@ import { useConfig } from "../../hooks/config-context";
 import { RouteConfig } from "../../routes/AuthRoutes";
 
 const PlanScreen: FunctionComponent<{}> = () => {
+  // This is a fix to not show flicker when the chooseUserComponent is loading tenantUsers and redirect if the user has just one
+  const [showContent, setShowContent] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { handoverRoute, debug } = useConfig();
@@ -23,6 +25,10 @@ const PlanScreen: FunctionComponent<{}> = () => {
       default:
         return navigate(targetUrl);
     }
+  };
+
+  const onDidFinishInitialLoading = () => {
+    setShowContent(true);
   };
 
   // If there's no plans to show, redirect back to app
@@ -47,6 +53,7 @@ const PlanScreen: FunctionComponent<{}> = () => {
       <ChoosePlanComponent
         planSelectHandler={planSelectHandler}
         didRecieveNoPlans={() => onDidRecieveNoPlans()}
+        didFinishedInitialLoading={() => onDidFinishInitialLoading()}
       />
     </TenantLayoutWrapperComponent>
   );

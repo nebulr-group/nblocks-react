@@ -104,7 +104,7 @@ export function ChooseUserScreen() {
         {!tenantQueryData.loading && (
           <ChooseUserComponent
             didSelectUser={(user) => onDidSelectUser(user)}
-            didFinishedInitialLoading={() => onDidFinishInitialLoading}
+            didFinishedInitialLoading={() => onDidFinishInitialLoading()}
           />
         )}
       </AuthLayoutWrapperComponent>

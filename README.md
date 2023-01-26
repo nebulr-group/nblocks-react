@@ -1,4 +1,4 @@
-# nblocks-react-native
+# nblocks-react
 
 This plugin supercharges your React app with Nblocks powers in a true plug-n-play manner.
 

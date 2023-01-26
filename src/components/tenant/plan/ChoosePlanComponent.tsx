@@ -8,7 +8,8 @@ import { SkeletonLoader } from "../../shared/SkeletonLoader";
 const ChoosePlanComponent: FunctionComponent<{
   planSelectHandler: (paymentsRequired?: boolean) => void;
   didRecieveNoPlans?: () => void;
-}> = ({ planSelectHandler, didRecieveNoPlans }) => {
+  didFinishedInitialLoading?: () => void;
+}> = ({ planSelectHandler, didRecieveNoPlans, didFinishedInitialLoading }) => {
   const [region, setRegion] = useState<string>("");
   const { data, loading } = useQuery(GetAppPlansDocument);
   const [regions, setRegions] = useState<string[]>([]);
@@ -25,6 +26,9 @@ const ChoosePlanComponent: FunctionComponent<{
         });
         setRegion(regions[0]);
         setRegions(regions);
+        if (didFinishedInitialLoading) {
+          didFinishedInitialLoading;
+        }
       } else {
         if (didRecieveNoPlans) {
           didRecieveNoPlans();
