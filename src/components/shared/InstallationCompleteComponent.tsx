@@ -27,7 +27,7 @@ const InstallationCompleteComponent: FunctionComponent<{}> = ({}) => {
 
         <ul className={"mt-8 space-y-2 max-w-sm mx-auto"}>
           <li className="p-4 border rounded-xl">
-            <span className="mr-2">&#127968;</span> Tenancy
+            <span className="mr-2">&#127968;</span> Multi-Tenancy
           </li>
           <li className="p-4 border rounded-xl">
             <span className="mr-2">&#9989;</span>Register & onboarding
