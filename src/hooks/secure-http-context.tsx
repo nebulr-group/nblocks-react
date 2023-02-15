@@ -12,7 +12,7 @@ import { useConfig } from "./config-context";
 import { OAuthService } from "../utils/OAuthService";
 
 const initialSecurityContext = {
-  authService: {} as AuthService | OAuthService,
+  authService: {} as AuthService,
   authHttpClient: {} as AuthHttpClient,
   authApolloClient: {} as AuthApolloClient,
   authenticated: true, // Optimistic approach
@@ -26,16 +26,14 @@ const NblocksSecureContextProvider: FunctionComponent<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const config = useConfig();
-  const { apiHost, graphqlPath, debug, appId, authLegacy } = config;
+  const { apiHost, graphqlPath, debug, appId } = config;
 
   const [authenticated, setAuthenticated] = useState<boolean>(true); // Optimistic approach
   const [authHttpClient] = useState<AuthHttpClient>(
     new AuthHttpClient(apiHost, debug, appId)
   );
-  const [authService] = useState<AuthService | OAuthService>(
-    !authLegacy
-      ? new OAuthService(authHttpClient.httpClient, debug, config)
-      : new AuthService(authHttpClient.httpClient, debug)
+  const [authService] = useState<AuthService>(
+    new AuthService(authHttpClient.httpClient, config)
   );
   const [authApolloClient] = useState<AuthApolloClient>(
     new AuthApolloClient(`${apiHost}${graphqlPath}`, debug, appId)

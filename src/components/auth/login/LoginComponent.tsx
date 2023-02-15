@@ -6,28 +6,15 @@ import { NblocksButton } from "../../shared/NblocksButton";
 import { InputComponent } from "../../shared/InputComponent";
 import { TextComponent } from "../../shared/TextComponent";
 import { useConfig } from "../../../hooks/config-context";
-import { AuthService, MfaState } from "../../../utils/AuthService";
+import { MfaState } from "../../../utils/AuthService";
 import { AlertComponent } from "../../shared/AlertComponent";
 import { UnauthenticatedError } from "../../../utils/errors/UnauthenticatedError";
-import { OAuthService } from "../../../utils/OAuthService";
-
-type OauthProps = {
-  clientId: string;
-  scope: string;
-  redirectUri: string;
-  responseType: string;
-  state?: string | null;
-};
 
 type ComponentProps = {
-  oauthProps?: OauthProps;
-  didLogin: (mfa: MfaState) => void;
+  didLogin: (mfa: MfaState, tenantUserId?: string) => void;
 };
 
-const LoginComponent: FunctionComponent<ComponentProps> = ({
-  didLogin,
-  oauthProps,
-}) => {
+const LoginComponent: FunctionComponent<ComponentProps> = ({ didLogin }) => {
   const { authService } = useSecureContext();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -39,25 +26,14 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
     event.preventDefault();
     setIsLoading(true);
     try {
-      if (!!oauthProps && authService instanceof OAuthService) {
-        await authService.authorizeUser(
-          username,
-          password,
-          oauthProps.scope,
-          oauthProps.clientId,
-          oauthProps.redirectUri,
-          oauthProps.responseType
-        );
-        setIsLoading(false);
-        didLogin("DISABLED");
-      }
-
-      if (authService instanceof AuthService) {
-        const response = await authService.authenticate(username, password);
-        setIsLoading(false);
-        didLogin(response.mfaState);
-      }
+      const { mfaState, tenantUserId } = await authService.authenticate(
+        username,
+        password
+      );
+      setIsLoading(false);
+      didLogin(mfaState, tenantUserId);
     } catch (error) {
+      console.error(error);
       if (error instanceof UnauthenticatedError) {
         setIsLoading(false);
         setErrorMsg("Wrong credentials, please try again.");
@@ -145,4 +121,3 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
 };
 
 export { LoginComponent };
-export type { OauthProps };

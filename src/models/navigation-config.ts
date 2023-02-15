@@ -3,6 +3,7 @@ export interface NavigationConfig {
     loginScreen: string;
     logoutScreen: string;
     chooseUserScreen: string;
+    callbackScreen: string;
   };
   password: {
     resetPasswordScreen: string;

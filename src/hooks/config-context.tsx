@@ -31,7 +31,7 @@ const initialContext: LibConfig = {
   tenantSignup: false,
   appSignup: false,
   oAuthBaseURI: authApi,
-  oauthRedirectUri: "http://localhost:8080/auth/login",
+  oauthRedirectUri: "http://localhost:8080/auth/oauth-callback",
   accountApiBaseUri: accountApi,
   copyrightFooter: `©${new Date().getUTCFullYear()} Nblocks. All Rights Reserved.`,
 };
