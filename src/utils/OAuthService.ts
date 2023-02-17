@@ -58,13 +58,14 @@ export class OAuthService {
   private readonly AUTH_API_ENDPOINTS = {
     authenticate: "/auth/authenticate",
     tenantUsers: "/auth/tenantUsers",
-    handover: "/auth/handover",
+    handover: "/auth/chooseTenantUser",
     logout: "/auth/logout",
   };
 
   private _accessTokenExpires?: number;
   private _refreshTokenExpires?: number;
   private _idToken?: OpenIDClaim;
+  private _initializePromise: Promise<void>;
 
   private readonly _JWKS: GetKeyFunction<
     jose.JWSHeaderParameters,
@@ -98,7 +99,7 @@ export class OAuthService {
     );
     this._JWKS = JWKS;
 
-    this.restoreTokensFromLocalStorage();
+    this._initializePromise = this.restoreTokensFromLocalStorage();
   }
 
   log(msg: string): void {
@@ -163,6 +164,10 @@ export class OAuthService {
     return `${this.oAuthBaseURI}${this.AUTH_API_ENDPOINTS.handover}?tenantUserId=${tenantUserId}`;
   }
 
+  getIdToken(): OpenIDClaim | undefined {
+    return this._idToken;
+  }
+
   async authenticate(
     username: string,
     password: string
@@ -171,7 +176,8 @@ export class OAuthService {
     const response = await this.httpClient.post<{
       session: string;
       expiresIn: number;
-      tenantUser?: string;
+      mfaState: MfaState;
+      tenantUserId?: string;
     }>(
       this.AUTH_API_ENDPOINTS.authenticate,
       {
@@ -180,9 +186,14 @@ export class OAuthService {
       },
       { baseURL: this.oAuthBaseURI, withCredentials: true }
     );
-    if (!response.data.session) throw new Error("Wrong credentials");
 
-    return { mfaState: "DISABLED", tenantUserId: response.data.tenantUser };
+    const { session, mfaState, tenantUserId } = response.data;
+
+    if (!session) {
+      throw new Error("Wrong credentials");
+    }
+
+    return { mfaState, tenantUserId };
   }
 
   async listUsers(): Promise<AuthTenantUserResponseDto[]> {
@@ -210,7 +221,7 @@ export class OAuthService {
     return result;
   }
 
-  async getTokens(code: string) {
+  async getTokens(code: string): Promise<boolean> {
     const response = await this.httpClient.post<{
       access_token: string;
       refresh_token: string;
@@ -247,7 +258,6 @@ export class OAuthService {
 
       if (response.data.id_token) {
         const idTokenVerify = await this._verifyToken(response.data.id_token);
-
         this._idToken = idTokenVerify.payload as OpenIDClaim;
         OAuthService.setIDToken(response.data.id_token);
       }
@@ -267,7 +277,7 @@ export class OAuthService {
       const expiresInMs = this._accessTokenExpires * 1000 - Date.now();
       const threshold = expiresInMs * 0.8;
       this.log(
-        `AccessToken rexpires in ${
+        `AccessToken expires in ${
           expiresInMs / 1000
         } seconds. Therefore we refresh it after ${threshold / 1000} seconds`
       );
@@ -280,7 +290,8 @@ export class OAuthService {
 
   private async _authenticated(): Promise<boolean> {
     // User is authenticated if the application has obtained id_token
-    const open_id = OAuthService.getIDToken();
+    await this._initializePromise;
+    const open_id = this._idToken;
 
     if (!open_id) {
       return false;

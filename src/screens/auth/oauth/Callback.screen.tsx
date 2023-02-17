@@ -1,26 +1,38 @@
 import React, { FunctionComponent, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../hooks/auth-context";
+import { useConfig } from "../../../hooks/config-context";
 import { useSecureContext } from "../../../hooks/secure-http-context";
 
 const CallbackScreen: FunctionComponent<{}> = () => {
   const location = useLocation();
-  const { authService } = useSecureContext();
+  const { handoverRoute } = useConfig();
+  const { switchUser } = useAuth();
+  const { didAuthenticate, authService, authenticated, initialized } =
+    useSecureContext();
 
   const urlSearch = new URLSearchParams(location.search);
   const code = urlSearch.get("code");
-  const state = urlSearch.get("code");
+  const state = urlSearch.get("state");
+  const target = state ? state : handoverRoute;
 
   useEffect(() => {
     if (code) {
       handleCallback(code);
     }
-  }, []);
+  }, [code]);
 
   const handleCallback = async (code: string) => {
-    await authService.handleCallback(code);
+    const tenantUserId = await authService.handleCallbackCode(code);
+    //await switchUser(tenantUserId!);
+    didAuthenticate(true);
   };
 
-  return <h1>Callback</h1>;
+  if (authenticated && initialized) {
+    return <Navigate to={target} />;
+  } else {
+    return <h1>Logging in...</h1>;
+  }
 };
 
 export { CallbackScreen };

@@ -9,7 +9,6 @@ import { AuthHttpClient } from "../utils/AuthHttpClient";
 import { AuthApolloClient } from "../utils/AuthApolloClient";
 import { ApolloProvider } from "@apollo/client";
 import { useConfig } from "./config-context";
-import { OAuthService } from "../utils/OAuthService";
 
 const initialSecurityContext = {
   authService: {} as AuthService,
@@ -17,6 +16,7 @@ const initialSecurityContext = {
   authApolloClient: {} as AuthApolloClient,
   authenticated: true, // Optimistic approach
   didAuthenticate: (value: boolean) => {},
+  initialized: false,
 };
 
 const SecureContext = React.createContext(initialSecurityContext);
@@ -28,7 +28,9 @@ const NblocksSecureContextProvider: FunctionComponent<{
   const config = useConfig();
   const { apiHost, graphqlPath, debug, appId } = config;
 
-  const [authenticated, setAuthenticated] = useState<boolean>(true); // Optimistic approach
+  const [authenticated, setAuthenticated] = useState<boolean>(false);
+  const [initialized, setInitialized] = useState<boolean>(false);
+
   const [authHttpClient] = useState<AuthHttpClient>(
     new AuthHttpClient(apiHost, debug, appId)
   );
@@ -47,9 +49,14 @@ const NblocksSecureContextProvider: FunctionComponent<{
   };
 
   useEffect(() => {
-    log("Use effect entry point");
-    authService.checkCurrentUserAuthenticated().then((authenticated) => {
-      didAuthenticate(authenticated);
+    log("Secure context entry");
+    authService.checkCurrentUserAuthenticated().then((value) => {
+      didAuthenticate(value);
+
+      if (!initialized) {
+        setInitialized(true);
+        log("Initialized");
+      }
     });
   }, []);
 
@@ -69,6 +76,7 @@ const NblocksSecureContextProvider: FunctionComponent<{
           authApolloClient,
           authenticated,
           didAuthenticate,
+          initialized,
         },
       }}
     >

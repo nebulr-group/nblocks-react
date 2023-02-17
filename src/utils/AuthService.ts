@@ -67,7 +67,12 @@ export class AuthService {
     }
   }
 
-  async handleCallback(code: string): Promise<void> {
+  /**
+   * 
+   * @param code
+   * @returns
+   */
+  async handleCallbackCode(code: string): Promise<void> {
     if (!!this._oauthService) {
       await this._oauthService.getTokens(code);
     }
@@ -79,7 +84,8 @@ export class AuthService {
    */
   async checkCurrentUserAuthenticated(): Promise<boolean> {
     if (!!this._oauthService) {
-      return this._oauthService.checkCurrentUserAuthenticated();
+      const data = await this._oauthService.checkCurrentUserAuthenticated();
+      return data;
     } else {
       const hasFullAuthContext = await AuthService.hasFullAuthContext();
       if (hasFullAuthContext) {
@@ -88,7 +94,6 @@ export class AuthService {
           return true;
         }
       }
-
       return false;
     }
   }
@@ -178,10 +183,33 @@ export class AuthService {
   }
 
   async currentUser(): Promise<AuthTenantUserResponseDto> {
-    const response = await this.httpClient.get<AuthTenantUserResponseDto>(
-      this.ENDPOINTS.currentUser
-    );
-    return response.data;
+    if (!!this._oauthService) {
+      const token = this._oauthService.getIdToken();
+      return token
+        ? {
+            email: token?.email!,
+            id: token?.sub,
+            onboarded: true,
+            role: "something",
+            tenant: { id: "1234", locale: "en", logo: "", name: "" },
+            username: token.email!,
+            fullName: token.name,
+          }
+        : {
+            email: "",
+            id: "",
+            onboarded: true,
+            role: "",
+            tenant: { id: "1234", locale: "en", logo: "", name: "" },
+            username: "",
+            fullName: "Unknown",
+          };
+    } else {
+      const response = await this.httpClient.get<AuthTenantUserResponseDto>(
+        this.ENDPOINTS.currentUser
+      );
+      return response.data;
+    }
   }
 
   async updateCurrentUser(userProfile: UpdateUserProfileArgs): Promise<any> {
