@@ -50,6 +50,10 @@ const NblocksAuthContextProvider: FunctionComponent<NblocksContextProps> = ({
     }
   };
 
+  /**
+   * TODO refresh tokens if we switch user
+   * @param userId
+   */
   const switchUser = async (userId: string) => {
     await authApolloClient.client.resetStore();
     AuthService.setTenantUserId(userId!);

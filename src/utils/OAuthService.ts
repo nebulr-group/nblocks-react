@@ -155,13 +155,14 @@ export class OAuthService {
     return false;
   }
 
+  /** TODO change to simplified login url? auth-api/url/login/:appID */
   getAuthorizeUrl(state?: string): string {
     const url = `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.authorize}?response_type=code&client_id=${this.appId}&redirect_uri=${this.redirectUri}&scope=${this.OAUTH_SCOPES}`;
     return state ? `${url}&state=${state}` : url;
   }
 
   getHandoverUrl(tenantUserId?: string): string {
-    return `${this.oAuthBaseURI}${this.AUTH_API_ENDPOINTS.handover}?tenantUserId=${tenantUserId}`;
+    return `${this.oAuthBaseURI}${this.AUTH_API_ENDPOINTS.handover}/${tenantUserId}`;
   }
 
   getIdToken(): OpenIDClaim | undefined {

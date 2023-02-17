@@ -31,6 +31,7 @@ const RouteConfig: NavigationConfig = {
     setupMfaScreen: "/auth/mfa/setup",
   },
   onboard: {
+    onboardingStart: "/onboard",
     onboardUserScreen: "/onboard/user",
     onboardTenantScreen: "/onboard/tenant",
   },

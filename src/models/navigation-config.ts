@@ -15,6 +15,7 @@ export interface NavigationConfig {
     setupMfaScreen: string;
   };
   onboard: {
+    onboardingStart: string;
     onboardUserScreen: string;
     onboardTenantScreen: string;
   };
