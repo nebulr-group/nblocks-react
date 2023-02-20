@@ -15,20 +15,31 @@ export type UpdateUserProfileArgs = {
 };
 
 export type OpenIDClaim = {
-  email?: string;
-  name?: string;
-  given_name?: string;
-  family_name?: string;
-  locale?: string;
-  picture?: string;
-  tenant_id?: string;
-  tenant_name?: string;
-  tid: string;
   iat: number;
   exp: number;
   aud: string[];
   iss: string;
   sub: string;
+
+  // email scope
+  email?: string;
+  email_verified?: boolean;
+
+  // profile scope
+  name?: string;
+  family_name?: string;
+  given_name?: string;
+  preferred_username?: string;
+  locale?: string;
+  
+  // onboarding scope
+  onboarded?: boolean;
+
+  // tenant scope
+  tenant_id?: string;
+  tenant_name?: string;
+  tenant_locale?: string;
+  tenant_logo?: string;
 };
 
 export type RefreshTokenClaim = {
