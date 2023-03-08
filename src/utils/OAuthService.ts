@@ -31,7 +31,7 @@ export type OpenIDClaim = {
   given_name?: string;
   preferred_username?: string;
   locale?: string;
-  
+
   // onboarding scope
   onboarded?: boolean;
 
@@ -58,6 +58,8 @@ export type AccesTokenClaim = {
   sub: string;
 };
 
+// TODO this class should probably just take care of OAuth specific stuff.
+// The calls that are made to auth-api regarding authenticate/mfa should be made through AuthService for a cleaner code base
 export class OAuthService {
   private readonly OAUTH_ENDPOINTS = {
     authorize: "/authorize",
@@ -71,6 +73,10 @@ export class OAuthService {
     tenantUsers: "/auth/tenantUsers",
     handover: "/auth/chooseTenantUser",
     logout: "/auth/logout",
+    commitMfaCode: "/auth/commitMfaCode",
+    startMfaUserSetup: "/auth/startMfaUserSetup",
+    finishMfaUserSetup: "/auth/finishMfaUserSetup",
+    resetUserMfaSetup: "/auth/resetUserMfaSetup",
   };
 
   private _accessTokenExpires?: number;
@@ -206,6 +212,45 @@ export class OAuthService {
     }
 
     return { mfaState, tenantUserId };
+  }
+
+  async commitMfaCode(mfaCode: string): Promise<void> {
+    await this.httpClient.post<void>(
+      this.AUTH_API_ENDPOINTS.commitMfaCode,
+      { mfaCode },
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+  }
+
+  async startMfaUserSetup(phoneNumber: string): Promise<void> {
+    await this.httpClient.post<void>(
+      this.AUTH_API_ENDPOINTS.startMfaUserSetup,
+      {
+        phoneNumber,
+      },
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+  }
+
+  async finishMfaUserSetup(mfaCode: string): Promise<string> {
+    const result = await this.httpClient.post<{
+      backupCode: string;
+    }>(
+      this.AUTH_API_ENDPOINTS.finishMfaUserSetup,
+      { mfaCode },
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+    return result.data.backupCode;
+  }
+
+  async resetUserMfaSetup(backupCode: string): Promise<void> {
+    await this.httpClient.post(
+      this.AUTH_API_ENDPOINTS.resetUserMfaSetup,
+      {
+        backupCode,
+      },
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
   }
 
   async listUsers(): Promise<AuthTenantUserResponseDto[]> {

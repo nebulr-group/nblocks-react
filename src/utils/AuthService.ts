@@ -137,17 +137,25 @@ export class AuthService {
   }
 
   async commitMfaCode(mfaCode: string): Promise<void> {
-    const result = await this.httpClient.post<{ mfaToken: string }>(
-      this.ENDPOINTS.commitMfaCode,
-      { mfaCode }
-    );
-    AuthService.setMfaToken(result.data.mfaToken);
+    if (!!this._oauthService) {
+      await this._oauthService.commitMfaCode(mfaCode);
+    } else {
+      const result = await this.httpClient.post<{ mfaToken: string }>(
+        this.ENDPOINTS.commitMfaCode,
+        { mfaCode }
+      );
+      AuthService.setMfaToken(result.data.mfaToken);
+    }
   }
 
   async startMfaUserSetup(phoneNumber: string): Promise<void> {
-    await this.httpClient.post<void>(this.ENDPOINTS.startMfaUserSetup, {
-      phoneNumber,
-    });
+    if (!!this._oauthService) {
+      await this._oauthService.startMfaUserSetup(phoneNumber);
+    } else {
+      await this.httpClient.post<void>(this.ENDPOINTS.startMfaUserSetup, {
+        phoneNumber,
+      });
+    }
   }
 
   /**
@@ -156,18 +164,27 @@ export class AuthService {
    * @returns The backup code to be saved for future reference
    */
   async finishMfaUserSetup(mfaCode: string): Promise<string> {
-    const result = await this.httpClient.post<{
-      mfaToken: string;
-      backupCode: string;
-    }>(this.ENDPOINTS.finishMfaUserSetup, { mfaCode });
-    AuthService.setMfaToken(result.data.mfaToken);
-    return result.data.backupCode;
+    if (!!this._oauthService) {
+      const result = await this._oauthService.finishMfaUserSetup(mfaCode);
+      return result;
+    } else {
+      const result = await this.httpClient.post<{
+        mfaToken: string;
+        backupCode: string;
+      }>(this.ENDPOINTS.finishMfaUserSetup, { mfaCode });
+      AuthService.setMfaToken(result.data.mfaToken);
+      return result.data.backupCode;
+    }
   }
 
   async resetUserMfaSetup(backupCode: string): Promise<void> {
-    await this.httpClient.post(this.ENDPOINTS.resetUserMfaSetup, {
-      backupCode,
-    });
+    if (!!this._oauthService) {
+      await this._oauthService.resetUserMfaSetup(backupCode);
+    } else {
+      await this.httpClient.post(this.ENDPOINTS.resetUserMfaSetup, {
+        backupCode,
+      });
+    }
   }
 
   async listUsers(): Promise<AuthTenantUserResponseDto[]> {
