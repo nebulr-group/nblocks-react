@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import React, { FunctionComponent } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { NBAuthGuard } from "./AuthGuard";
 import { AuthRoutes } from "./AuthRoutes";
