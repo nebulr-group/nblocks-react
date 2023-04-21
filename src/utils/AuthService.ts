@@ -1,5 +1,8 @@
 import { AxiosInstance } from "axios";
 import { AuthTenantUserResponseDto } from "../models/auth-tenant-user-response.dto";
+import { LibConfig } from "../models/lib-config";
+import { RouteConfig } from "../routes/AuthRoutes";
+import { OAuthService } from "./OAuthService";
 import { NblocksStorage } from "./Storage";
 
 //FIXME centralize models
@@ -28,14 +31,51 @@ export class AuthService {
 
   private readonly httpClient: AxiosInstance;
   private readonly debug: boolean;
+  private readonly _oauthService?: OAuthService;
 
   private static AUTH_TOKEN_KEY = "AUTH_TOKEN";
   private static TENANT_USER_ID_KEY = "TENANT_USER_ID";
   private static MFA_TOKEN_KEY = "MFA_TOKEN";
 
-  constructor(httpClient: AxiosInstance, debug: boolean) {
-    this.debug = debug;
+  constructor(httpClient: AxiosInstance, config: LibConfig) {
+    this.debug = config.debug;
     this.httpClient = httpClient;
+    if (!config.authLegacy) {
+      this._oauthService = new OAuthService(httpClient, config);
+    }
+  }
+
+  /**
+   * Returns either the
+   * @param returnUrl
+   * @returns
+   */
+  getLoginUrl(returnUrl: string): string {
+    return !!this._oauthService
+      ? this._oauthService.getAuthorizeUrl(returnUrl)
+      : RouteConfig.login.loginScreen;
+  }
+
+  /**
+   * FIXME, this shouldnt be here
+   * @param tenantUserId
+   * @returns
+   */
+  getHandoverUrl(tenantUserId?: string): string | undefined {
+    if (!!this._oauthService) {
+      return this._oauthService.getHandoverUrl(tenantUserId);
+    }
+  }
+
+  /**
+   *
+   * @param code
+   * @returns
+   */
+  async handleCallbackCode(code: string): Promise<void> {
+    if (!!this._oauthService) {
+      await this._oauthService.getTokens(code);
+    }
   }
 
   /**
@@ -43,33 +83,45 @@ export class AuthService {
    * @returns
    */
   async checkCurrentUserAuthenticated(): Promise<boolean> {
-    const hasFullAuthContext = await AuthService.hasFullAuthContext();
-    if (hasFullAuthContext) {
-      const authenticated = await this.authenticated();
-      if (authenticated) {
-        return true;
+    if (!!this._oauthService) {
+      const data = await this._oauthService.checkCurrentUserAuthenticated();
+      return data;
+    } else {
+      const hasFullAuthContext = await AuthService.hasFullAuthContext();
+      if (hasFullAuthContext) {
+        const authenticated = await this._authenticated();
+        if (authenticated) {
+          return true;
+        }
       }
+      return false;
     }
-
-    return false;
   }
 
   async authenticate(
     username: string,
     password: string
-  ): Promise<{ mfaState: MfaState }> {
-    const response = await this.httpClient.post<{
-      token: string;
-      mfaState: MfaState;
-    }>(this.ENDPOINTS.authenticate, { username, password });
-    if (!response.data.token) throw new Error("Wrong credentials");
+  ): Promise<{ mfaState: MfaState; tenantUserId?: string }> {
+    if (!!this._oauthService) {
+      const response = await this._oauthService.authenticate(
+        username,
+        password
+      );
+      return response;
+    } else {
+      const response = await this.httpClient.post<{
+        token: string;
+        mfaState: MfaState;
+      }>(this.ENDPOINTS.authenticate, { username, password });
 
-    AuthService.setAuthToken(response.data.token);
+      if (!response.data.token) throw new Error("Wrong credentials");
 
-    return { mfaState: response.data.mfaState };
+      AuthService.setAuthToken(response.data.token);
+      return { mfaState: response.data.mfaState };
+    }
   }
 
-  async authenticated(): Promise<boolean> {
+  private async _authenticated(): Promise<boolean> {
     const response = await this.httpClient.get<{ authenticated: boolean }>(
       this.ENDPOINTS.authenticated
     );
@@ -85,17 +137,25 @@ export class AuthService {
   }
 
   async commitMfaCode(mfaCode: string): Promise<void> {
-    const result = await this.httpClient.post<{ mfaToken: string }>(
-      this.ENDPOINTS.commitMfaCode,
-      { mfaCode }
-    );
-    AuthService.setMfaToken(result.data.mfaToken);
+    if (!!this._oauthService) {
+      await this._oauthService.commitMfaCode(mfaCode);
+    } else {
+      const result = await this.httpClient.post<{ mfaToken: string }>(
+        this.ENDPOINTS.commitMfaCode,
+        { mfaCode }
+      );
+      AuthService.setMfaToken(result.data.mfaToken);
+    }
   }
 
   async startMfaUserSetup(phoneNumber: string): Promise<void> {
-    await this.httpClient.post<void>(this.ENDPOINTS.startMfaUserSetup, {
-      phoneNumber,
-    });
+    if (!!this._oauthService) {
+      await this._oauthService.startMfaUserSetup(phoneNumber);
+    } else {
+      await this.httpClient.post<void>(this.ENDPOINTS.startMfaUserSetup, {
+        phoneNumber,
+      });
+    }
   }
 
   /**
@@ -104,32 +164,69 @@ export class AuthService {
    * @returns The backup code to be saved for future reference
    */
   async finishMfaUserSetup(mfaCode: string): Promise<string> {
-    const result = await this.httpClient.post<{
-      mfaToken: string;
-      backupCode: string;
-    }>(this.ENDPOINTS.finishMfaUserSetup, { mfaCode });
-    AuthService.setMfaToken(result.data.mfaToken);
-    return result.data.backupCode;
+    if (!!this._oauthService) {
+      const result = await this._oauthService.finishMfaUserSetup(mfaCode);
+      return result;
+    } else {
+      const result = await this.httpClient.post<{
+        mfaToken: string;
+        backupCode: string;
+      }>(this.ENDPOINTS.finishMfaUserSetup, { mfaCode });
+      AuthService.setMfaToken(result.data.mfaToken);
+      return result.data.backupCode;
+    }
   }
 
   async resetUserMfaSetup(backupCode: string): Promise<void> {
-    await this.httpClient.post(this.ENDPOINTS.resetUserMfaSetup, {
-      backupCode,
-    });
+    if (!!this._oauthService) {
+      await this._oauthService.resetUserMfaSetup(backupCode);
+    } else {
+      await this.httpClient.post(this.ENDPOINTS.resetUserMfaSetup, {
+        backupCode,
+      });
+    }
   }
 
   async listUsers(): Promise<AuthTenantUserResponseDto[]> {
-    const response = await this.httpClient.get<AuthTenantUserResponseDto[]>(
-      this.ENDPOINTS.tenantUsers
-    );
-    return response.data;
+    if (!!this._oauthService) {
+      const response = await this._oauthService.listUsers();
+      return response;
+    } else {
+      const response = await this.httpClient.get<AuthTenantUserResponseDto[]>(
+        this.ENDPOINTS.tenantUsers
+      );
+      return response.data;
+    }
   }
 
   async currentUser(): Promise<AuthTenantUserResponseDto> {
-    const response = await this.httpClient.get<AuthTenantUserResponseDto>(
-      this.ENDPOINTS.currentUser
-    );
-    return response.data;
+    if (!!this._oauthService) {
+      const token = this._oauthService.getIdToken();
+      return token
+        ? {
+            email: token?.email!,
+            id: token?.sub,
+            onboarded: true,
+            role: "something",
+            tenant: { id: "1234", locale: "en", logo: "", name: "" },
+            username: token.email!,
+            fullName: token.name,
+          }
+        : {
+            email: "",
+            id: "",
+            onboarded: true,
+            role: "",
+            tenant: { id: "1234", locale: "en", logo: "", name: "" },
+            username: "",
+            fullName: "Unknown",
+          };
+    } else {
+      const response = await this.httpClient.get<AuthTenantUserResponseDto>(
+        this.ENDPOINTS.currentUser
+      );
+      return response.data;
+    }
   }
 
   async updateCurrentUser(userProfile: UpdateUserProfileArgs): Promise<any> {

@@ -2,19 +2,16 @@ import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useConfig } from "../hooks/config-context";
 import { useSecureContext } from "../hooks/secure-http-context";
-import { OAuthService } from "../utils/OAuthService";
-import { RouteConfig } from "./AuthRoutes";
-
 /**
  * This is a route guard that checks if current user is authenticated or not.
  * If not, the user will be redirected to login screen.
  */
 function NBAuthGuard({ children }: { children: React.ReactElement }) {
-  const { authenticated, authService } = useSecureContext();
+  const { authenticated, initialized, authService } = useSecureContext();
   const { debug, authLegacy } = useConfig();
   let location = useLocation();
 
-  if (!authenticated) {
+  if (!authenticated && initialized) {
     // Redirect them to the /login page, but save the current location they were
     // trying to go to when they were redirected. This allows us to send them
     // along to that page after they login, which is a nicer user experience
@@ -22,17 +19,14 @@ function NBAuthGuard({ children }: { children: React.ReactElement }) {
     if (debug) {
       console.log("Authguard redirecting user to login");
     }
+
+    //TODO Could be more elegant!
+    const target = authService.getLoginUrl(location.state?.from?.pathname);
+
     if (authLegacy) {
-      return (
-        <Navigate
-          to={RouteConfig.login.loginScreen}
-          state={{ from: location }}
-          replace
-        />
-      );
+      return <Navigate to={target} state={{ from: location }} replace />;
     } else {
-      const oauthUrl = (authService as OAuthService).getAuthorizeUrl();
-      window.location.replace(oauthUrl);
+      window.location.replace(target);
     }
   }
 

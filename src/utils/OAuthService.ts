@@ -1,9 +1,10 @@
 import { AxiosInstance } from "axios";
-import { AuthTenantUserResponseDto } from "../models/auth-tenant-user-response.dto";
 import { NblocksStorage } from "./Storage";
 import * as jose from "jose";
 import { GetKeyFunction } from "jose/dist/types/types";
 import { LibConfig } from "../models/lib-config";
+import { MfaState } from "./AuthService";
+import { AuthTenantUserResponseDto } from "../models/auth-tenant-user-response.dto";
 
 //FIXME centralize models
 export type UpdateUserProfileArgs = {
@@ -14,20 +15,31 @@ export type UpdateUserProfileArgs = {
 };
 
 export type OpenIDClaim = {
-  email?: string;
-  name?: string;
-  given_name?: string;
-  family_name?: string;
-  locale?: string;
-  picture?: string;
-  tenant_id?: string;
-  tenant_name?: string;
-  tid: string;
   iat: number;
   exp: number;
   aud: string[];
   iss: string;
   sub: string;
+
+  // email scope
+  email?: string;
+  email_verified?: boolean;
+
+  // profile scope
+  name?: string;
+  family_name?: string;
+  given_name?: string;
+  preferred_username?: string;
+  locale?: string;
+
+  // onboarding scope
+  onboarded?: boolean;
+
+  // tenant scope
+  tenant_id?: string;
+  tenant_name?: string;
+  tenant_locale?: string;
+  tenant_logo?: string;
 };
 
 export type RefreshTokenClaim = {
@@ -46,28 +58,31 @@ export type AccesTokenClaim = {
   sub: string;
 };
 
+// TODO this class should probably just take care of OAuth specific stuff.
+// The calls that are made to auth-api regarding authenticate/mfa should be made through AuthService for a cleaner code base
 export class OAuthService {
   private readonly OAUTH_ENDPOINTS = {
     authorize: "/authorize",
-    token: "/oauth/token",
-    refresh: "/oauth/refresh",
+    token: "/token",
+    refresh: "/token",
     jwks: "/.well-known/jwks.json",
   };
 
-  private readonly ENDPOINTS = {
-    password: "/auth-proxy/password",
-    user: "/auth-proxy/user",
-    tenantUsers: "/auth-proxy/tenantUsers",
-    currentUser: "/auth/currentUser",
-    startMfaUserSetup: "/auth-proxy/startMfaUserSetup",
-    commitMfaCode: "/auth-proxy/commitMfaCode",
-    finishMfaUserSetup: "/auth-proxy/finishMfaUserSetup",
-    resetUserMfaSetup: "/auth-proxy/resetUserMfaSetup",
+  private readonly AUTH_API_ENDPOINTS = {
+    authenticate: "/auth/authenticate",
+    tenantUsers: "/auth/tenantUsers",
+    handover: "/auth/chooseTenantUser",
+    logout: "/auth/logout",
+    commitMfaCode: "/auth/commitMfaCode",
+    startMfaUserSetup: "/auth/startMfaUserSetup",
+    finishMfaUserSetup: "/auth/finishMfaUserSetup",
+    resetUserMfaSetup: "/auth/resetUserMfaSetup",
   };
 
   private _accessTokenExpires?: number;
   private _refreshTokenExpires?: number;
   private _idToken?: OpenIDClaim;
+  private _initializePromise: Promise<void>;
 
   private readonly _JWKS: GetKeyFunction<
     jose.JWSHeaderParameters,
@@ -77,7 +92,6 @@ export class OAuthService {
   private readonly EXPECTED_ISSUER = "auth.nblocks.cloud";
   private readonly OAUTH_SCOPES = "openid profile email";
 
-  //TODO these variables should come from config
   private readonly oAuthBaseURI: string;
   private readonly appId: string;
   private readonly redirectUri: string;
@@ -86,12 +100,11 @@ export class OAuthService {
   private readonly debug: boolean;
 
   private static ACCCESS_TOKEN = "OAUTH_ACCESS_TOKEN";
-  private static OPENID_TOKEN = "OPENID_TOKEN";
-  private static MFA_TOKEN_KEY = "MFA_TOKEN";
   private static REFRESH_TOKEN = "OAUTH_REFRESH_TOKEN";
+  private static ID_TOKEN = "ID_TOKEN";
 
-  constructor(httpClient: AxiosInstance, debug: boolean, config: LibConfig) {
-    this.debug = debug;
+  constructor(httpClient: AxiosInstance, config: LibConfig) {
+    this.debug = config.debug;
     this.httpClient = httpClient;
 
     this.appId = config.appId!;
@@ -103,7 +116,7 @@ export class OAuthService {
     );
     this._JWKS = JWKS;
 
-    this.restoreTokensFromLocalStorage();
+    this._initializePromise = this.restoreTokensFromLocalStorage();
   }
 
   log(msg: string): void {
@@ -115,7 +128,7 @@ export class OAuthService {
   private async restoreTokensFromLocalStorage(): Promise<void> {
     try {
       const [openIdToken, accessToken, refreshToken] = [
-        OAuthService.getOpenIDToken(),
+        OAuthService.getIDToken(),
         OAuthService.getAccessToken(),
         OAuthService.getRefreshToken(),
       ];
@@ -150,7 +163,7 @@ export class OAuthService {
     const hasFullOAuthContext = await OAuthService.hasFullAuthContext();
 
     if (hasFullOAuthContext) {
-      const authenticated = await this.authenticated();
+      const authenticated = await this._authenticated();
       if (authenticated) {
         return true;
       }
@@ -159,55 +172,93 @@ export class OAuthService {
     return false;
   }
 
+  /** TODO change to simplified login url? auth-api/url/login/:appID */
   getAuthorizeUrl(state?: string): string {
     const url = `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.authorize}?response_type=code&client_id=${this.appId}&redirect_uri=${this.redirectUri}&scope=${this.OAUTH_SCOPES}`;
     return state ? `${url}&state=${state}` : url;
   }
 
-  async authorizeUser(
+  getHandoverUrl(tenantUserId?: string): string {
+    return `${this.oAuthBaseURI}${this.AUTH_API_ENDPOINTS.handover}/${tenantUserId}`;
+  }
+
+  getIdToken(): OpenIDClaim | undefined {
+    return this._idToken;
+  }
+
+  async authenticate(
     username: string,
-    password: string,
-    scope: string,
-    client_id: string,
-    redirect_uri: string,
-    response_type: string
-  ): Promise<boolean> {
+    password: string
+  ): Promise<{ mfaState: MfaState; tenantUserId?: string }> {
     // Obtain id_token for end-user and access_code for obtaining access_token
     const response = await this.httpClient.post<{
-      code: string;
-      id_token: string;
+      session: string;
+      expiresIn: number;
+      mfaState: MfaState;
+      tenantUserId?: string;
     }>(
-      this.OAUTH_ENDPOINTS.authorize,
+      this.AUTH_API_ENDPOINTS.authenticate,
       {
         username,
         password,
-        response_type,
-        client_id,
-        redirect_uri,
-        scope,
       },
-      { baseURL: this.oAuthBaseURI }
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
     );
-    if (!response.data.id_token && !response.data.code)
+
+    const { session, mfaState, tenantUserId } = response.data;
+
+    if (!session) {
       throw new Error("Wrong credentials");
-
-    try {
-      const idTokenVerify = await this._verifyToken(response.data.id_token);
-
-      await this.authorizeClient(
-        this.appId,
-        "authorization_code",
-        response.data.code
-      );
-
-      this._idToken = idTokenVerify.payload as OpenIDClaim;
-      OAuthService.setOpenIDToken(response.data.id_token);
-
-      return true;
-    } catch (error) {
-      console.error(error);
-      throw new Error("Authentication failed!");
     }
+
+    return { mfaState, tenantUserId };
+  }
+
+  async commitMfaCode(mfaCode: string): Promise<void> {
+    await this.httpClient.post<void>(
+      this.AUTH_API_ENDPOINTS.commitMfaCode,
+      { mfaCode },
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+  }
+
+  async startMfaUserSetup(phoneNumber: string): Promise<void> {
+    await this.httpClient.post<void>(
+      this.AUTH_API_ENDPOINTS.startMfaUserSetup,
+      {
+        phoneNumber,
+      },
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+  }
+
+  async finishMfaUserSetup(mfaCode: string): Promise<string> {
+    const result = await this.httpClient.post<{
+      backupCode: string;
+    }>(
+      this.AUTH_API_ENDPOINTS.finishMfaUserSetup,
+      { mfaCode },
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+    return result.data.backupCode;
+  }
+
+  async resetUserMfaSetup(backupCode: string): Promise<void> {
+    await this.httpClient.post(
+      this.AUTH_API_ENDPOINTS.resetUserMfaSetup,
+      {
+        backupCode,
+      },
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+  }
+
+  async listUsers(): Promise<AuthTenantUserResponseDto[]> {
+    const response = await this.httpClient.get<AuthTenantUserResponseDto[]>(
+      this.AUTH_API_ENDPOINTS.tenantUsers,
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+    return response.data;
   }
 
   /**
@@ -227,16 +278,19 @@ export class OAuthService {
     return result;
   }
 
-  async authorizeClient(client_id: string, grant_type: string, code: string) {
+  async getTokens(code: string): Promise<boolean> {
     const response = await this.httpClient.post<{
       access_token: string;
       refresh_token: string;
       token_type: string;
+      expiresIn: number;
+      id_token?: string;
     }>(
       this.OAUTH_ENDPOINTS.token,
       {
-        client_id,
-        grant_type,
+        client_id: this.appId,
+        grant_type: "authorization_code",
+        redirect_uri: this.redirectUri,
         code,
       },
       { baseURL: this.oAuthBaseURI }
@@ -259,6 +313,12 @@ export class OAuthService {
       this._refreshTokenExpires = decodedRefreshToken.payload.exp!;
       OAuthService.setRefreshToken(response.data.refresh_token);
 
+      if (response.data.id_token) {
+        const idTokenVerify = await this._verifyToken(response.data.id_token);
+        this._idToken = idTokenVerify.payload as OpenIDClaim;
+        OAuthService.setIDToken(response.data.id_token);
+      }
+
       // Schedule a future that will refresh the tokens
       this.setRefreshTokenScheduler();
 
@@ -274,7 +334,7 @@ export class OAuthService {
       const expiresInMs = this._accessTokenExpires * 1000 - Date.now();
       const threshold = expiresInMs * 0.8;
       this.log(
-        `AccessToken rexpires in ${
+        `AccessToken expires in ${
           expiresInMs / 1000
         } seconds. Therefore we refresh it after ${threshold / 1000} seconds`
       );
@@ -285,9 +345,10 @@ export class OAuthService {
     }
   }
 
-  async authenticated(): Promise<boolean> {
+  private async _authenticated(): Promise<boolean> {
     // User is authenticated if the application has obtained id_token
-    const open_id = OAuthService.getOpenIDToken();
+    await this._initializePromise;
+    const open_id = this._idToken;
 
     if (!open_id) {
       return false;
@@ -299,7 +360,9 @@ export class OAuthService {
     const response = await this.httpClient.post<{
       access_token: string;
       refresh_token: string;
-      tokenType: string;
+      token_type: string;
+      expiresIn: number;
+      id_token?: string;
     }>(
       this.OAUTH_ENDPOINTS.refresh,
       {
@@ -327,92 +390,22 @@ export class OAuthService {
       this._refreshTokenExpires = decodedRefreshToken.payload.exp!;
       OAuthService.setRefreshToken(response.data.refresh_token);
 
+      if (response.data.id_token) {
+        const idTokenVerify = await this._verifyToken(response.data.id_token);
+
+        this._idToken = idTokenVerify.payload as OpenIDClaim;
+        OAuthService.setIDToken(response.data.id_token);
+      }
+
       return true;
     } catch (error) {
       console.error(error);
-      throw new Error("Authentication failed!");
+      throw new Error("Token Refresh failed!");
     }
   }
 
-  async sendResetPasswordLink(username: string): Promise<void> {
-    await this.httpClient.post<void>(this.ENDPOINTS.password, { username });
-  }
-
-  async updatePassword(token: string, password: string): Promise<void> {
-    await this.httpClient.put(this.ENDPOINTS.password, { token, password });
-  }
-
-  async commitMfaCode(mfaCode: string): Promise<void> {
-    const result = await this.httpClient.post<{ mfaToken: string }>(
-      this.ENDPOINTS.commitMfaCode,
-      { mfaCode }
-    );
-    OAuthService.setMfaToken(result.data.mfaToken);
-  }
-
-  async startMfaUserSetup(phoneNumber: string): Promise<void> {
-    await this.httpClient.post<void>(this.ENDPOINTS.startMfaUserSetup, {
-      phoneNumber,
-    });
-  }
-
-  /**
-   * Finish setting up MFA for the user and the user is hereby authenticated with MFA aswell.
-   * @param mfaCode
-   * @returns The backup code to be saved for future reference
-   */
-  async finishMfaUserSetup(mfaCode: string): Promise<string> {
-    const result = await this.httpClient.post<{
-      mfaToken: string;
-      backupCode: string;
-    }>(this.ENDPOINTS.finishMfaUserSetup, { mfaCode });
-
-    OAuthService.setMfaToken(result.data.mfaToken);
-    return result.data.backupCode;
-  }
-
-  async resetUserMfaSetup(backupCode: string): Promise<void> {
-    await this.httpClient.post(this.ENDPOINTS.resetUserMfaSetup, {
-      backupCode,
-    });
-  }
-
-  async listUsers(): Promise<AuthTenantUserResponseDto[]> {
-    const response = await this.httpClient.get<AuthTenantUserResponseDto[]>(
-      this.ENDPOINTS.tenantUsers
-    );
-    return response.data;
-  }
-
-  /**
-   * This method operates on the ID token and expects sub to be TenantUserId
-   * @returns
-   */
-  currentUserId(): string | undefined {
-    return this._idToken?.sub;
-  }
-
-  async currentUser(): Promise<AuthTenantUserResponseDto> {
-    // In future we can make it possible to obtain claims data from oauth's /userinfo endpoint
-    // This is by specification
-    // for now it reads data from the id_token if pressent
-
-    const response = await this.httpClient.get<AuthTenantUserResponseDto>(
-      this.ENDPOINTS.currentUser
-    );
-    return response.data;
-  }
-
-  async updateCurrentUser(userProfile: UpdateUserProfileArgs): Promise<any> {
-    const response = await this.httpClient.put<any>(
-      this.ENDPOINTS.user,
-      userProfile
-    );
-    return response.data;
-  }
-
   static async hasFullAuthContext(): Promise<boolean> {
-    return !!this.getAccessToken() && !!this.getOpenIDToken();
+    return !!this.getAccessToken() && !!this.getIDToken();
   }
   // Setters
 
@@ -420,21 +413,13 @@ export class OAuthService {
     NblocksStorage.setItem(this.ACCCESS_TOKEN, token);
   }
 
-  static setOpenIDToken(token: string): void {
-    NblocksStorage.setItem(this.OPENID_TOKEN, token);
-  }
-
-  static setMfaToken(token: string): void {
-    NblocksStorage.setItem(this.MFA_TOKEN_KEY, token);
+  static setIDToken(token: string): void {
+    NblocksStorage.setItem(this.ID_TOKEN, token);
   }
 
   static setRefreshToken(token: string): void {
     NblocksStorage.setItem(this.REFRESH_TOKEN, token);
   }
-
-  // static setTenantUserId(userId: string): void {
-  //   NblocksStorage.setItem(this.TENANT_USER_ID_KEY, userId);
-  // }
 
   // Getters
   static getRefreshToken(): string | null {
@@ -445,17 +430,13 @@ export class OAuthService {
     return NblocksStorage.getItem(this.ACCCESS_TOKEN);
   }
 
-  static getOpenIDToken(): string | null {
-    return NblocksStorage.getItem(this.OPENID_TOKEN);
+  static getIDToken(): string | null {
+    return NblocksStorage.getItem(this.ID_TOKEN);
   }
-
-  // static getTenantUserId(): string | null {
-  //   return NblocksStorage.getItem(this.TENANT_USER_ID_KEY);
-  // }
 
   static clearAuthStorage(): void {
     NblocksStorage.removeItem(this.ACCCESS_TOKEN);
-    NblocksStorage.removeItem(this.OPENID_TOKEN);
+    NblocksStorage.removeItem(this.ID_TOKEN);
     NblocksStorage.removeItem(this.REFRESH_TOKEN);
   }
 }

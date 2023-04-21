@@ -34,6 +34,7 @@ const NblocksAuthContextProvider: FunctionComponent<NblocksContextProps> = ({
     authService,
     authApolloClient,
     authHttpClient,
+    initialized,
   } = useSecureContext();
   const [currentUser, setCurrentUser] = useState(new CurrentUser());
 
@@ -49,6 +50,10 @@ const NblocksAuthContextProvider: FunctionComponent<NblocksContextProps> = ({
     }
   };
 
+  /**
+   * TODO refresh tokens if we switch user
+   * @param userId
+   */
   const switchUser = async (userId: string) => {
     await authApolloClient.client.resetStore();
     AuthService.setTenantUserId(userId!);
@@ -79,21 +84,19 @@ const NblocksAuthContextProvider: FunctionComponent<NblocksContextProps> = ({
   };
 
   const refreshCurrentUser = async () => {
-    if (await AuthService.hasFullAuthContext()) {
-      log("Will refresh currentUser");
-      const user = await authService.currentUser();
-      setCurrentUser(new CurrentUser(user));
-      log("Did refresh currentUser");
-    }
+    log("Will refresh currentUser");
+    const user = await authService.currentUser();
+    setCurrentUser(new CurrentUser(user));
+    log("Did refresh currentUser");
   };
 
   useEffect(() => {
-    if (authenticated) {
+    if (authenticated && initialized) {
       refreshCurrentUser();
     } else {
       setCurrentUser(new CurrentUser());
     }
-  }, [authenticated]);
+  }, [authenticated, initialized]);
 
   return (
     <AuthContext.Provider

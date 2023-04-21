@@ -123,7 +123,6 @@ const ModalComponent: FunctionComponent<ConfigObject> = ({
           )}
           <NblocksButton
             onClick={() => {
-              console.log("Hello");
               setIsOpen(false);
             }}
           >

@@ -24,7 +24,7 @@ const OnboardTenantScreen: FunctionComponent<{}> = () => {
   const targetUrl = location.state?.targetUrl?.pathname || handoverRoute;
 
   const onDidCompleteOnboarding = () => {
-    navigate(RouteConfig.login.chooseUserScreen, { state: { targetUrl } });
+    navigate(RouteConfig.onboard.onboardingStart, { state: { targetUrl } });
   };
 
   const log = (msg: string) => {

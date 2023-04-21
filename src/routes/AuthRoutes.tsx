@@ -11,6 +11,7 @@ import { SetupMfaScreen } from "../screens/auth/mfa/SetupMfa.screen";
 import { NavigationConfig } from "../models/navigation-config";
 import { SignupScreen } from "../screens/auth/Signup.screen";
 import { useConfig } from "../hooks/config-context";
+import { CallbackScreen } from "../screens/auth/oauth/Callback.screen";
 
 //TODO this should be moved to a hook or somewhere more generic
 const RouteConfig: NavigationConfig = {
@@ -18,6 +19,7 @@ const RouteConfig: NavigationConfig = {
     loginScreen: "/auth/login",
     logoutScreen: "/auth/logout",
     chooseUserScreen: "/auth/choose-user",
+    callbackScreen: "/auth/oauth-callback",
   },
   password: {
     resetPasswordScreen: "/auth/reset-password",
@@ -29,6 +31,7 @@ const RouteConfig: NavigationConfig = {
     setupMfaScreen: "/auth/mfa/setup",
   },
   onboard: {
+    onboardingStart: "/onboard",
     onboardUserScreen: "/onboard/user",
     onboardTenantScreen: "/onboard/tenant",
   },
@@ -61,6 +64,7 @@ const AuthRoutes = () => {
       <Route path="reset-password" element={<ResetPasswordScreen />}></Route>
       <Route path="set-password/:token" element={<SetPasswordScreen />}></Route>
       <Route path="choose-user" element={<ChooseUserScreen />}></Route>
+      <Route path="oauth-callback" element={<CallbackScreen />}></Route>
       {tenantSignup && (
         <Route path="signup/:planName" element={<SignupScreen />}></Route>
       )}

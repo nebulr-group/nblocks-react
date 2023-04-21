@@ -46,6 +46,8 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
     if (user) {
       await switchUser(user.id);
       didAuthenticate(true);
+
+      // Callback to parent components
       didSelectUser(user);
       setIsLoading(false);
     } else {

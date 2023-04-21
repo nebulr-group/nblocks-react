@@ -56,7 +56,6 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
   let planData = data?.getAppConfig
     ? data.getAppConfig.businessModel?.plans
     : [];
-  console.log(planData);
   const onSubmitStripeCredentialsHandler: React.FormEventHandler<
     HTMLFormElement
   > = async (event) => {

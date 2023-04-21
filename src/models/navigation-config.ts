@@ -3,6 +3,7 @@ export interface NavigationConfig {
     loginScreen: string;
     logoutScreen: string;
     chooseUserScreen: string;
+    callbackScreen: string;
   };
   password: {
     resetPasswordScreen: string;
@@ -14,6 +15,7 @@ export interface NavigationConfig {
     setupMfaScreen: string;
   };
   onboard: {
+    onboardingStart: string;
     onboardUserScreen: string;
     onboardTenantScreen: string;
   };
