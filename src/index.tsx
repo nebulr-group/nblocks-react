@@ -18,6 +18,7 @@ import { NBPlanAccessControlGuard } from "./routes/PlanAccessControlGuard";
 import { NBAccessControlGuard } from "./routes/AccessControlGuard";
 import { NBRoleAccessControlGuard } from "./routes/RoleAccessControlGuard";
 import { SpaRouter } from "./routes/SpaRouter";
+import { AuthService } from "./utils/AuthService";
 
 export {
   NblocksProvider,
@@ -38,6 +39,7 @@ export {
   UserRoutes,
   TenantRoutes,
   InstallationCompleteComponent,
+  AuthService,
 };
 
 export type { LibConfig };

@@ -14,6 +14,10 @@ export type UpdateUserProfileArgs = {
 };
 export type MfaState = "DISABLED" | "REQUIRED" | "SETUP";
 
+/**
+ * TODO merge this one with OauthService more elegantly. OauthService can contain core functionality but this one is master
+ * This class should work like a toolbox for cloud views, like obtaining tokens etc. Maybe this plugin should make use of the TsLib frontend client???
+ */
 export class AuthService {
   private readonly ENDPOINTS = {
     authenticate: "/auth-proxy/authenticate",
