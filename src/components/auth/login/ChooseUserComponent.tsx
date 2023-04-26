@@ -15,7 +15,9 @@ import { SkeletonLoader } from "../../shared/SkeletonLoader";
 
 type ComponentProps = {
   didSelectUser: (user: AuthTenantUserResponseDto) => void;
-  didFinishedInitialLoading?: () => void;
+
+  // If component should autoselect user should there only be one
+  autoSelect: boolean;
 };
 
 const convertToOption = (user: AuthTenantUserResponseDto): Option => {
@@ -30,9 +32,10 @@ const convertToOption = (user: AuthTenantUserResponseDto): Option => {
   };
 };
 
+//http://localhost:8081/auth/choose-user?autoSelect=false
 const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
   didSelectUser,
-  didFinishedInitialLoading: finishedInitialLoading,
+  autoSelect,
 }) => {
   const { switchUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -73,28 +76,9 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
   }, []);
 
   const init = async (): Promise<void> => {
-    const users = await authService.listUsers();
-    if (users) {
-      // Support pre selecting user based on localstorage data
-      const id = AuthService.getTenantUserId();
-      if (id) {
-        const userMatch = users.find((user) => user.id === id);
-        if (userMatch) {
-          log("Pre selecting current workspace");
-          setSelectedUser(userMatch);
-        }
-      }
-
-      // Auto select user if only one workspace is available
-      if (users.length === 1) {
-        log("User has just one workspace access. Assuming this.");
-        submit(users[0]);
-      } else {
-        setUsers(users);
-        if (finishedInitialLoading) {
-          finishedInitialLoading();
-        }
-      }
+    const usersResponse = await authService.listUsers();
+    if (usersResponse) {
+      setUsers(usersResponse);
     }
   };
 
@@ -113,7 +97,9 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
       // Auto select user if only one workspace is available
       if (users.length === 1) {
         log("User has just one workspace access. Assuming this.");
-        submit(users[0]);
+        if (autoSelect) {
+          submit(users[0]);
+        }
       }
     }
   }, [users]);

@@ -18,6 +18,8 @@ export function ChooseUserScreen() {
 
   // Handover will be done to handoverRoute or targetUrl if specified
   const targetUrl = location.state?.targetUrl?.pathname || handoverRoute;
+  const urlSearch = new URLSearchParams(location.search);
+  const autoSelect = urlSearch.get("autoSelect") === "false" ? false : true;
 
   const onDidSelectUser = async (user: AuthTenantUserResponseDto) => {
     if (!authLegacy) {
@@ -48,7 +50,10 @@ export function ChooseUserScreen() {
         heading={"Welcome back!"}
         subHeading={"Choose a workspace you want to login into below."}
       >
-        <ChooseUserComponent didSelectUser={(user) => onDidSelectUser(user)} />
+        <ChooseUserComponent
+          didSelectUser={(user) => onDidSelectUser(user)}
+          autoSelect={autoSelect}
+        />
       </AuthLayoutWrapperComponent>
     );
   }
