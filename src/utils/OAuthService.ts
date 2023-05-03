@@ -3,7 +3,7 @@ import { NblocksStorage } from "./Storage";
 import * as jose from "jose";
 import { GetKeyFunction } from "jose/dist/types/types";
 import { LibConfig } from "../models/lib-config";
-import { MfaState } from "./AuthService";
+import { FederationType, MfaState } from "./AuthService";
 import { AuthTenantUserResponseDto } from "../models/auth-tenant-user-response.dto";
 
 //FIXME centralize models
@@ -69,6 +69,7 @@ export class OAuthService {
   };
 
   private readonly AUTH_API_ENDPOINTS = {
+    federatedLogin: "/federated",
     authenticate: "/auth/authenticate",
     tenantUsers: "/auth/tenantUsers",
     handover: "/auth/chooseTenantUser",
@@ -123,6 +124,10 @@ export class OAuthService {
     if (this.debug) {
       console.log(`OAuthService: ${msg}`);
     }
+  }
+
+  getFederatedLoginUrl(type: FederationType): string {
+    return `${this.oAuthBaseURI}${this.AUTH_API_ENDPOINTS.federatedLogin}/${type}/login`;
   }
 
   private async restoreTokensFromLocalStorage(): Promise<void> {

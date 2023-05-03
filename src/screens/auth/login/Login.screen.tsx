@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/auth-context";
 import { LoginComponent } from "../../../components/auth/login/LoginComponent";
 import { useConfig } from "../../../hooks/config-context";
 import { RouteConfig } from "../../../routes/AuthRoutes";
 import { AuthLayoutWrapperComponent } from "../../../components/auth/AuthLayoutWrapperComponent";
-import { MfaState } from "../../../utils/AuthService";
+import { FederationType, MfaState } from "../../../utils/AuthService";
 import { useSecureContext } from "../../../hooks/secure-http-context";
 
 export function LoginScreen() {
@@ -52,6 +52,11 @@ export function LoginScreen() {
     }
   };
 
+  const onDidClickFederatedLogin = (type: FederationType) => {
+    const url = authService.getFederatedLoginUrl(type);
+    window.location.href = url!;
+  };
+
   const log = (msg: string) => {
     if (debug) {
       console.log(msg);
@@ -65,6 +70,7 @@ export function LoginScreen() {
     >
       <LoginComponent
         didLogin={(mfa, tenantUserId) => onDidLogin(mfa, tenantUserId)}
+        didClickFederatedLogin={(type) => onDidClickFederatedLogin(type)}
       />
     </AuthLayoutWrapperComponent>
   );

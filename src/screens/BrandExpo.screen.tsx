@@ -208,7 +208,7 @@ export function BrandExpoScreen() {
           <h1 className="mt-5 text-3xl">Image Component</h1>
           <div className="flex flex-column items-baseline mt-5">
             <div style={{ width: 32, height: 32 }}>
-              <ImageComponent src={"image"}></ImageComponent>
+              <ImageComponent src={image}></ImageComponent>
             </div>
             <div style={{ width: 64, height: 64 }} className="ml-5">
               <ImageComponent src={image}></ImageComponent>

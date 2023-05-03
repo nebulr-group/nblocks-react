@@ -6,21 +6,30 @@ import { NblocksButton } from "../../shared/NblocksButton";
 import { InputComponent } from "../../shared/InputComponent";
 import { TextComponent } from "../../shared/TextComponent";
 import { useConfig } from "../../../hooks/config-context";
-import { MfaState } from "../../../utils/AuthService";
+import { FederationType, MfaState } from "../../../utils/AuthService";
 import { AlertComponent } from "../../shared/AlertComponent";
 import { UnauthenticatedError } from "../../../utils/errors/UnauthenticatedError";
+import { ImageComponent } from "../../shared/ImageComponent";
+
+const azureAdLoginLogo = "https://img.icons8.com/?size=48&id=22989&format=png";
 
 type ComponentProps = {
   didLogin: (mfa: MfaState, tenantUserId?: string) => void;
+  didClickFederatedLogin: (type: FederationType) => void;
 };
 
-const LoginComponent: FunctionComponent<ComponentProps> = ({ didLogin }) => {
+const LoginComponent: FunctionComponent<ComponentProps> = ({
+  didLogin,
+  didClickFederatedLogin,
+}) => {
   const { authService } = useSecureContext();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isloading, setIsLoading] = useState(false);
-  const { tenantSignup } = useConfig();
+  const { tenantSignup, authLegacy } = useConfig();
+  //const { azureAdLogin } = useApp();
+  const azureAdLogin = !authLegacy && true;
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -44,6 +53,26 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({ didLogin }) => {
         );
       }
       setPassword("");
+    }
+  };
+
+  const renderSso = () => {
+    if (azureAdLogin) {
+      return (
+        <div>
+          <NblocksButton
+            size="sm"
+            type="tertiary"
+            fullWidth={true}
+            onClick={() => didClickFederatedLogin("ms-azure-ad")}
+          >
+            <div style={{ width: 48, height: 48 }}>
+              <ImageComponent src={azureAdLoginLogo}></ImageComponent>
+            </div>
+            Sign in with Microsoft AD
+          </NblocksButton>
+        </div>
+      );
     }
   };
 
@@ -100,6 +129,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({ didLogin }) => {
             Sign in
           </NblocksButton>
         </div>
+        {renderSso()}
       </form>
       {tenantSignup && (
         <div className="mt-8">

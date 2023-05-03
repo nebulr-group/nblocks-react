@@ -12,7 +12,9 @@ export type UpdateUserProfileArgs = {
   phoneNumber?: string;
   consentsToPrivacyPolicy?: boolean;
 };
+
 export type MfaState = "DISABLED" | "REQUIRED" | "SETUP";
+export type FederationType = "ms-azure-ad" | "google";
 
 export class AuthService {
   private readonly ENDPOINTS = {
@@ -64,6 +66,12 @@ export class AuthService {
   getHandoverUrl(tenantUserId?: string): string | undefined {
     if (!!this._oauthService) {
       return this._oauthService.getHandoverUrl(tenantUserId);
+    }
+  }
+
+  getFederatedLoginUrl(type: FederationType): string | undefined {
+    if (!!this._oauthService) {
+      return this._oauthService.getFederatedLoginUrl(type);
     }
   }
 
