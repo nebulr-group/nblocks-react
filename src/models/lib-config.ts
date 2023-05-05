@@ -1,5 +1,7 @@
 export interface LibConfig {
-  /** Sets several other configs into a sensible default for development */
+  /** Sets several other configs into a sensible default for development.
+   * `spa=true`, `tenantSignup=true`, `appSignup=true`, `passwordValidation=false`
+   */
   devMode: boolean;
 
   // Output debug messages from plugin

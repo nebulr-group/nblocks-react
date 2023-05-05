@@ -69,7 +69,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
             <div style={{ width: 48, height: 48 }}>
               <ImageComponent src={azureAdLoginLogo}></ImageComponent>
             </div>
-            Sign in with Microsoft AD
+            Sign in with Microsoft
           </NblocksButton>
         </div>
       );
