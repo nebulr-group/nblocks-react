@@ -16,6 +16,7 @@ export type Scalars = {
 
 export type App = {
   __typename?: 'App';
+  azureAdSsoEnabled?: Maybe<Scalars['String']>;
   logo?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   onboardingFlow?: Maybe<Scalars['String']>;
@@ -28,7 +29,10 @@ export type App = {
 export type AppConfig = {
   __typename?: 'AppConfig';
   apiUrl?: Maybe<Scalars['String']>;
+  azureAdSsoEnabled?: Maybe<Scalars['Boolean']>;
+  azureMarketplaceEnabled?: Maybe<Scalars['Boolean']>;
   businessModel?: Maybe<BusinessModelGraphql>;
+  defaultCallbackUri?: Maybe<Scalars['String']>;
   defaultRole?: Maybe<Scalars['String']>;
   emailSenderEmail?: Maybe<Scalars['String']>;
   emailSenderName?: Maybe<Scalars['String']>;
@@ -37,6 +41,7 @@ export type AppConfig = {
   name?: Maybe<Scalars['String']>;
   onboardingFlow?: Maybe<Scalars['String']>;
   privacyPolicyUrl?: Maybe<Scalars['String']>;
+  redirectUris?: Maybe<Array<Scalars['String']>>;
   roles?: Maybe<Array<Scalars['String']>>;
   stripeEnabled?: Maybe<Scalars['Boolean']>;
   termsOfServiceUrl?: Maybe<Scalars['String']>;
@@ -130,6 +135,7 @@ export type PlanGraphql = {
   __typename?: 'PlanGraphql';
   name: Scalars['String'];
   prices: Array<PriceGraphql>;
+  trialDays?: Maybe<Scalars['Float']>;
 };
 
 export type PriceGraphql = {
@@ -200,6 +206,12 @@ export type TenantOwnerInput = {
 };
 
 export type UpdateCredentialsInput = {
+  microsoftAzureADClientId?: InputMaybe<Scalars['String']>;
+  microsoftAzureADClientSecret?: InputMaybe<Scalars['String']>;
+  microsoftAzureADTenantId?: InputMaybe<Scalars['String']>;
+  microsoftAzureMarketplaceClientId?: InputMaybe<Scalars['String']>;
+  microsoftAzureMarketplaceClientSecret?: InputMaybe<Scalars['String']>;
+  microsoftAzureMarketplaceTenantId?: InputMaybe<Scalars['String']>;
   stripePublicKey?: InputMaybe<Scalars['String']>;
   stripeSecretKey?: InputMaybe<Scalars['String']>;
 };
@@ -312,7 +324,7 @@ export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __type
 export type GetAppAnonymousQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAppAnonymousQuery = { __typename?: 'Query', getAppAnonymous: { __typename?: 'App', name?: string | null, logo?: string | null, privacyPolicyUrl?: string | null, termsOfServiceUrl?: string | null, onboardingFlow?: string | null } };
+export type GetAppAnonymousQuery = { __typename?: 'Query', getAppAnonymous: { __typename?: 'App', name?: string | null, logo?: string | null, privacyPolicyUrl?: string | null, termsOfServiceUrl?: string | null, onboardingFlow?: string | null, azureAdSsoEnabled?: string | null } };
 
 
 export const CreateCheckoutSessionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateCheckoutSession"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"args"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateCheckoutSessionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createCheckoutSession"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"args"},"value":{"kind":"Variable","name":{"kind":"Name","value":"args"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"publicKey"}}]}}]}}]} as unknown as DocumentNode<CreateCheckoutSessionMutation, CreateCheckoutSessionMutationVariables>;
@@ -329,4 +341,4 @@ export const ListUsersDocument = {"kind":"Document","definitions":[{"kind":"Oper
 export const SendPasswordResetLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SendPasswordResetLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendPasswordResetLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}]}}]} as unknown as DocumentNode<SendPasswordResetLinkMutation, SendPasswordResetLinkMutationVariables>;
 export const UpdateTenantDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateTenant"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tenant"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TenantInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateTenant"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"tenant"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tenant"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"locale"}},{"kind":"Field","name":{"kind":"Name","value":"mfa"}},{"kind":"Field","name":{"kind":"Name","value":"paymentsEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"paymentsRequired"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"plan"}}]}}]}}]} as unknown as DocumentNode<UpdateTenantMutation, UpdateTenantMutationVariables>;
 export const UpdateUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fullName"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"onboarded"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"teams"}}]}}]}}]} as unknown as DocumentNode<UpdateUserMutation, UpdateUserMutationVariables>;
-export const GetAppAnonymousDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAppAnonymous"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAppAnonymous"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"privacyPolicyUrl"}},{"kind":"Field","name":{"kind":"Name","value":"termsOfServiceUrl"}},{"kind":"Field","name":{"kind":"Name","value":"onboardingFlow"}}]}}]}}]} as unknown as DocumentNode<GetAppAnonymousQuery, GetAppAnonymousQueryVariables>;
+export const GetAppAnonymousDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAppAnonymous"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAppAnonymous"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"privacyPolicyUrl"}},{"kind":"Field","name":{"kind":"Name","value":"termsOfServiceUrl"}},{"kind":"Field","name":{"kind":"Name","value":"onboardingFlow"}},{"kind":"Field","name":{"kind":"Name","value":"azureAdSsoEnabled"}}]}}]}}]} as unknown as DocumentNode<GetAppAnonymousQuery, GetAppAnonymousQueryVariables>;

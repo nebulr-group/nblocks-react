@@ -17,7 +17,7 @@ const documents = {
     "mutation SendPasswordResetLink($userId: String!) {\n  sendPasswordResetLink(userId: $userId)\n}": types.SendPasswordResetLinkDocument,
     "mutation UpdateTenant($tenant: TenantInput!) {\n  updateTenant(tenant: $tenant) {\n    createdAt\n    id\n    logo\n    locale\n    mfa\n    paymentsEnabled\n    paymentsRequired\n    name\n    plan\n  }\n}": types.UpdateTenantDocument,
     "mutation UpdateUser($user: UserInput!) {\n  updateUser(user: $user) {\n    id\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n}": types.UpdateUserDocument,
-    "query GetAppAnonymous {\n  getAppAnonymous {\n    name\n    logo\n    privacyPolicyUrl\n    termsOfServiceUrl\n    onboardingFlow\n  }\n}": types.GetAppAnonymousDocument,
+    "query GetAppAnonymous {\n  getAppAnonymous {\n    name\n    logo\n    privacyPolicyUrl\n    termsOfServiceUrl\n    onboardingFlow\n    azureAdSsoEnabled\n  }\n}": types.GetAppAnonymousDocument,
 };
 
 export function graphql(source: "mutation CreateCheckoutSession($args: CreateCheckoutSessionInput!) {\n  createCheckoutSession(args: $args) {\n    id\n    publicKey\n  }\n}"): (typeof documents)["mutation CreateCheckoutSession($args: CreateCheckoutSessionInput!) {\n  createCheckoutSession(args: $args) {\n    id\n    publicKey\n  }\n}"];
@@ -34,7 +34,7 @@ export function graphql(source: "query ListUsers {\n  listUsers {\n    id\n    f
 export function graphql(source: "mutation SendPasswordResetLink($userId: String!) {\n  sendPasswordResetLink(userId: $userId)\n}"): (typeof documents)["mutation SendPasswordResetLink($userId: String!) {\n  sendPasswordResetLink(userId: $userId)\n}"];
 export function graphql(source: "mutation UpdateTenant($tenant: TenantInput!) {\n  updateTenant(tenant: $tenant) {\n    createdAt\n    id\n    logo\n    locale\n    mfa\n    paymentsEnabled\n    paymentsRequired\n    name\n    plan\n  }\n}"): (typeof documents)["mutation UpdateTenant($tenant: TenantInput!) {\n  updateTenant(tenant: $tenant) {\n    createdAt\n    id\n    logo\n    locale\n    mfa\n    paymentsEnabled\n    paymentsRequired\n    name\n    plan\n  }\n}"];
 export function graphql(source: "mutation UpdateUser($user: UserInput!) {\n  updateUser(user: $user) {\n    id\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n}"): (typeof documents)["mutation UpdateUser($user: UserInput!) {\n  updateUser(user: $user) {\n    id\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n}"];
-export function graphql(source: "query GetAppAnonymous {\n  getAppAnonymous {\n    name\n    logo\n    privacyPolicyUrl\n    termsOfServiceUrl\n    onboardingFlow\n  }\n}"): (typeof documents)["query GetAppAnonymous {\n  getAppAnonymous {\n    name\n    logo\n    privacyPolicyUrl\n    termsOfServiceUrl\n    onboardingFlow\n  }\n}"];
+export function graphql(source: "query GetAppAnonymous {\n  getAppAnonymous {\n    name\n    logo\n    privacyPolicyUrl\n    termsOfServiceUrl\n    onboardingFlow\n    azureAdSsoEnabled\n  }\n}"): (typeof documents)["query GetAppAnonymous {\n  getAppAnonymous {\n    name\n    logo\n    privacyPolicyUrl\n    termsOfServiceUrl\n    onboardingFlow\n    azureAdSsoEnabled\n  }\n}"];
 
 export function graphql(source: string): unknown;
 export function graphql(source: string) {

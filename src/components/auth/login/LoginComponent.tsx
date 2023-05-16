@@ -10,6 +10,7 @@ import { FederationType, MfaState } from "../../../utils/AuthService";
 import { AlertComponent } from "../../shared/AlertComponent";
 import { UnauthenticatedError } from "../../../utils/errors/UnauthenticatedError";
 import { ImageComponent } from "../../shared/ImageComponent";
+import { useApp } from "../../../hooks/app-context";
 
 const azureAdLoginLogo = "https://img.icons8.com/?size=48&id=22989&format=png";
 
@@ -28,8 +29,8 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
   const [errorMsg, setErrorMsg] = useState("");
   const [isloading, setIsLoading] = useState(false);
   const { tenantSignup, authLegacy } = useConfig();
-  //const { azureAdLogin } = useApp();
-  const azureAdLogin = !authLegacy && true;
+  const { azureAdSsoEnabled } = useApp();
+  const azureAdLogin = !authLegacy && azureAdSsoEnabled;
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();

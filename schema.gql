@@ -3,6 +3,7 @@
 # ------------------------------------------------------
 
 type App {
+  azureAdSsoEnabled: String
   logo: String
   name: String
   onboardingFlow: String
@@ -14,7 +15,10 @@ type App {
 
 type AppConfig {
   apiUrl: String
+  azureAdSsoEnabled: Boolean
+  azureMarketplaceEnabled: Boolean
   businessModel: BusinessModelGraphql
+  defaultCallbackUri: String
   defaultRole: String
   emailSenderEmail: String
   emailSenderName: String
@@ -23,6 +27,7 @@ type AppConfig {
   name: String
   onboardingFlow: String
   privacyPolicyUrl: String
+  redirectUris: [String!]
   roles: [String!]
   stripeEnabled: Boolean
   termsOfServiceUrl: String
@@ -91,6 +96,7 @@ type Mutation {
 type PlanGraphql {
   name: String!
   prices: [PriceGraphql!]!
+  trialDays: Float
 }
 
 type PriceGraphql {
@@ -176,6 +182,12 @@ input TenantOwnerInput {
 }
 
 input UpdateCredentialsInput {
+  microsoftAzureADClientId: String
+  microsoftAzureADClientSecret: String
+  microsoftAzureADTenantId: String
+  microsoftAzureMarketplaceClientId: String
+  microsoftAzureMarketplaceClientSecret: String
+  microsoftAzureMarketplaceTenantId: String
   stripePublicKey: String
   stripeSecretKey: String
 }
