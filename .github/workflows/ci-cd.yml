@@ -89,7 +89,7 @@ jobs:
       - name: Step 5 - Publish package to the npm
         if: ${{ !contains(steps.package-version.outputs.current-version, 'beta')}}
         run: |
-          docker run -e NPM_TOKEN=${{ secrets.NPM_TOKEN }} --rm ${{ github.run_id }} /bin/bash -c "./npm-config-setter.sh; yarn publish"
+          docker run -e NPM_TOKEN=${{ secrets.NPM_TOKEN }} --rm ${{ github.run_id }} /bin/bash -c "./npm-config-setter.sh; npm run publish"
 
   deploy-beta:
     needs: [build, test]
@@ -121,4 +121,4 @@ jobs:
       - name: Step 5 - Publish package to the npm
         if: ${{ contains(steps.package-version.outputs.current-version, 'beta')}}
         run: |
-          docker run -e NPM_TOKEN=${{ secrets.NPM_TOKEN }} --rm ${{ github.run_id }} /bin/bash -c "./npm-config-setter.sh; yarn publish-beta"
+          docker run -e NPM_TOKEN=${{ secrets.NPM_TOKEN }} --rm ${{ github.run_id }} /bin/bash -c "./npm-config-setter.sh; npm run publish-beta"
