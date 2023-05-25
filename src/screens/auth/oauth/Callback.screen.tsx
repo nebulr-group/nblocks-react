@@ -13,6 +13,7 @@ const CallbackScreen: FunctionComponent<{}> = () => {
 
   const urlSearch = new URLSearchParams(location.search);
   const code = urlSearch.get("code");
+  const error = urlSearch.get("error");
   const state = urlSearch.get("state");
   const target = state ? state : handoverRoute;
 
@@ -27,6 +28,11 @@ const CallbackScreen: FunctionComponent<{}> = () => {
     //await switchUser(tenantUserId!);
     didAuthenticate(true);
   };
+
+  if (error) {
+    console.error("Login error");
+    // return <Navigate to={authService.getLoginUrl("")} />;
+  }
 
   if (authenticated && initialized) {
     return <Navigate to={target} />;

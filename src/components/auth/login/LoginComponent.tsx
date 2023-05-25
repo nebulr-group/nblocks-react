@@ -9,10 +9,8 @@ import { useConfig } from "../../../hooks/config-context";
 import { FederationType, MfaState } from "../../../utils/AuthService";
 import { AlertComponent } from "../../shared/AlertComponent";
 import { UnauthenticatedError } from "../../../utils/errors/UnauthenticatedError";
-import { ImageComponent } from "../../shared/ImageComponent";
 import { useApp } from "../../../hooks/app-context";
-
-const azureAdLoginLogo = "https://img.icons8.com/?size=48&id=22989&format=png";
+import { AzureAdSsoButtonComponent } from "../shared/AzureAdSsoButtonComponent";
 
 type ComponentProps = {
   didLogin: (mfa: MfaState, tenantUserId?: string) => void;
@@ -60,19 +58,10 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
   const renderSso = () => {
     if (azureAdLogin) {
       return (
-        <div>
-          <NblocksButton
-            size="sm"
-            type="tertiary"
-            fullWidth={true}
-            onClick={() => didClickFederatedLogin("ms-azure-ad")}
-          >
-            <div style={{ width: 48, height: 48 }}>
-              <ImageComponent src={azureAdLoginLogo}></ImageComponent>
-            </div>
-            Sign in with Microsoft
-          </NblocksButton>
-        </div>
+        <AzureAdSsoButtonComponent
+          mode="login"
+          onClick={() => didClickFederatedLogin("ms-azure-ad")}
+        ></AzureAdSsoButtonComponent>
       );
     }
   };

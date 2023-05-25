@@ -75,6 +75,12 @@ export class AuthService {
     }
   }
 
+  getFederatedSignupUrl(type: FederationType): string | undefined {
+    if (!!this._oauthService) {
+      return this._oauthService.getFederatedSignupUrl(type);
+    }
+  }
+
   /**
    *
    * @param code
@@ -212,23 +218,23 @@ export class AuthService {
       const token = this._oauthService.getIdToken();
       return token
         ? {
-            email: token?.email!,
-            id: token?.sub,
-            onboarded: true,
-            role: "something",
-            tenant: { id: "1234", locale: "en", logo: "", name: "" },
-            username: token.email!,
-            fullName: token.name,
-          }
+          email: token.email!,
+          id: token.sub!,
+          onboarded: token.onboarded!,
+          role: "",
+          tenant: { id: token.tenant_id!, locale: token.locale!, logo: token.tenant_logo, name: token.tenant_name },
+          username: token.email!,
+          fullName: token.name,
+        }
         : {
-            email: "",
-            id: "",
-            onboarded: true,
-            role: "",
-            tenant: { id: "1234", locale: "en", logo: "", name: "" },
-            username: "",
-            fullName: "Unknown",
-          };
+          email: "",
+          id: "",
+          onboarded: true,
+          role: "",
+          tenant: { id: "Dummy id", locale: "en", logo: "", name: "" },
+          username: "",
+          fullName: "Unknown",
+        };
     } else {
       const response = await this.httpClient.get<AuthTenantUserResponseDto>(
         this.ENDPOINTS.currentUser

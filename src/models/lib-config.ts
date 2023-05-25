@@ -60,15 +60,4 @@ export interface LibConfig {
 
   // A copyright footer that is shown on auth views
   copyrightFooter: string;
-
-  /** Available social login providers and account api data that the user can use for authorization. */
-  socialLogins: {
-    accountApiHost: string;
-    appId: string;
-    providers: {
-      google: boolean;
-      github: boolean;
-      facebook: boolean;
-    };
-  };
 }

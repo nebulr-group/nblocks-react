@@ -4,6 +4,11 @@ import { LibConfig } from "../models/lib-config";
 const backendlessApi = "https://backendless-stage.nblocks.cloud";
 const authApi = "https://auth-stage.nblocks.cloud";
 const accountApi = "https://account-api-stage.nebulr-core.com";
+
+// const backendlessApi = "https://backendless.nblocks.cloud";
+// const authApi = "https://auth.nblocks.cloud";
+// const accountApi = "https://account-api.nebulr-core.com";
+
 const oauthRedirectUri = "http://localhost:8080/auth/oauth-callback";
 
 const initialContext: LibConfig = {
@@ -19,15 +24,6 @@ const initialContext: LibConfig = {
   languages: ["en"],
   passwordValidation: true,
   spa: false,
-  socialLogins: {
-    accountApiHost: "",
-    appId: "",
-    providers: {
-      google: false,
-      github: false,
-      facebook: false,
-    },
-  },
   tenantSignup: false,
   appSignup: false,
   oAuthBaseURI: authApi,

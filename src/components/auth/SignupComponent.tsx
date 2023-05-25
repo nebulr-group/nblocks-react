@@ -9,21 +9,31 @@ import { InputComponent } from "../shared/InputComponent";
 import { LinkComponent } from "../shared/LinkComponent";
 import { NblocksButton } from "../shared/NblocksButton";
 import { TextComponent } from "../shared/TextComponent";
+import { useConfig } from "../../hooks/config-context";
+import { FederationType } from "../../utils/AuthService";
+import { AzureAdSsoButtonComponent } from "./shared/AzureAdSsoButtonComponent";
 
 type ComponentProps = {
   didSignup: (email: string) => void;
+  didClickFederatedSignup: (type: FederationType) => void;
 };
 
-const SignupComponent: FunctionComponent<ComponentProps> = ({ didSignup }) => {
+const SignupComponent: FunctionComponent<ComponentProps> = ({
+  didSignup,
+  didClickFederatedSignup,
+}) => {
   const [createTenantAnonymous, { loading }] = useMutation(
     CreateTenantAnonymousDocument
   );
-  const { logo } = useApp();
+  const { authLegacy } = useConfig();
+  const { logo, azureAdSsoEnabled } = useApp();
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const azureAdLogin = !authLegacy && azureAdSsoEnabled;
 
   const { plan } = useParams();
 
@@ -49,6 +59,17 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({ didSignup }) => {
         "There was an error when creating the account. Try again, otherwise contact support."
       );
       setIsLoading(false);
+    }
+  };
+
+  const renderSso = () => {
+    if (azureAdLogin) {
+      return (
+        <AzureAdSsoButtonComponent
+          mode="signup"
+          onClick={() => didClickFederatedSignup("ms-azure-ad")}
+        ></AzureAdSsoButtonComponent>
+      );
     }
   };
 
@@ -103,6 +124,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({ didSignup }) => {
             Create account
           </NblocksButton>
         </div>
+        {renderSso()}
       </form>
       <div className="mt-8">
         <TextComponent size="sm">

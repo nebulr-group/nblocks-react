@@ -130,6 +130,10 @@ export class OAuthService {
     return `${this.oAuthBaseURI}${this.AUTH_API_ENDPOINTS.federatedLogin}/${type}/login`;
   }
 
+  getFederatedSignupUrl(type: FederationType): string {
+    return `${this.oAuthBaseURI}${this.AUTH_API_ENDPOINTS.federatedLogin}/${type}/signup`;
+  }
+
   private async restoreTokensFromLocalStorage(): Promise<void> {
     try {
       const [openIdToken, accessToken, refreshToken] = [
@@ -339,8 +343,7 @@ export class OAuthService {
       const expiresInMs = this._accessTokenExpires * 1000 - Date.now();
       const threshold = expiresInMs * 0.8;
       this.log(
-        `AccessToken expires in ${
-          expiresInMs / 1000
+        `AccessToken expires in ${expiresInMs / 1000
         } seconds. Therefore we refresh it after ${threshold / 1000} seconds`
       );
       const timer = setTimeout(async () => {
