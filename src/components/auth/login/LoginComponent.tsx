@@ -11,6 +11,7 @@ import { AlertComponent } from "../../shared/AlertComponent";
 import { UnauthenticatedError } from "../../../utils/errors/UnauthenticatedError";
 import { useApp } from "../../../hooks/app-context";
 import { AzureAdSsoButtonComponent } from "../shared/AzureAdSsoButtonComponent";
+import { GoogleSsoButtonComponent } from "../shared/GoogleSsoButtonComponent";
 
 type ComponentProps = {
   didLogin: (mfa: MfaState, tenantUserId?: string) => void;
@@ -26,9 +27,12 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isloading, setIsLoading] = useState(false);
-  const { tenantSignup, authLegacy } = useConfig();
-  const { azureAdSsoEnabled } = useApp();
-  const azureAdLogin = !authLegacy && azureAdSsoEnabled;
+  const { tenantSignup, authLegacy, demoSSO } = useConfig();
+  const { azureAdSsoEnabled, googleSsoEnabled } = useApp();
+
+  // Show SSO Login btn if we have it enabled or demoSSO is true
+  const azureAdLogin = !authLegacy && (azureAdSsoEnabled || demoSSO);
+  const googleLogin = !authLegacy && (googleSsoEnabled || demoSSO);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -55,13 +59,40 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
     }
   };
 
-  const renderSso = () => {
+  const loginMiddleware = (type: FederationType) => {
+    setIsLoading(true);
+    didClickFederatedLogin(type);
+  };
+
+  const renderAzureAd = () => {
     if (azureAdLogin) {
       return (
         <AzureAdSsoButtonComponent
           mode="login"
-          onClick={() => didClickFederatedLogin("ms-azure-ad")}
+          onClick={() => loginMiddleware("ms-azure-ad")}
         ></AzureAdSsoButtonComponent>
+      );
+    }
+  };
+
+  const renderGoogle = () => {
+    if (googleLogin) {
+      return (
+        <GoogleSsoButtonComponent
+          mode="login"
+          onClick={() => loginMiddleware("google")}
+        ></GoogleSsoButtonComponent>
+      );
+    }
+  };
+
+  const renderSso = () => {
+    if (azureAdLogin) {
+      return (
+        <div className="space-y-2">
+          {renderGoogle()}
+          {renderAzureAd()}
+        </div>
       );
     }
   };

@@ -16,7 +16,8 @@ export type Scalars = {
 
 export type App = {
   __typename?: 'App';
-  azureAdSsoEnabled?: Maybe<Scalars['String']>;
+  azureAdSsoEnabled?: Maybe<Scalars['Boolean']>;
+  googleSsoEnabled?: Maybe<Scalars['Boolean']>;
   logo?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   onboardingFlow?: Maybe<Scalars['String']>;
@@ -36,6 +37,7 @@ export type AppConfig = {
   defaultRole?: Maybe<Scalars['String']>;
   emailSenderEmail?: Maybe<Scalars['String']>;
   emailSenderName?: Maybe<Scalars['String']>;
+  googleSsoEnabled?: Maybe<Scalars['Boolean']>;
   id?: Maybe<Scalars['String']>;
   logo?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
@@ -324,7 +326,7 @@ export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __type
 export type GetAppAnonymousQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAppAnonymousQuery = { __typename?: 'Query', getAppAnonymous: { __typename?: 'App', name?: string | null, logo?: string | null, privacyPolicyUrl?: string | null, termsOfServiceUrl?: string | null, onboardingFlow?: string | null, azureAdSsoEnabled?: string | null } };
+export type GetAppAnonymousQuery = { __typename?: 'Query', getAppAnonymous: { __typename?: 'App', name?: string | null, logo?: string | null, privacyPolicyUrl?: string | null, termsOfServiceUrl?: string | null, onboardingFlow?: string | null, azureAdSsoEnabled?: boolean | null } };
 
 
 export const CreateCheckoutSessionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateCheckoutSession"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"args"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateCheckoutSessionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createCheckoutSession"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"args"},"value":{"kind":"Variable","name":{"kind":"Name","value":"args"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"publicKey"}}]}}]}}]} as unknown as DocumentNode<CreateCheckoutSessionMutation, CreateCheckoutSessionMutationVariables>;

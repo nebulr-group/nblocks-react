@@ -58,6 +58,9 @@ export interface LibConfig {
   /** If this is a single page application and to have routes for /auth etc provided by plugin or bring your own react router */
   spa: boolean;
 
+  /** Show and use Nblocks Demo SSO login even though the app has not been setup, part of devMode */
+  demoSSO: boolean;
+
   // A copyright footer that is shown on auth views
   copyrightFooter: string;
 }

@@ -214,6 +214,7 @@ export class AuthService {
   }
 
   async currentUser(): Promise<AuthTenantUserResponseDto> {
+    // Map to older structure
     if (!!this._oauthService) {
       const token = this._oauthService.getIdToken();
       return token
