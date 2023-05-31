@@ -87,14 +87,12 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
   };
 
   const renderSso = () => {
-    if (azureAdLogin) {
-      return (
-        <div className="space-y-2">
-          {renderGoogle()}
-          {renderAzureAd()}
-        </div>
-      );
-    }
+    return (
+      <div className="space-y-2">
+        {renderGoogle()}
+        {renderAzureAd()}
+      </div>
+    );
   };
 
   return (

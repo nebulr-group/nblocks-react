@@ -12,6 +12,7 @@ import { TextComponent } from "../shared/TextComponent";
 import { useConfig } from "../../hooks/config-context";
 import { FederationType } from "../../utils/AuthService";
 import { AzureAdSsoButtonComponent } from "./shared/AzureAdSsoButtonComponent";
+import { GoogleSsoButtonComponent } from "./shared/GoogleSsoButtonComponent";
 
 type ComponentProps = {
   didSignup: (email: string) => void;
@@ -25,15 +26,17 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
   const [createTenantAnonymous, { loading }] = useMutation(
     CreateTenantAnonymousDocument
   );
-  const { authLegacy } = useConfig();
-  const { logo, azureAdSsoEnabled } = useApp();
+  const { authLegacy, demoSSO } = useConfig();
+  const { logo, azureAdSsoEnabled, googleSsoEnabled } = useApp();
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const azureAdLogin = !authLegacy && azureAdSsoEnabled;
+  // Show SSO Login btn if we have it enabled or demoSSO is true
+  const azureAdLogin = !authLegacy && (azureAdSsoEnabled || demoSSO);
+  const googleLogin = !authLegacy && (googleSsoEnabled || demoSSO);
 
   const { plan } = useParams();
 
@@ -62,15 +65,40 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
     }
   };
 
-  const renderSso = () => {
+  const signupMiddleware = (type: FederationType) => {
+    setIsLoading(true);
+    didClickFederatedSignup(type);
+  };
+
+  const renderAzureAd = () => {
     if (azureAdLogin) {
       return (
         <AzureAdSsoButtonComponent
           mode="signup"
-          onClick={() => didClickFederatedSignup("ms-azure-ad")}
+          onClick={() => signupMiddleware("ms-azure-ad")}
         ></AzureAdSsoButtonComponent>
       );
     }
+  };
+
+  const renderGoogle = () => {
+    if (googleLogin) {
+      return (
+        <GoogleSsoButtonComponent
+          mode="signup"
+          onClick={() => signupMiddleware("google")}
+        ></GoogleSsoButtonComponent>
+      );
+    }
+  };
+
+  const renderSso = () => {
+    return (
+      <div className="space-y-2">
+        {renderGoogle()}
+        {renderAzureAd()}
+      </div>
+    );
   };
 
   return (
