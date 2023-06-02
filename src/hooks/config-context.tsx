@@ -2,11 +2,11 @@ import React, { FunctionComponent, useContext } from "react";
 import { LibConfig } from "../models/lib-config";
 
 const backendlessApi = "https://backendless-stage.nblocks.cloud";
-const authApi = "https://auth-stage.nblocks.cloud";
+const oAuthUrl = "https://auth-stage.nblocks.cloud";
 const accountApi = "https://account-api-stage.nebulr-core.com";
 
 // const backendlessApi = "https://backendless.nblocks.cloud";
-// const authApi = "https://auth.nblocks.cloud";
+// const oAuthUrl = "https://auth.nblocks.cloud";
 // const accountApi = "https://account-api.nebulr-core.com";
 
 const oauthRedirectUri = "http://localhost:8080/auth/oauth-callback";
@@ -26,7 +26,7 @@ const initialContext: LibConfig = {
   spa: false,
   tenantSignup: false,
   appSignup: false,
-  oAuthBaseURI: authApi,
+  oAuthBaseURI: oAuthUrl,
   oauthRedirectUri,
   accountApiBaseUri: accountApi,
   copyrightFooter: `©${new Date().getUTCFullYear()} Nblocks. All Rights Reserved.`,
