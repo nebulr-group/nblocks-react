@@ -90,7 +90,8 @@ export class OAuthService {
     jose.FlattenedJWSInput
   >;
 
-  private readonly EXPECTED_ISSUER = "auth.nblocks.cloud";
+  // This is set from libConfig
+  private readonly EXPECTED_ISSUER: string;
   private readonly OAUTH_SCOPES = "openid profile email";
 
   private readonly oAuthBaseURI: string;
@@ -110,6 +111,7 @@ export class OAuthService {
 
     this.appId = config.appId!;
     this.oAuthBaseURI = config.oAuthBaseURI;
+    this.EXPECTED_ISSUER = config.oAuthBaseURI;
     this.redirectUri = config.oauthRedirectUri;
 
     const JWKS = jose.createRemoteJWKSet(
