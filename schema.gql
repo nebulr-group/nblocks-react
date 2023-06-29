@@ -5,6 +5,7 @@
 type App {
   azureAdSsoEnabled: Boolean
   googleSsoEnabled: Boolean
+  id: String
   logo: String
   name: String
   onboardingFlow: String
@@ -43,9 +44,7 @@ type BusinessModelGraphql {
 }
 
 type CheckoutResponse {
-  """
-  A checkout ID to create a `Stripe` checkout form
-  """
+  """A checkout ID to create a `Stripe` checkout form"""
   id: String!
 
   """
@@ -55,9 +54,7 @@ type CheckoutResponse {
 }
 
 input CreateCheckoutSessionInput {
-  """
-  The plan the customer which to checkout
-  """
+  """The plan the customer which to checkout"""
   plan: String!
 
   """
@@ -77,16 +74,16 @@ type Mutation {
   createCheckoutSession(args: CreateCheckoutSessionInput!): CheckoutResponse!
   createTenantAnonymous(tenant: CreateTenantInput!): Tenant!
 
-  """
-  This will create a new user for a tenant.
-  """
+  """This will create a new user for a tenant."""
   createUsers(userNames: [String!]!): [User!]!
   deleteUser(userId: String!): Boolean!
   sendPasswordResetLink(userId: String!): Boolean!
 
-  """
-  """
+  """"""
   updateAppCredentials(credentials: UpdateCredentialsInput!): Boolean!
+
+  """Update current user"""
+  updateMe(user: UserInput!): User!
   updateTenant(tenant: TenantInput!): Tenant!
 
   """
@@ -108,9 +105,7 @@ type PriceGraphql {
 }
 
 type Query {
-  """
-  Gets useful App configs for the UI to consume
-  """
+  """Gets useful App configs for the UI to consume"""
   getAppAnonymous: App!
 
   """
@@ -128,20 +123,17 @@ type Query {
   """
   getCustomerPortal: String!
 
-  """
-  Gets a single tenant
-  """
+  """Get current user"""
+  getMe: User!
+
+  """Gets a single tenant"""
   getTenant: Tenant!
   getTenantAnonymous: TenantAnonymous!
 
-  """
-  List all available user roles that the current user can assign others
-  """
+  """List all available user roles that the current user can assign others"""
   listUserRoles: [String!]!
 
-  """
-  List all users in this tenant.
-  """
+  """List all users in this tenant."""
   listUsers: [User!]!
 }
 

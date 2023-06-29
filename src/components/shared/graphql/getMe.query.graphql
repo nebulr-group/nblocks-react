@@ -1,0 +1,13 @@
+query GetMe {
+  getMe {
+    id
+    fullName
+    email
+    username
+    createdAt
+    onboarded
+    enabled
+    role
+    teams
+  }
+}
