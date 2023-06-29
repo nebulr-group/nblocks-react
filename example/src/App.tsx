@@ -1,23 +1,43 @@
-import { NblocksProvider, InstallationCompleteComponent } from "nblocks-react";
 import React from "react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import LoginComponent from "./LoginComponent";
+import CallbackComponent from "./CallbackComponent";
+import ProtectedRoute from "./ProtectedRouted";
 
 function App() {
   return (
-    <div className="App">
-      <NblocksProvider
-        config={{
-          debug: true,
-          devMode: true,
-          backendLess: true,
-          accountApiBaseUri: "http://localhost:3010",
-          oAuthBaseURI: "http://localhost:3070",
-          apiHost: "http://localhost:3080",
-          appId: "633402fdf28d8e00252948b1",
-        }}
-      >
-        <InstallationCompleteComponent />
-      </NblocksProvider>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/auth/login" element={<LoginComponent />} />
+        <Route path="/auth/oauth-callback" element={<CallbackComponent />} />
+        <Route path="/forbidden" element={<span>Forbidden</span>} />
+        <Route
+          path="*"
+          element={
+            <ProtectedRoute privileges={["AUTHENTICATED"]}>
+              <Routes>
+                <Route path="/home" element={<span>Home</span>} />
+                <Route
+                  path="/analytics"
+                  element={
+                    <ProtectedRoute
+                      privileges={["ANALYTICS"]}
+                      redirectTo="/forbidden"
+                    >
+                      <span>Private</span>
+                    </ProtectedRoute>
+                  }
+                ></Route>
+                <Route
+                  path="/settings"
+                  element={<span>Protected</span>}
+                ></Route>
+              </Routes>
+            </ProtectedRoute>
+          }
+        ></Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
