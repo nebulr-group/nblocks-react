@@ -15,6 +15,7 @@ import { UserTableRowComponent } from "./UserTableRowComponent";
 import { ModalComponent } from "./ModalComponent";
 import { SafeUserNameComponent } from "./SafeUserNameComponent";
 import { SkeletonLoader } from "./SkeletonLoader";
+import { useTranslation } from "react-i18next";
 
 /**
  *
@@ -31,6 +32,7 @@ export type ModalState = {
 
 const UserListTableComponent: FunctionComponent<ConfigObject> = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { t } = useTranslation();
 
   const [modalState, setModalState] = useState<ModalState>({
     heading: "",
@@ -45,7 +47,7 @@ const UserListTableComponent: FunctionComponent<ConfigObject> = () => {
 
   const columns = [
     columnHelper.accessor("fullName", {
-      header: "Name",
+      header: t("Name"),
       footer: (props) => props.column.id,
       cell: (info) => (
         <span className="font-medium text-gray-900">
@@ -54,17 +56,18 @@ const UserListTableComponent: FunctionComponent<ConfigObject> = () => {
       ),
     }),
     columnHelper.accessor("enabled", {
-      header: "Status",
+      header: t("Status"),
       footer: (props) => props.column.id,
-      cell: (info) => (info.getValue() ? "Active" : "Deactivated"),
+      cell: (info) => (info.getValue() ? t("Active") : t("Deactivated")),
     }),
     columnHelper.accessor("role", {
-      header: "Role",
+      header: t("Role"),
       footer: (props) => props.column.id,
-      cell: (info) => info.getValue(),
+      // t(RoleName)
+      cell: (info) => (info.getValue() ? t(info.getValue()!) : info.getValue()),
     }),
     columnHelper.accessor("email", {
-      header: "Email Address",
+      header: t("Email Address"),
       footer: (props) => props.column.id,
       cell: (info) => info.getValue(),
       meta: { editable: true },
@@ -85,7 +88,7 @@ const UserListTableComponent: FunctionComponent<ConfigObject> = () => {
               type="tertiary"
               onClick={() => setIsOpen(false)}
             >
-              Cancel
+              {t("Cancel")}
             </NblocksButton>
             <NblocksButton
               size="md"
@@ -95,7 +98,7 @@ const UserListTableComponent: FunctionComponent<ConfigObject> = () => {
                 modalState.onPrimaryClick();
               }}
             >
-              Delete
+              {t("Delete")}
             </NblocksButton>
           </div>
         );
@@ -108,7 +111,7 @@ const UserListTableComponent: FunctionComponent<ConfigObject> = () => {
               type="tertiary"
               onClick={() => setIsOpen(false)}
             >
-              Cancel
+              {t("Cancel")}
             </NblocksButton>
             <NblocksButton
               size="md"
@@ -119,7 +122,7 @@ const UserListTableComponent: FunctionComponent<ConfigObject> = () => {
                 setIsOpen(false);
               }}
             >
-              Save changes
+              {t("Save changes")}
             </NblocksButton>
           </div>
         );
@@ -231,7 +234,7 @@ const UserListTableComponent: FunctionComponent<ConfigObject> = () => {
           disabled={!table.getCanPreviousPage()}
         >
           <ArrowLeftIcon className="h-6 w-6 inline-block mr-2" />
-          Previous
+          {t("Previous")}
         </NblocksButton>
         <NblocksButton
           type="tertiary"
@@ -255,7 +258,7 @@ const UserListTableComponent: FunctionComponent<ConfigObject> = () => {
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          Next
+          {t("Next")}
           <ArrowRightIcon className="h-6 w-6 inline-block md:ml-2" />
         </NblocksButton>
         <NblocksButton

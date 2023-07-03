@@ -13,6 +13,7 @@ import { useConfig } from "../../hooks/config-context";
 import { FederationType } from "../../utils/AuthService";
 import { AzureAdSsoButtonComponent } from "./shared/AzureAdSsoButtonComponent";
 import { GoogleSsoButtonComponent } from "./shared/GoogleSsoButtonComponent";
+import { useTranslation } from "react-i18next";
 
 type ComponentProps = {
   didSignup: (email: string) => void;
@@ -33,6 +34,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
   const [lastName, setLastName] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
 
   // Show SSO Login btn if we have it enabled or demoSSO is true
   const azureAdLogin = !authLegacy && (azureAdSsoEnabled || demoSSO);
@@ -59,7 +61,9 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
       setIsLoading(false);
     } catch (error) {
       setErrorMsg(
-        "There was an error when creating the account. Try again, otherwise contact support."
+        t(
+          "There was an error when creating the account. Try again, otherwise contact support."
+        )
       );
       setIsLoading(false);
     }
@@ -107,7 +111,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
         <div className="max-w-sm w-full mb-6">
           <AlertComponent
             type="danger"
-            title="An error occured"
+            title={t("An error occured")}
             messages={[errorMsg]}
           />
         </div>
@@ -118,24 +122,24 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
       >
         <InputComponent
           type="email"
-          label="Email address*"
-          placeholder="Enter your email"
+          label={t("Email address*")}
+          placeholder={t("Enter your email")}
           name="username"
           onChange={(event) => setEmail(event.target.value)}
           value={email}
         />
         <InputComponent
           type="text"
-          label="First name"
-          placeholder="Enter your first name"
+          label={t("First name")}
+          placeholder={t("Enter your first name")}
           name="firstName"
           onChange={(event) => setFirstName(event.target.value)}
           value={firstName}
         />
         <InputComponent
           type="text"
-          label="Last name"
-          placeholder="Enter your last name"
+          label={t("Last name")}
+          placeholder={t("Enter your last name")}
           name="lastName"
           onChange={(event) => setLastName(event.target.value)}
           value={lastName}
@@ -149,21 +153,21 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
             type="primary"
             fullWidth={true}
           >
-            Create account
+            {t("Create account")}
           </NblocksButton>
         </div>
         {renderSso()}
       </form>
       <div className="mt-8">
         <TextComponent size="sm">
-          Already have an account?&nbsp;
+          {t("Already have an account?")}&nbsp;
           <LinkComponent
             to={RouteConfig.login.loginScreen}
             type="primary"
             size="sm"
             className="font-semibold"
           >
-            Log in
+            {t("Log in")}
           </LinkComponent>
         </TextComponent>
       </div>

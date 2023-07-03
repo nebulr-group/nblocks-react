@@ -9,6 +9,7 @@ import { ValidationMessageComponent } from "../../shared/ValidationMessageCompon
 import { UnauthenticatedError } from "../../../utils/errors/UnauthenticatedError";
 import { AlertComponent } from "../../shared/AlertComponent";
 import { useConfig } from "../../../hooks/config-context";
+import { useTranslation } from "react-i18next";
 
 type ComponentProps = {
   didSetPassword: () => void;
@@ -23,6 +24,7 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { passwordValidation, passwordComplexityRegex } = useConfig();
+  const { t } = useTranslation();
 
   const {
     password: newPassword,
@@ -52,11 +54,15 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
     } catch (error) {
       if (error instanceof UnauthenticatedError) {
         setErrorMsg(
-          "The link has expired. You need to request a new reset password link again."
+          t(
+            "The link has expired. You need to request a new reset password link again."
+          )
         );
       } else {
         setErrorMsg(
-          "There was an error when logging in. Try again, otherwise contact support."
+          t(
+            "There was an error when logging in. Try again, otherwise contact support."
+          )
         );
       }
       onNewPasswordTextChangeValidation("");
@@ -88,7 +94,7 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
         <div className="max-w-sm w-full mb-6">
           <AlertComponent
             type="danger"
-            title="An error occured"
+            title={t("An error occured")}
             messages={[errorMsg]}
           />
         </div>
@@ -100,8 +106,8 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
         <div>
           <InputComponent
             type="password"
-            label="Password"
-            placeholder="Enter a new password"
+            label={t("Password")}
+            placeholder={t("Enter a new password")}
             name="password"
             onChange={(event) => updateNewPasswordValue(event.target.value)}
             value={newPassword}
@@ -112,8 +118,8 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
         </div>
         <InputComponent
           type="password"
-          label="Repeat password"
-          placeholder="Repeat your new password"
+          label={t("Repeat password")}
+          placeholder={t("Repeat your new password")}
           name="passwordRepeat"
           onChange={(event) => setConfirmPassword(event.target.value)}
           value={confirmPassword}
@@ -127,7 +133,7 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
             fullWidth={true}
             disabled={!formIsValid}
           >
-            Set a password
+            {t("Set a password")}
           </NblocksButton>
         </div>
       </form>
@@ -138,7 +144,7 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
           size="sm"
           className="font-semibold "
         >
-          Back to login
+          {t("Back to login")}
         </LinkComponent>
       </div>
     </>

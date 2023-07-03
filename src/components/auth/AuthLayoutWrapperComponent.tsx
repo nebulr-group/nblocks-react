@@ -6,6 +6,7 @@ import { ImageComponent } from "../shared/ImageComponent";
 import { LinkComponent } from "../shared/LinkComponent";
 import { SubHeadingComponent } from "../shared/SubHeadingComponent";
 import { TextComponent } from "../shared/TextComponent";
+import { useTranslation } from "react-i18next";
 
 type ComponentProps = {
   children: React.ReactNode;
@@ -20,6 +21,7 @@ const AuthLayoutWrapperComponent: FunctionComponent<ComponentProps> = ({
 }) => {
   const app = useApp();
   const { copyrightFooter } = useConfig();
+  const { t } = useTranslation();
 
   return (
     <div className="flex flex-col pt-12 md:pt-24 min-h-screen">
@@ -54,7 +56,7 @@ const AuthLayoutWrapperComponent: FunctionComponent<ComponentProps> = ({
             size="sm"
             className="font-semibold"
           >
-            Privacy policy
+            {t("Privacy policy")}
           </LinkComponent>
         </div>
       </div>

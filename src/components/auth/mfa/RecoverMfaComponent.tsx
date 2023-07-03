@@ -6,6 +6,7 @@ import { AlertComponent } from "../../shared/AlertComponent";
 import { InputComponent } from "../../shared/InputComponent";
 import { LinkComponent } from "../../shared/LinkComponent";
 import { NblocksButton } from "../../shared/NblocksButton";
+import { useTranslation } from "react-i18next";
 
 type ComponentProps = {
   didRecoverMfaCode: () => void;
@@ -18,6 +19,7 @@ const RecoverMfaComponent: FunctionComponent<ComponentProps> = ({
   const [recoverCode, setRecoverCode] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -28,10 +30,12 @@ const RecoverMfaComponent: FunctionComponent<ComponentProps> = ({
       setIsLoading(false);
     } catch (error) {
       if (error instanceof UnauthenticatedError) {
-        setErrorMsg("Wrong recovery code, please try again.");
+        setErrorMsg(t("Wrong recovery code, please try again."));
       } else {
         setErrorMsg(
-          "There was an error when recovering. Try again, otherwise contact support."
+          t(
+            "There was an error when recovering. Try again, otherwise contact support."
+          )
         );
       }
       setIsLoading(false);
@@ -45,7 +49,7 @@ const RecoverMfaComponent: FunctionComponent<ComponentProps> = ({
         <div className="max-w-sm w-full mb-6">
           <AlertComponent
             type="danger"
-            title="An error occured"
+            title={t("An error occured")}
             messages={[errorMsg]}
           />
         </div>
@@ -56,8 +60,8 @@ const RecoverMfaComponent: FunctionComponent<ComponentProps> = ({
       >
         <InputComponent
           type="password"
-          label="Recovery code"
-          placeholder="Enter your recovery code"
+          label={t("Recovery code")}
+          placeholder={t("Enter your recovery code")}
           name="username"
           onChange={(event) => setRecoverCode(event.target.value)}
           value={recoverCode}
@@ -71,7 +75,7 @@ const RecoverMfaComponent: FunctionComponent<ComponentProps> = ({
             type="primary"
             fullWidth={true}
           >
-            Reset
+            {t("Reset")}
           </NblocksButton>
         </div>
       </form>
@@ -82,7 +86,7 @@ const RecoverMfaComponent: FunctionComponent<ComponentProps> = ({
           className="font-semibold"
           size="sm"
         >
-          Back to login
+          {t("Back to login")}
         </LinkComponent>
       </div>
     </>

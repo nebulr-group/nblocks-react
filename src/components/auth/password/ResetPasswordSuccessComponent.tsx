@@ -2,12 +2,14 @@ import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import React, { FunctionComponent } from "react";
 import { RouteConfig } from "../../../routes/AuthRoutes";
 import { LinkComponent } from "../../shared/LinkComponent";
+import { useTranslation } from "react-i18next";
 
 type ComponentProps = {};
 
 const ResetPasswordSuccessComponent: FunctionComponent<
   ComponentProps
 > = ({}) => {
+  const { t } = useTranslation();
   return (
     <>
       <LinkComponent
@@ -16,8 +18,8 @@ const ResetPasswordSuccessComponent: FunctionComponent<
         size="sm"
         className="font-semibold flex items-center"
       >
-        <ArrowLeftIcon className="w-5 inline-block mr-1 font-bold" /> Back to
-        login
+        <ArrowLeftIcon className="w-5 inline-block mr-1 font-bold" />{" "}
+        {t("Back to login")}
       </LinkComponent>
     </>
   );

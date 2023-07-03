@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { NblocksButton } from "../../shared/NblocksButton";
 import { ImageComponent } from "../../shared/ImageComponent";
+import { useTranslation } from "react-i18next";
 
 type ComponentProps = {
   mode: "login" | "signup";
@@ -11,16 +12,18 @@ const AzureAdSsoButtonComponent: FunctionComponent<ComponentProps> = ({
   onClick,
   mode,
 }) => {
+  const { t } = useTranslation();
+
   const azureAdLoginLogo =
     "https://img.icons8.com/?size=48&id=22989&format=png";
 
   const renderText = () => {
     switch (mode) {
       case "signup":
-        return "Sign up with Microsoft";
+        return t("Sign up with Microsoft");
       case "login":
       default:
-        return "Sign in with Microsoft";
+        return t("Sign in with Microsoft");
     }
   };
   return (

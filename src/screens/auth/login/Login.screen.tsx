@@ -7,9 +7,12 @@ import { RouteConfig } from "../../../routes/AuthRoutes";
 import { AuthLayoutWrapperComponent } from "../../../components/auth/AuthLayoutWrapperComponent";
 import { FederationType, MfaState } from "../../../utils/AuthService";
 import { useSecureContext } from "../../../hooks/secure-http-context";
+import { useTranslation } from "react-i18next";
 
 export function LoginScreen() {
-  document.title = "Login";
+  const { t } = useTranslation();
+
+  document.title = t("Login");
 
   const { authService } = useSecureContext();
   const { debug, handoverRoute, authLegacy } = useConfig();
@@ -65,8 +68,8 @@ export function LoginScreen() {
 
   return (
     <AuthLayoutWrapperComponent
-      heading={"Log in to your account"}
-      subHeading={"Welcome back! Please enter your details."}
+      heading={t("Log in to your account")}
+      subHeading={t("Welcome back! Please enter your details.")}
     >
       <LoginComponent
         didLogin={(mfa, tenantUserId) => onDidLogin(mfa, tenantUserId)}

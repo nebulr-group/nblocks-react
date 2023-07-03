@@ -1,11 +1,13 @@
 import React, { FunctionComponent } from "react";
+import { useTranslation } from "react-i18next";
 
 type ConfigObject = {
   name?: string;
 };
 
 const SafeUserNameComponent: FunctionComponent<ConfigObject> = ({ name }) => {
-  return <span>{name ? name : "Invited user"}</span>;
+  const { t } = useTranslation();
+  return <span>{name ? name : t("Invited user")}</span>;
 };
 
 export { SafeUserNameComponent };

@@ -9,6 +9,7 @@ import { GetTenantDocument, UpdateTenantDocument } from "../../../gql/graphql";
 import { AlertComponent } from "../../shared/AlertComponent";
 import { InputComponent } from "../../shared/InputComponent";
 import { NblocksButton } from "../../shared/NblocksButton";
+import { useTranslation } from "react-i18next";
 
 type ComponentProps = {
   didCompleteOnboarding: () => void;
@@ -21,6 +22,7 @@ const OnboardTenantComponent: FunctionComponent<ComponentProps> = ({
   const [name, setName] = useState("");
   const [locale, setLocale] = useState("");
   const [logo, setLogo] = useState("");
+  const { t } = useTranslation();
 
   const { data, loading, error } = useQuery(GetTenantDocument);
   const [updateTenantMutation, updateTenantData] =
@@ -46,18 +48,20 @@ const OnboardTenantComponent: FunctionComponent<ComponentProps> = ({
       didCompleteOnboarding();
     } catch (error) {
       setErrorMsg(
-        "There was an error when updating your workspace. Try again, otherwise contact support."
+        t(
+          "There was an error when updating your workspace. Try again, otherwise contact support."
+        )
       );
     }
   };
-  
+
   return (
     <>
       {errorMsg && (
         <div className="max-w-sm w-full mb-6">
           <AlertComponent
             type="danger"
-            title="An error occured"
+            title={t("An error occured")}
             messages={[errorMsg]}
           />
         </div>
@@ -68,8 +72,8 @@ const OnboardTenantComponent: FunctionComponent<ComponentProps> = ({
       >
         <InputComponent
           type="text"
-          label="Name"
-          placeholder="Enter a workspace name"
+          label={t("Name")}
+          placeholder={t("Enter a workspace name")}
           name="name"
           onChange={(event) => setName(event.target.value)}
           value={name}
@@ -82,7 +86,7 @@ const OnboardTenantComponent: FunctionComponent<ComponentProps> = ({
             type="primary"
             fullWidth={true}
           >
-            Save
+            {t("Save")}
           </NblocksButton>
         </div>
       </form>

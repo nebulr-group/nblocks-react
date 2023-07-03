@@ -9,6 +9,7 @@ import { useAuth } from "../../../hooks/auth-context";
 import { AlertComponent } from "../../shared/AlertComponent";
 import { InputComponent } from "../../shared/InputComponent";
 import { NblocksButton } from "../../shared/NblocksButton";
+import { useTranslation } from "react-i18next";
 
 type ComponentProps = {
   didCompleteOnboarding: () => void;
@@ -25,6 +26,7 @@ const OnboardUserComponent: FunctionComponent<ComponentProps> = ({
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   //const [phoneNumber, setPhoneNumber] = useState("");
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (currentUser && currentUser.user) {
@@ -49,7 +51,9 @@ const OnboardUserComponent: FunctionComponent<ComponentProps> = ({
       setIsLoading(false);
     } catch (error) {
       setErrorMsg(
-        "There was an error when updating your profile. Try again, otherwise contact support."
+        t(
+          "There was an error when updating your profile. Try again, otherwise contact support."
+        )
       );
       setIsLoading(false);
     }
@@ -78,7 +82,7 @@ const OnboardUserComponent: FunctionComponent<ComponentProps> = ({
         <div className="max-w-sm w-full mb-6">
           <AlertComponent
             type="danger"
-            title="An error occured"
+            title={t("An error occured")}
             messages={[errorMsg]}
           />
         </div>
@@ -89,16 +93,16 @@ const OnboardUserComponent: FunctionComponent<ComponentProps> = ({
       >
         <InputComponent
           type="text"
-          label="First name"
-          placeholder="Enter your first name"
+          label={t("First name")}
+          placeholder={t("Enter your first name")}
           name="firstName"
           onChange={(event) => setFirstName(event.target.value)}
           value={firstName}
         />
         <InputComponent
           type="text"
-          label="Last name"
-          placeholder="Enter your last name"
+          label={t("Last name")}
+          placeholder={t("Enter your last name")}
           name="lastName"
           onChange={(event) => setLastName(event.target.value)}
           value={lastName}
@@ -111,7 +115,7 @@ const OnboardUserComponent: FunctionComponent<ComponentProps> = ({
             type="primary"
             fullWidth={true}
           >
-            Save
+            {t("Save")}
           </NblocksButton>
         </div>
       </form>

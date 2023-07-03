@@ -6,6 +6,7 @@ import { AlertComponent } from "../../shared/AlertComponent";
 import { InputComponent } from "../../shared/InputComponent";
 import { LinkComponent } from "../../shared/LinkComponent";
 import { NblocksButton } from "../../shared/NblocksButton";
+import { useTranslation } from "react-i18next";
 
 type ComponentProps = {
   /** Setup mode will call a different API endpoint which is used when setting up MFA (optional) */
@@ -22,6 +23,7 @@ const RequireMfaComponent: FunctionComponent<ComponentProps> = ({
   const [mfaCode, setMfaCode] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -38,10 +40,12 @@ const RequireMfaComponent: FunctionComponent<ComponentProps> = ({
     } catch (error) {
       setIsLoading(false);
       if (error instanceof UnauthenticatedError) {
-        setErrorMsg("Wrong security code, please try again.");
+        setErrorMsg(t("Wrong security code, please try again."));
       } else {
         setErrorMsg(
-          "There was an error when logging in. Try again, otherwise contact support."
+          t(
+            "There was an error when logging in. Try again, otherwise contact support."
+          )
         );
       }
       setMfaCode("");
@@ -54,7 +58,7 @@ const RequireMfaComponent: FunctionComponent<ComponentProps> = ({
         <div className="max-w-sm w-full mb-6">
           <AlertComponent
             type="danger"
-            title="An error occured"
+            title={t("An error occured")}
             messages={[errorMsg]}
           />
         </div>
@@ -65,8 +69,8 @@ const RequireMfaComponent: FunctionComponent<ComponentProps> = ({
       >
         <InputComponent
           type="text"
-          label="Secure code"
-          placeholder="Enter the secure code"
+          label={t("Secure code")}
+          placeholder={t("Enter the secure code")}
           name="username"
           onChange={(event) => setMfaCode(event.target.value)}
           value={mfaCode}
@@ -79,7 +83,7 @@ const RequireMfaComponent: FunctionComponent<ComponentProps> = ({
               className="font-semibold"
               size="sm"
             >
-              Use recover code?
+              {t("Use recover code?")}
             </LinkComponent>
           </div>
         )}
@@ -92,7 +96,7 @@ const RequireMfaComponent: FunctionComponent<ComponentProps> = ({
             type="primary"
             fullWidth={true}
           >
-            Verify
+            {t("Verify")}
           </NblocksButton>
         </div>
       </form>
@@ -103,7 +107,7 @@ const RequireMfaComponent: FunctionComponent<ComponentProps> = ({
           size="sm"
           className="font-semibold"
         >
-          Back to login
+          {t("Back to login")}
         </LinkComponent>
       </div>
     </>

@@ -6,6 +6,7 @@ import { LinkComponent } from "../../shared/LinkComponent";
 import { NblocksButton } from "../../shared/NblocksButton";
 import { AlertComponent } from "../../shared/AlertComponent";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
+import { useTranslation } from "react-i18next";
 
 type ComponentProps = {
   didSendResetPasswordLink: (email: string) => void;
@@ -18,6 +19,7 @@ const ResetPasswordComponent: FunctionComponent<ComponentProps> = ({
   const [email, setEmail] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -28,7 +30,9 @@ const ResetPasswordComponent: FunctionComponent<ComponentProps> = ({
       setIsLoading(false);
     } catch (error) {
       setErrorMsg(
-        "There was an error when resetting the password. Try again, otherwise contact support."
+        t(
+          "There was an error when resetting the password. Try again, otherwise contact support."
+        )
       );
       setEmail("");
       setIsLoading(false);
@@ -41,7 +45,7 @@ const ResetPasswordComponent: FunctionComponent<ComponentProps> = ({
         <div className="max-w-sm w-full mb-6">
           <AlertComponent
             type="danger"
-            title="An error occured"
+            title={t("An error occured")}
             messages={[errorMsg]}
           />
         </div>
@@ -52,8 +56,8 @@ const ResetPasswordComponent: FunctionComponent<ComponentProps> = ({
       >
         <InputComponent
           type="email"
-          label="Email address"
-          placeholder="Enter your email"
+          label={t("Email address")}
+          placeholder={t("Enter your email")}
           name="username"
           onChange={(event) => setEmail(event.target.value)}
           value={email}
@@ -67,7 +71,7 @@ const ResetPasswordComponent: FunctionComponent<ComponentProps> = ({
             type="primary"
             fullWidth={true}
           >
-            Reset password
+            {t("Reset password")}
           </NblocksButton>
         </div>
       </form>
@@ -78,7 +82,8 @@ const ResetPasswordComponent: FunctionComponent<ComponentProps> = ({
           size="sm"
           className="font-semibold flex items-center"
         >
-          <ArrowLeftIcon className="w-5 inline-block mr-1" /> Back to login
+          <ArrowLeftIcon className="w-5 inline-block mr-1" />{" "}
+          {t("Back to login")}
         </LinkComponent>
       </div>
     </>

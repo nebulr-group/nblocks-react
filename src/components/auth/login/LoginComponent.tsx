@@ -12,6 +12,7 @@ import { UnauthenticatedError } from "../../../utils/errors/UnauthenticatedError
 import { useApp } from "../../../hooks/app-context";
 import { AzureAdSsoButtonComponent } from "../shared/AzureAdSsoButtonComponent";
 import { GoogleSsoButtonComponent } from "../shared/GoogleSsoButtonComponent";
+import { useTranslation } from "react-i18next";
 
 type ComponentProps = {
   didLogin: (mfa: MfaState, tenantUserId?: string) => void;
@@ -29,6 +30,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
   const [isloading, setIsLoading] = useState(false);
   const { tenantSignup, authLegacy, demoSSO } = useConfig();
   const { azureAdSsoEnabled, googleSsoEnabled } = useApp();
+  const { t } = useTranslation();
 
   // Show SSO Login btn if we have it enabled or demoSSO is true
   const azureAdLogin = !authLegacy && (azureAdSsoEnabled || demoSSO);
@@ -48,11 +50,13 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
       console.error(error);
       if (error instanceof UnauthenticatedError) {
         setIsLoading(false);
-        setErrorMsg("Wrong credentials, please try again.");
+        setErrorMsg(t("Wrong credentials, please try again."));
       } else {
         setIsLoading(false);
         setErrorMsg(
-          "There was an error when logging in. Try again, otherwise contact support."
+          t(
+            "There was an error when logging in. Try again, otherwise contact support."
+          )
         );
       }
       setPassword("");
@@ -101,7 +105,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
         <div className="max-w-sm w-full mb-6">
           <AlertComponent
             type="danger"
-            title="An error occured"
+            title={t("An error occured")}
             messages={[errorMsg]}
           />
         </div>
@@ -112,16 +116,16 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
       >
         <InputComponent
           type="email"
-          label="Email address"
-          placeholder="Enter your email"
+          label={t("Email address")}
+          placeholder={t("Enter your email")}
           name="username"
           onChange={(event) => setUsername(event.target.value)}
           value={username}
         />
         <InputComponent
           type="password"
-          label="Password"
-          placeholder="Enter your password"
+          label={t("Password")}
+          placeholder={t("Enter your password")}
           name="password"
           onChange={(event) => setPassword(event.target.value)}
           value={password}
@@ -133,7 +137,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
             size="sm"
             className="font-semibold"
           >
-            Forgot password
+            {t("Forgot password")}
           </LinkComponent>
         </div>
         <div>
@@ -145,7 +149,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
             isLoading={isloading}
             fullWidth={true}
           >
-            Sign in
+            {t("Sign in")}
           </NblocksButton>
         </div>
         {renderSso()}
@@ -153,14 +157,14 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
       {tenantSignup && (
         <div className="mt-8">
           <TextComponent size="sm">
-            Don't have an account?&nbsp;
+            {t("Don't have an account?")}&nbsp;
             <LinkComponent
               to={RouteConfig.tenant.signupScreen}
               type="primary"
               size="sm"
               className="font-semibold"
             >
-              Create one
+              {t("Create one")}
             </LinkComponent>
           </TextComponent>
         </div>

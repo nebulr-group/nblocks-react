@@ -17,6 +17,7 @@ import { ChipComponent } from "./ChipComponent";
 import { ModalState } from "./UserListTableComponent";
 import { KeyIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useAuth } from "../../hooks/auth-context";
+import { useTranslation } from "react-i18next";
 
 type ConfigObject = {
   row: Row<User>;
@@ -34,7 +35,7 @@ const UserTableRowComponent: FunctionComponent<ConfigObject> = ({
   // Row editing cells value states
   const [enabled, setEnabled] = useState(true);
   const [role, setRole] = useState("");
-
+  const { t } = useTranslation();
   const { currentUser } = useAuth();
 
   const listRolesQuery = useQuery(ListUserRolesDocument);
@@ -125,10 +126,10 @@ const UserTableRowComponent: FunctionComponent<ConfigObject> = ({
       case "edit":
         const options: Option[] = [
           {
-            label: "Reset password",
+            label: t("Reset password"),
             onClick: () => {
               setModalState({
-                heading: "Reset password",
+                heading: t("Reset password"),
                 icon: <KeyIcon />,
                 type: "primary",
                 description: `Do you want to send a reset password link to ${cell.row.original.fullName}?`,
@@ -141,11 +142,11 @@ const UserTableRowComponent: FunctionComponent<ConfigObject> = ({
             },
           },
           {
-            label: "Delete",
+            label: t("Delete"),
             type: "danger",
             onClick: () => {
               setModalState({
-                heading: "Delete user",
+                heading: t("Delete user"),
                 icon: <TrashIcon />,
                 type: "danger",
                 description: `Are you sure you want to delete the user ${cell.row.original.fullName}?`,
@@ -171,7 +172,7 @@ const UserTableRowComponent: FunctionComponent<ConfigObject> = ({
                   type={"tertiary"}
                   size={"sm"}
                 >
-                  Cancel
+                  {t("Cancel")}
                 </NblocksButton>
               )}
               <NblocksButton
@@ -180,7 +181,7 @@ const UserTableRowComponent: FunctionComponent<ConfigObject> = ({
                 type={edit ? "primary" : undefined}
                 size={edit ? "sm" : undefined}
               >
-                {edit ? "Save" : "Edit"}
+                {edit ? t("Save") : t("Edit")}
               </NblocksButton>
               {!edit && (
                 <HorizontalEllipsisMenu options={options} position={"left"} />
