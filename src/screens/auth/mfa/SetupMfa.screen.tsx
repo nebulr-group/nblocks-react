@@ -5,8 +5,10 @@ import { RequireMfaComponent } from "../../../components/auth/mfa/RequireMfaComp
 import { SetupMfaPhoneComponent } from "../../../components/auth/mfa/SetupMfaPhoneComponent";
 import { SetupMfaRecoverCodeComponent } from "../../../components/auth/mfa/SetupMfaRecoverCodeComponent";
 import { RouteConfig } from "../../../routes/AuthRoutes";
+import { useTranslation } from "react-i18next";
 
 const SetupMfaScreen: FunctionComponent<{}> = () => {
+  const { t } = useTranslation();
   const [setupStep, setSetupStep] = useState(0);
   const [recoverCode, setRecoverCode] = useState("");
 
@@ -45,20 +47,26 @@ const SetupMfaScreen: FunctionComponent<{}> = () => {
   const getHeading = () => {
     switch (setupStep) {
       default:
-        return "Set up Two Factor Authentication";
+        return t("Set up Two Factor Authentication");
     }
   };
 
   const getSubHeading = () => {
     switch (setupStep) {
       case 0:
-        return "You're required to set up two factor authentication. Enter your phone number below.";
+        return t(
+          "You're required to set up two factor authentication. Enter your phone number below."
+        );
 
       case 1:
-        return "We just sent you a code to your phone. Please enter the code below.";
+        return t(
+          "We just sent you a code to your phone. Please enter the code below."
+        );
 
       case 2:
-        return "You're now set up. This is your recovery code. Save and keep it safe in case you would need to reset your two factor authentication.";
+        return t(
+          "You're now set up. This is your recovery code. Save and keep it safe in case you would need to reset your two factor authentication."
+        );
 
       default:
         return "";

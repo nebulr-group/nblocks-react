@@ -5,11 +5,12 @@ import {
   SignupComponent,
 } from "../../components/setup/SignupComponent";
 import { SignupSuccessComponent } from "../../components/setup/SignupSuccessComponent";
+import { useTranslation } from "react-i18next";
 
 const SignupScreen: FunctionComponent<{}> = () => {
   const [didSignup, setDidSignup] = useState(false);
   const [response, setResponse] = useState<CreateAppResponse>();
-
+  const { t } = useTranslation();
   const onDidSignup = (data: CreateAppResponse) => {
     setDidSignup(true);
     setResponse(data);
@@ -28,11 +29,15 @@ const SignupScreen: FunctionComponent<{}> = () => {
   return (
     <AuthLayoutWrapperComponent
       heading={
-        didSignup ? "A new app has been created" : "Create your Nblocks app"
+        didSignup
+          ? t("A new app has been created")
+          : t("Create your Nblocks app")
       }
       subHeading={
         didSignup
-          ? `These are your new credentials. Update your configs and create your first tenant.`
+          ? t(
+              "These are your new credentials. Update your configs and create your first tenant."
+            )
           : ""
       }
     >

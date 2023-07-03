@@ -4,6 +4,7 @@ import { ChoosePlanComponent } from "../../components/tenant/plan/ChoosePlanComp
 import { TenantLayoutWrapperComponent } from "../../components/tenant/TenantLayoutWrapperComponent";
 import { useConfig } from "../../hooks/config-context";
 import { RouteConfig } from "../../routes/AuthRoutes";
+import { useTranslation } from "react-i18next";
 
 const PlanScreen: FunctionComponent<{}> = () => {
   // This is a fix to not show flicker when the chooseUserComponent is loading tenantUsers and redirect if the user has just one
@@ -11,7 +12,7 @@ const PlanScreen: FunctionComponent<{}> = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { handoverRoute, debug } = useConfig();
-
+  const { t } = useTranslation();
   const targetUrl = location.state?.targetUrl?.pathname || handoverRoute;
 
   const planSelectHandler = (paymentsRequired?: boolean) => {
@@ -45,10 +46,10 @@ const PlanScreen: FunctionComponent<{}> = () => {
 
   return (
     <TenantLayoutWrapperComponent
-      heading={"Pricing plans"}
-      subHeading={
+      heading={t("Pricing plans")}
+      subHeading={t(
         "We belive Nblocks should be available to all companies, no matter the size."
-      }
+      )}
     >
       <ChoosePlanComponent
         planSelectHandler={planSelectHandler}

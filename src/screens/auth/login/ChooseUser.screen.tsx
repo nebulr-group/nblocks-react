@@ -6,9 +6,11 @@ import { useConfig } from "../../../hooks/config-context";
 import { useSecureContext } from "../../../hooks/secure-http-context";
 import { AuthTenantUserResponseDto } from "../../../models/auth-tenant-user-response.dto";
 import { RouteConfig } from "../../../routes/AuthRoutes";
+import { useTranslation } from "react-i18next";
 
 export function ChooseUserScreen() {
-  document.title = "Choose workspace";
+  const { t } = useTranslation();
+  document.title = t("Choose workspace");
 
   const [userSelected, setUserSelected] = useState(false);
   const [user, setUser] = useState<AuthTenantUserResponseDto>();
@@ -47,8 +49,8 @@ export function ChooseUserScreen() {
   } else {
     return (
       <AuthLayoutWrapperComponent
-        heading={"Welcome back!"}
-        subHeading={"Choose a workspace you want to login into below."}
+        heading={t("Welcome back!")}
+        subHeading={t("Choose a workspace you want to login into below.")}
       >
         <ChooseUserComponent
           didSelectUser={(user) => onDidSelectUser(user)}
