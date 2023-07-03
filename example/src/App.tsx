@@ -1,7 +1,12 @@
 import { NblocksProvider, InstallationCompleteComponent } from "nblocks-react";
 import React from "react";
 
-const lang = [{ lang: "en", resources: { foo: "fis" } }];
+const lang = [
+  {
+    lang: "en",
+    resources: { "Log in to your account": "Log in to your space" },
+  },
+];
 
 function App() {
   return (
