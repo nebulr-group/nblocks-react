@@ -1,6 +1,8 @@
 import { NblocksProvider, InstallationCompleteComponent } from "nblocks-react";
 import React from "react";
 
+const lang = [{ lang: "en", resources: { foo: "fis" } }];
+
 function App() {
   return (
     <div className="App">
@@ -14,6 +16,7 @@ function App() {
           apiHost: "http://localhost:3080",
           appId: "633402fdf28d8e00252948b1",
         }}
+        i18nOverrides={lang}
       >
         <InstallationCompleteComponent />
       </NblocksProvider>
