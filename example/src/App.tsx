@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import LoginComponent from "./LoginComponent";
 import CallbackComponent from "./CallbackComponent";
 import ProtectedRoute from "./ProtectedRouted";
+import UsersIframe from "./UsersIframe";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Route path="/auth/login" element={<LoginComponent />} />
         <Route path="/auth/oauth-callback" element={<CallbackComponent />} />
         <Route path="/forbidden" element={<span>Forbidden</span>} />
+        <Route path="/users" element={<UsersIframe />} />
         <Route
           path="*"
           element={

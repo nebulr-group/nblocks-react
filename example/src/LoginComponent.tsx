@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 export default function LoginComponent() {
-  //const APP_ID = "647887039bc85f00088fba57";
+  const APP_ID = "647887039bc85f00088fba57";
   
   useEffect(() => {
     // Immediately redirect the web browser to Nblocks login
