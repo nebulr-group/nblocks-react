@@ -7,6 +7,7 @@ import { InputComponent } from "../shared/InputComponent";
 import { LinkComponent } from "../shared/LinkComponent";
 import { NblocksButton } from "../shared/NblocksButton";
 import { TextComponent } from "../shared/TextComponent";
+import { useTranslation } from "react-i18next";
 
 type CreateAppResponse = {
   apiKey: string;
@@ -23,6 +24,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({ didSignup }) => {
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { accountApiBaseUri } = useConfig();
+  const { t } = useTranslation();
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -40,7 +42,9 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({ didSignup }) => {
       setIsLoading(false);
     } catch (error) {
       setErrorMsg(
-        "There was an error when creating the app. Try again, otherwise contact support."
+        t(
+          "There was an error when creating the app. Try again, otherwise contact support."
+        )
       );
       setIsLoading(false);
     }
@@ -52,7 +56,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({ didSignup }) => {
         <div className="max-w-sm w-full mb-6">
           <AlertComponent
             type="danger"
-            title="An error occured"
+            title={t("An error occured")}
             messages={[errorMsg]}
           />
         </div>
@@ -64,15 +68,15 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({ didSignup }) => {
         <InputComponent
           type="text"
           label="Name*"
-          placeholder="Give your app a name"
+          placeholder={t("Give your app a name")}
           name="name"
           onChange={(event) => setName(event.target.value)}
           value={name}
         />
         <InputComponent
           type="email"
-          label="Email address*"
-          placeholder="Enter your email"
+          label={t("Email address*")}
+          placeholder={t("Enter your email")}
           name="username"
           onChange={(event) => setEmail(event.target.value)}
           value={email}
@@ -86,7 +90,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({ didSignup }) => {
             type="primary"
             fullWidth={true}
           >
-            Create app
+            {t("Create app")}
           </NblocksButton>
         </div>
       </form>
@@ -97,7 +101,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({ didSignup }) => {
           size="sm"
           className="font-semibold"
         >
-          Back to login
+          {t(" Back to login")}
         </LinkComponent>
       </div>
     </>

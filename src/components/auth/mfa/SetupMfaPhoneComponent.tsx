@@ -5,6 +5,7 @@ import { AlertComponent } from "../../shared/AlertComponent";
 import { InputComponent } from "../../shared/InputComponent";
 import { LinkComponent } from "../../shared/LinkComponent";
 import { NblocksButton } from "../../shared/NblocksButton";
+import { useTranslation } from "react-i18next";
 
 type ComponentProps = {
   didSetupPhoneNumber: () => void;
@@ -17,6 +18,7 @@ const SetupMfaPhoneComponent: FunctionComponent<ComponentProps> = ({
   const [phoneNumber, setPhoneNumber] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -27,7 +29,9 @@ const SetupMfaPhoneComponent: FunctionComponent<ComponentProps> = ({
       setIsLoading(false);
     } catch (error) {
       setErrorMsg(
-        "There was an error when trying to setup your phone number. Try again and make sure you're using the correct format, otherwise contact support."
+        t(
+          "There was an error when trying to setup your phone number. Try again and make sure you're using the correct format, otherwise contact support."
+        )
       );
       setIsLoading(false);
       setPhoneNumber("");
@@ -40,7 +44,7 @@ const SetupMfaPhoneComponent: FunctionComponent<ComponentProps> = ({
         <div className="max-w-sm w-full mb-6">
           <AlertComponent
             type="danger"
-            title="An error occured"
+            title={t("An error occured")}
             messages={[errorMsg]}
           />
         </div>
@@ -51,8 +55,8 @@ const SetupMfaPhoneComponent: FunctionComponent<ComponentProps> = ({
       >
         <InputComponent
           type="text"
-          label="Phone number"
-          placeholder="+46..."
+          label={t("Phone number")}
+          placeholder={t("+46...")}
           name="phoneNumber"
           onChange={(event) => setPhoneNumber(event.target.value)}
           value={phoneNumber}
@@ -66,7 +70,7 @@ const SetupMfaPhoneComponent: FunctionComponent<ComponentProps> = ({
             isLoading={isLoading}
             fullWidth={true}
           >
-            Submit
+            {t("Submit")}
           </NblocksButton>
         </div>
       </form>
@@ -77,7 +81,7 @@ const SetupMfaPhoneComponent: FunctionComponent<ComponentProps> = ({
           className="font-semibold"
           size="sm"
         >
-          Back to login
+          {t("Back to login")}
         </LinkComponent>
       </div>
     </>

@@ -3,6 +3,7 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/auth-context";
 import { useConfig } from "../../../hooks/config-context";
 import { useSecureContext } from "../../../hooks/secure-http-context";
+import { useTranslation } from "react-i18next";
 
 const CallbackScreen: FunctionComponent<{}> = () => {
   const location = useLocation();
@@ -10,6 +11,7 @@ const CallbackScreen: FunctionComponent<{}> = () => {
   const { switchUser } = useAuth();
   const { didAuthenticate, authService, authenticated, initialized } =
     useSecureContext();
+  const { t } = useTranslation();
 
   const urlSearch = new URLSearchParams(location.search);
   const code = urlSearch.get("code");
@@ -37,7 +39,7 @@ const CallbackScreen: FunctionComponent<{}> = () => {
   if (authenticated && initialized) {
     return <Navigate to={target} />;
   } else {
-    return <h1>Logging in...</h1>;
+    return <h1>{t("Logging in...")}</h1>;
   }
 };
 

@@ -3,6 +3,7 @@ import { RouteConfig } from "../../../routes/AuthRoutes";
 import { HeadingComponent } from "../../shared/HeadingComponent";
 import { LinkComponent } from "../../shared/LinkComponent";
 import { NblocksButton } from "../../shared/NblocksButton";
+import { useTranslation } from "react-i18next";
 
 type ComponentProps = {
   recoverCode: string;
@@ -13,6 +14,7 @@ const SetupMfaRecoverCodeComponent: FunctionComponent<ComponentProps> = ({
   didClickContinue,
   recoverCode,
 }) => {
+  const { t } = useTranslation();
   return (
     <div className="max-w-sm w-full">
       <div className="space-y-6 flex flex-col mt-6 md:mt-8 text-center ">
@@ -31,7 +33,7 @@ const SetupMfaRecoverCodeComponent: FunctionComponent<ComponentProps> = ({
           fullWidth={true}
           onClick={() => didClickContinue()}
         >
-          Continue
+          {t("Continue")}
         </NblocksButton>
       </div>
 
@@ -42,7 +44,7 @@ const SetupMfaRecoverCodeComponent: FunctionComponent<ComponentProps> = ({
           className="font-semibold"
           size="sm"
         >
-          Back to login
+          {t("Back to login")}
         </LinkComponent>
       </div>
     </div>

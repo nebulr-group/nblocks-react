@@ -14,6 +14,7 @@ import {
   getCurrencySymbol,
 } from "../../utils/ComponentHelpers";
 import { useMutation, useQuery } from "@apollo/client";
+import { useTranslation } from "react-i18next";
 
 type ConfigObject = {
   plans?: PlanGraphql[];
@@ -36,6 +37,7 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
 
   // Getting Tenat instance
   const { data, loading, error } = useQuery(GetTenantDocument);
+  const { t } = useTranslation();
 
   // Updating Tenant instance
   const [updateTenantMutation, updateTenantData] =
@@ -74,7 +76,7 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
                   fullWidth={true}
                   disabled={true}
                 >
-                  Get Started
+                  {t("Get Started")}
                 </NblocksButton>
               </div>
             </div>
@@ -116,7 +118,7 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
                   fullWidth={true}
                   onClick={() => updatePlan(name)}
                 >
-                  Get Started
+                  {t("Get Started")}
                 </NblocksButton>
               </div>
             </div>

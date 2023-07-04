@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { NblocksButton } from "../../shared/NblocksButton";
 import { ImageComponent } from "../../shared/ImageComponent";
+import { useTranslation } from "react-i18next";
 
 type ComponentProps = {
   mode: "login" | "signup";
@@ -11,16 +12,17 @@ const GoogleSsoButtonComponent: FunctionComponent<ComponentProps> = ({
   onClick,
   mode,
 }) => {
+  const { t } = useTranslation();
   const loginLogo =
     "https://developers.google.com/static/identity/images/g-logo.png";
 
   const renderText = () => {
     switch (mode) {
       case "signup":
-        return "Sign up with Google";
+        return t("Sign up with Google");
       case "login":
       default:
-        return "Sign in with Google";
+        return t("Sign in with Google");
     }
   };
   return (

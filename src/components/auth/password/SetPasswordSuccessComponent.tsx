@@ -1,10 +1,12 @@
 import React, { FunctionComponent } from "react";
 import { RouteConfig } from "../../../routes/AuthRoutes";
 import { LinkComponent } from "../../shared/LinkComponent";
+import { useTranslation } from "react-i18next";
 
 type ComponentProps = {};
 
 const SetPasswordSuccessComponent: FunctionComponent<ComponentProps> = ({}) => {
+  const { t } = useTranslation();
   return (
     <>
       <div>
@@ -14,7 +16,7 @@ const SetPasswordSuccessComponent: FunctionComponent<ComponentProps> = ({}) => {
           size="sm"
           className="font-semibold"
         >
-          Back to login
+          {t("Back to login")}
         </LinkComponent>
       </div>
     </>

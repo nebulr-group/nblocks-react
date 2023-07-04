@@ -4,11 +4,13 @@ import { AuthLayoutWrapperComponent } from "../../components/auth/AuthLayoutWrap
 import { OnboardUserComponent } from "../../components/auth/onboard/OnboardUserComponent";
 import { useConfig } from "../../hooks/config-context";
 import { RouteConfig } from "../../routes/AuthRoutes";
+import { useTranslation } from "react-i18next";
 
 // TODO add support for pulling current user data + redirect to tenant onboarding if that is missing
 const OnboardUserScreen: FunctionComponent<{}> = () => {
   document.title = "Onboard user";
 
+  const { t } = useTranslation();
   const { debug, handoverRoute } = useConfig();
   const navigate = useNavigate();
   const location = useLocation();
@@ -28,7 +30,7 @@ const OnboardUserScreen: FunctionComponent<{}> = () => {
 
   return (
     <AuthLayoutWrapperComponent
-      heading={"Complete your profile"}
+      heading={t("Complete your profile")}
       subHeading={""}
     >
       <OnboardUserComponent

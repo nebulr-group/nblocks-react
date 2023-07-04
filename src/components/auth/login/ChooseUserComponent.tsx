@@ -12,6 +12,8 @@ import { RouteConfig } from "../../../routes/AuthRoutes";
 import { AlertComponent } from "../../shared/AlertComponent";
 import { useConfig } from "../../../hooks/config-context";
 import { SkeletonLoader } from "../../shared/SkeletonLoader";
+import { useTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 
 type ComponentProps = {
   didSelectUser: (user: AuthTenantUserResponseDto) => void;
@@ -20,9 +22,12 @@ type ComponentProps = {
   autoSelect: boolean;
 };
 
-const convertToOption = (user: AuthTenantUserResponseDto): Option => {
+const convertToOption = (
+  user: AuthTenantUserResponseDto,
+  t: TFunction
+): Option => {
   return {
-    label: user.tenant.name ? user.tenant.name : "New account",
+    label: user.tenant.name ? user.tenant.name : t("New account"),
     value: user.id,
     icon: (
       <div style={{ minWidth: 32, height: 32 }}>
@@ -43,6 +48,7 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
   const [users, setUsers] = useState<AuthTenantUserResponseDto[]>();
   const [selectedUser, setSelectedUser] = useState<AuthTenantUserResponseDto>();
   const { debug } = useConfig();
+  const { t } = useTranslation();
 
   const submit = async (user?: AuthTenantUserResponseDto) => {
     setIsLoading(true);
@@ -109,8 +115,8 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
       {users && users.length === 0 && (
         <AlertComponent
           type="warning"
-          title="No workspace found!"
-          messages={["You don't belong to any workspace. Contact support!"]}
+          title={t("No workspace found!")}
+          messages={[t("You don't belong to any workspace. Contact support!")]}
         />
       )}
       <div className="max-w-sm w-full mb-6">
@@ -118,9 +124,9 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
           <RadioGroupComponent
             didSelectOption={(value) => onDidSelectOption(value)}
             defaultValue={
-              selectedUser ? convertToOption(selectedUser) : undefined
+              selectedUser ? convertToOption(selectedUser, t) : undefined
             }
-            options={users.map((u) => convertToOption(u))}
+            options={users.map((u) => convertToOption(u, t))}
           />
         ) : (
           <>
@@ -144,14 +150,16 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
         </NblocksButton>
       </div>
       <div className="text-center mt-8">
-        <TextComponent size="sm">Not seeing your workspace?</TextComponent>
+        <TextComponent size="sm">
+          {t("Not seeing your workspace?")}
+        </TextComponent>
         <LinkComponent
           to={RouteConfig.login.loginScreen}
           type="primary"
           size="sm"
           className="font-semibold"
         >
-          Try a different email
+          {t("Try a different email")}
         </LinkComponent>
       </div>
     </>

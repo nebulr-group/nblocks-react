@@ -12,14 +12,16 @@ import { ModalComponent } from "../../components/shared/ModalComponent";
 import { NblocksButton } from "../../components/shared/NblocksButton";
 import { TextComponent } from "../../components/shared/TextComponent";
 import { UserListTableComponent } from "../../components/shared/UserListTableComponent";
+import { useTranslation } from "react-i18next";
 
 const UserListScreen: FunctionComponent<{}> = () => {
+  const { t } = useTranslation();
   return (
     <>
       <div className="min-h-screen flex flex-col">
         <div className="flex justify-between items-center py-5 mx-6">
           <HeadingComponent type={"h1"} size={"3xl"} className={"inline-block"}>
-            Users
+            {t("Users")}
           </HeadingComponent>
           <InviteUserBtn />
         </div>
@@ -36,6 +38,7 @@ const InviteUserBtn: FunctionComponent<{}> = () => {
   const [usernames, setUsernames] = useState<string[]>([""]);
   const [inviteUserMutation, inviteUserMutationData] =
     useMutation(CreateUsersDocument);
+  const { t } = useTranslation();
   const [alert, setAlert] = useState<ComponentProps & { show: boolean }>({
     title: "",
     type: "primary",
@@ -82,25 +85,25 @@ const InviteUserBtn: FunctionComponent<{}> = () => {
             setIsOpen(true);
           }}
         >
-          Add user
+          {t("Add user")}
         </NblocksButton>
       </div>
       <ModalComponent
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         icon={<UserPlusIcon />}
-        heading={"Add user"}
-        description={
+        heading={t("Add user")}
+        description={t(
           "Add one or multiple users. You can change their role in the table after they are added."
-        }
+        )}
       >
         <div className="space-y-3 mt-5">
           {usernames.map((username, i) => (
             <InputComponent
               key={`email${i}`}
               type="email"
-              label={i === 0 ? "Email address" : undefined}
-              placeholder="you@domain.com"
+              label={i === 0 ? t("Email address") : undefined}
+              placeholder={t("you@domain.com")}
               name={`email${i}`}
               value={username}
               labelClassName={"mt-4"}
@@ -121,7 +124,7 @@ const InviteUserBtn: FunctionComponent<{}> = () => {
               className="font-semibold"
               colorName="text-purple-700"
             >
-              + Add another
+              {t("+ Add another")}
             </TextComponent>
           </NblocksButton>
         </div>
@@ -132,7 +135,7 @@ const InviteUserBtn: FunctionComponent<{}> = () => {
             type="tertiary"
             onClick={() => setIsOpen(false)}
           >
-            Cancel
+            {t("Cancel")}
           </NblocksButton>
           <NblocksButton
             size="md"
@@ -144,7 +147,7 @@ const InviteUserBtn: FunctionComponent<{}> = () => {
               setAlert((value) => {
                 return {
                   ...value,
-                  title: "Invite has been sent!",
+                  title: t("Invite has been sent!"),
                   show: true,
                   type: "success",
                   messages: [
@@ -156,7 +159,7 @@ const InviteUserBtn: FunctionComponent<{}> = () => {
               });
             }}
           >
-            Add
+            {t("Add")}
           </NblocksButton>
         </div>
       </ModalComponent>

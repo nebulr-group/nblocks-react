@@ -4,11 +4,13 @@ import { AuthLayoutWrapperComponent } from "../../../components/auth/AuthLayoutW
 import { SetPasswordComponent } from "../../../components/auth/password/SetPasswordComponent";
 import { SetPasswordSuccessComponent } from "../../../components/auth/password/SetPasswordSuccessComponent";
 import { useAuth } from "../../../hooks/auth-context";
+import { useTranslation } from "react-i18next";
 
 const SetPasswordScreen: FunctionComponent = () => {
   const params = useParams();
   const resetToken = params.token!;
   const { logout, currentUser } = useAuth();
+  const { t } = useTranslation();
 
   const [passwordReset, setPasswordReset] = useState(false);
 
@@ -38,11 +40,13 @@ const SetPasswordScreen: FunctionComponent = () => {
 
   return (
     <AuthLayoutWrapperComponent
-      heading={passwordReset ? "Password reset" : "Set new password"}
+      heading={passwordReset ? t("Password reset") : t("Set new password")}
       subHeading={
         passwordReset
-          ? "Your new password has been successfully set. Click below to log in."
-          : "Set a password to use when you sign in."
+          ? t(
+              "Your new password has been successfully set. Click below to log in."
+            )
+          : t("Set a password to use when you sign in.")
       }
     >
       {renderChild()}
