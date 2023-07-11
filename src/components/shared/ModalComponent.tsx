@@ -19,6 +19,18 @@ type ConfigObject = {
   iconType?: "primary" | "danger" | "warning" | "success" | "info";
   iconClassName?: string;
   description?: string;
+  width?:
+    | "md"
+    | "lg"
+    | "xl"
+    | "2xl"
+    | "3xl"
+    | "4xl"
+    | "5xl"
+    | "6xl"
+    | "7xl"
+    | "8xl"
+    | "9xl";
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -79,6 +91,7 @@ const ModalComponent: FunctionComponent<ConfigObject> = ({
   iconClassName,
   iconType,
   setIsOpen,
+  width,
 }) => {
   iconClassName = iconClassName ? iconClassName : "";
 
@@ -99,17 +112,19 @@ const ModalComponent: FunctionComponent<ConfigObject> = ({
     }
   };
 
+  const getMaxWidthClassName = () => {
+    return `max-w-${width ? width : "md"}`;
+  };
+
   return (
     <Dialog
       open={isOpen}
       onClose={() => setIsOpen(false)}
       className="fixed flex justify-center items-center inset-0 overflow-y-auto"
     >
-      <Dialog.Overlay className={"fixed inset-0 bg-gray-400/30"} />
+      <Dialog.Overlay className={"fixed inset-0 bg-gray-400/30 z-50"} />
       <Dialog.Panel
-        className={
-          "relative w-full p-4 md:p-6 max-w-md bg-white rounded-lg z-50"
-        }
+        className={`relative w-full p-4 md:p-6 ${getMaxWidthClassName()} bg-white rounded-lg`}
       >
         <div className={`flex ${icon ? "justify-between" : "justify-end"} p-0`}>
           {icon && (
