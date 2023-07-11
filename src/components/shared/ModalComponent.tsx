@@ -18,6 +18,7 @@ type ConfigObject = {
   icon?: React.ReactNode;
   iconType?: "primary" | "danger" | "warning" | "success" | "info";
   iconClassName?: string;
+  overlayClassName?: string;
   description?: string;
   width?:
     | "md"
@@ -92,6 +93,7 @@ const ModalComponent: FunctionComponent<ConfigObject> = ({
   iconType,
   setIsOpen,
   width,
+  overlayClassName,
 }) => {
   iconClassName = iconClassName ? iconClassName : "";
 
@@ -122,9 +124,13 @@ const ModalComponent: FunctionComponent<ConfigObject> = ({
       onClose={() => setIsOpen(false)}
       className="fixed flex justify-center items-center inset-0 overflow-y-auto"
     >
-      <Dialog.Overlay className={"fixed inset-0 bg-gray-400/30 z-50"} />
+      <Dialog.Overlay
+        className={`fixed inset-0 bg-gray-400/30 ${
+          overlayClassName ? overlayClassName : ""
+        }`}
+      />
       <Dialog.Panel
-        className={`relative w-full p-4 md:p-6 ${getMaxWidthClassName()} bg-white rounded-lg`}
+        className={`relative w-full p-4 md:p-6 ${getMaxWidthClassName()} bg-white rounded-lg z-50`}
       >
         <div className={`flex ${icon ? "justify-between" : "justify-end"} p-0`}>
           {icon && (
