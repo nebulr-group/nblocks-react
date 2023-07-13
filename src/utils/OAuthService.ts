@@ -144,19 +144,38 @@ export class OAuthService {
         OAuthService.getRefreshToken(),
       ];
 
-      if (openIdToken) {
-        const decoded = await this._verifyToken(openIdToken);
-        this._idToken = decoded.payload as OpenIDClaim;
+      try {
+        if (refreshToken) {
+          const decoded = await this._verifyToken(refreshToken);
+          this._refreshTokenExpires = decoded.payload.exp;
+        }
+
+        if (openIdToken) {
+          const decoded = await this._verifyToken(openIdToken);
+          this._idToken = decoded.payload as OpenIDClaim;
+        }
+
+        if (accessToken) {
+          const decoded = await this._verifyToken(accessToken);
+          this._accessTokenExpires = decoded.payload.exp;
+        }
+      } catch (error) {
+        if (this.debug) {
+          console.error(`OAuthService: Encountered error when restoring tokens from localStorage`, error);
+        }
+
+        if (this._refreshTokenExpires) {
+          // We have a valid refresh token, so let's try to refresh the access and ID token.
+          console.log(`OAuthService: Refreshing tokens since refreshToken exists`);
+          await this.refreshTokens();
+        } else {
+          console.log(`OAuthService: No refreshToken exists. Waiting for observers to understand the user is unauthenticated`);
+          return;
+        }
       }
 
-      if (accessToken) {
-        const decoded = await this._verifyToken(accessToken);
-        this._accessTokenExpires = decoded.payload.exp;
-      }
-
-      if (refreshToken) {
-        const decoded = await this._verifyToken(refreshToken);
-        this._refreshTokenExpires = decoded.payload.exp;
+      if (this.debug) {
+        console.log(`OAuthService: Did try to restore tokens from Local storage`);
       }
 
       // Start scheduler
@@ -344,6 +363,7 @@ export class OAuthService {
     if (this._accessTokenExpires) {
       const expiresInMs = this._accessTokenExpires * 1000 - Date.now();
       const threshold = expiresInMs * 0.8;
+      this.log(`OAuthService: Will schedule refresher`);
       this.log(
         `AccessToken expires in ${expiresInMs / 1000
         } seconds. Therefore we refresh it after ${threshold / 1000} seconds`
@@ -352,6 +372,10 @@ export class OAuthService {
         await this.refreshTokens();
         this.setRefreshTokenScheduler();
       }, threshold);
+    } else {
+      if (this.debug) {
+        console.log(`OAuthService: Will not schedule refresher since there's no accessToken`);
+      }
     }
   }
 

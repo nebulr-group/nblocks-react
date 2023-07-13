@@ -350,6 +350,7 @@ export function BrandExpoScreen() {
               isOpen={isOpen}
               setIsOpen={setIsOpen}
               heading={"Reset Password"}
+              width="5xl"
               description={
                 "Do you want to send a reset password link to Candice Wu?"
               }
