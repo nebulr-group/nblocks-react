@@ -9,8 +9,7 @@ const CallbackScreen: FunctionComponent<{}> = () => {
   const location = useLocation();
   const { handoverRoute } = useConfig();
   const { switchUser } = useAuth();
-  const { didAuthenticate, authService, authenticated, initialized } =
-    useSecureContext();
+  const { didAuthenticate, authService, authenticated } = useSecureContext();
   const { t } = useTranslation();
 
   const urlSearch = new URLSearchParams(location.search);
@@ -36,7 +35,7 @@ const CallbackScreen: FunctionComponent<{}> = () => {
     // return <Navigate to={authService.getLoginUrl("")} />;
   }
 
-  if (authenticated && initialized) {
+  if (authenticated) {
     return <Navigate to={target} />;
   } else {
     return <h1>{t("Logging in...")}</h1>;

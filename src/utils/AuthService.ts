@@ -93,7 +93,7 @@ export class AuthService {
   }
 
   /**
-   * Application boot should start by calling this method
+   * Application boot should start by calling this method and not render children before it has resolved
    * @returns
    */
   async checkCurrentUserAuthenticated(): Promise<boolean> {

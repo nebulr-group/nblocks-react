@@ -166,16 +166,26 @@ export class OAuthService {
 
         if (this._refreshTokenExpires) {
           // We have a valid refresh token, so let's try to refresh the access and ID token.
-          console.log(`OAuthService: Refreshing tokens since refreshToken exists`);
+          if (this.debug) {
+            console.log(`OAuthService: Recovering from error by Refreshing tokens since refreshToken exists`);
+          }
           await this.refreshTokens();
         } else {
           console.log(`OAuthService: No refreshToken exists. Waiting for observers to understand the user is unauthenticated`);
           return;
         }
+      } finally {
+        if ((!this._accessTokenExpires || !this._idToken) && this._refreshTokenExpires) {
+          // We have a valid refresh token, so let's try to refresh the access and ID token.
+          if (this.debug) {
+            console.log(`OAuthService: Some tokens could not be restored. Refreshing tokens since refreshToken exists`);
+          }
+          await this.refreshTokens();
+        }
       }
 
       if (this.debug) {
-        console.log(`OAuthService: Did try to restore tokens from Local storage`);
+        console.log(`OAuthService: Did try to restore tokens from Local storage and successfully restored [${this._refreshTokenExpires ? 'refreshToken' : ''} ${this._accessTokenExpires ? 'accessToken' : ''} ${this._idToken ? 'idToken' : ''}]`);
       }
 
       // Start scheduler
@@ -439,7 +449,7 @@ export class OAuthService {
   }
 
   static async hasFullAuthContext(): Promise<boolean> {
-    return !!this.getAccessToken() && !!this.getIDToken();
+    return !!this.getRefreshToken(); //!!this.getAccessToken() && !!this.getIDToken();
   }
   // Setters
 

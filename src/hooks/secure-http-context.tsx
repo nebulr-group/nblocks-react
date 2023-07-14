@@ -55,7 +55,9 @@ const NblocksSecureContextProvider: FunctionComponent<{
 
       if (!initialized) {
         setInitialized(true);
-        log("Initialized");
+        log(
+          `Initialized. With authenticated:${value} Will render all children`
+        );
       }
     });
   }, []);
@@ -63,6 +65,18 @@ const NblocksSecureContextProvider: FunctionComponent<{
   const log = (msg: string) => {
     if (debug) {
       console.log(`NblocksSecureContextProvider: ${msg}`);
+    }
+  };
+
+  const renderChildren = () => {
+    if (initialized) {
+      return (
+        <ApolloProvider client={authApolloClient.client}>
+          {children}
+        </ApolloProvider>
+      );
+    } else {
+      return "";
     }
   };
 
@@ -80,9 +94,7 @@ const NblocksSecureContextProvider: FunctionComponent<{
         },
       }}
     >
-      <ApolloProvider client={authApolloClient.client}>
-        {children}
-      </ApolloProvider>
+      {renderChildren()}
     </SecureContext.Provider>
   );
 };
