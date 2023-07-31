@@ -64,6 +64,7 @@ export class OAuthService {
   private readonly OAUTH_ENDPOINTS = {
     authorize: "/authorize",
     token: "/token",
+    tokenCodeShorthand: "/token/code",
     refresh: "/token",
     jwks: "/.well-known/jwks.json",
   };
@@ -318,8 +319,26 @@ export class OAuthService {
     return result;
   }
 
-  async getTokens(code: string): Promise<boolean> {
-    const response = await this.httpClient.post<{
+  /**
+   *
+   * @param code 
+   * @param useShortHand used by cloud views when redirectUri is default
+   * @returns 
+   */
+  async getTokens(code: string, useShortHand?: boolean): Promise<boolean> {
+    const response = useShortHand ? await this.httpClient.post<{
+      access_token: string;
+      refresh_token: string;
+      token_type: string;
+      expiresIn: number;
+      id_token?: string;
+    }>(
+      `${this.OAUTH_ENDPOINTS.tokenCodeShorthand}/${this.appId}`,
+      {
+        code,
+      },
+      { baseURL: this.oAuthBaseURI }
+    ) : await this.httpClient.post<{
       access_token: string;
       refresh_token: string;
       token_type: string;

@@ -86,9 +86,9 @@ export class AuthService {
    * @param code
    * @returns
    */
-  async handleCallbackCode(code: string): Promise<void> {
+  async handleCallbackCode(code: string, useShortHand?: boolean): Promise<void> {
     if (!!this._oauthService) {
-      await this._oauthService.getTokens(code);
+      await this._oauthService.getTokens(code, useShortHand);
     }
   }
 
