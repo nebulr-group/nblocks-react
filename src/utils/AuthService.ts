@@ -52,9 +52,9 @@ export class AuthService {
    * @param returnUrl
    * @returns
    */
-  getLoginUrl(returnUrl: string): string {
+  getLoginUrl(args?: { useShortHand?: boolean, state?: string }): string {
     return !!this._oauthService
-      ? this._oauthService.getAuthorizeUrl(returnUrl)
+      ? this._oauthService.getAuthorizeUrl(args ? args : {})
       : RouteConfig.login.loginScreen;
   }
 

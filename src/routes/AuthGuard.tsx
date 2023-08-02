@@ -21,7 +21,10 @@ function NBAuthGuard({ children }: { children: React.ReactElement }) {
     }
 
     //TODO Could be more elegant!
-    const target = authService.getLoginUrl(location.state?.from?.pathname);
+    const target = authService.getLoginUrl({
+      useShortHand: true,
+      state: location.state?.from?.pathname,
+    });
 
     if (authLegacy) {
       return <Navigate to={target} state={{ from: location }} replace />;

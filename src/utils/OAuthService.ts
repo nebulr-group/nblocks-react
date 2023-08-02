@@ -63,6 +63,7 @@ export type AccesTokenClaim = {
 export class OAuthService {
   private readonly OAUTH_ENDPOINTS = {
     authorize: "/authorize",
+    authorizeShorthand: "/url/login",
     token: "/token",
     tokenCodeShorthand: "/token/code",
     refresh: "/token",
@@ -214,8 +215,9 @@ export class OAuthService {
   }
 
   /** TODO change to simplified login url? auth-api/url/login/:appID */
-  getAuthorizeUrl(state?: string): string {
-    const url = `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.authorize}?response_type=code&client_id=${this.appId}&redirect_uri=${this.redirectUri}&scope=${this.OAUTH_SCOPES}`;
+  getAuthorizeUrl(args: { useShortHand?: boolean, state?: string }): string {
+    const { useShortHand, state } = args;
+    const url = useShortHand ? `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.authorizeShorthand}/${this.appId}` : `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.authorize}?response_type=code&client_id=${this.appId}&redirect_uri=${this.redirectUri}&scope=${this.OAUTH_SCOPES}`;
     return state ? `${url}&state=${state}` : url;
   }
 
