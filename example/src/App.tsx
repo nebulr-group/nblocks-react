@@ -16,11 +16,11 @@ function App() {
           debug: true,
           devMode: true,
           backendLess: true,
-          authLegacy: false,
+          authLegacy: true,
           accountApiBaseUri: "http://localhost:3010",
           oAuthBaseURI: "http://localhost:3070",
           apiHost: "http://localhost:3080",
-          appId: "633402fdf28d8e00252948b1",
+          appId: "64aff927e7af77552b09b689",
         }}
         i18nOverrides={lang}
       >

@@ -135,6 +135,19 @@ export class AuthService {
     }
   }
 
+  async getCredentialsConfig(
+    username: string
+  ): Promise<{ hasPassword: boolean }> {
+    if (!!this._oauthService) {
+      const response = await this._oauthService.getCredentialsConfig(
+        username
+      );
+      return response;
+    } else {
+      return { hasPassword: true }
+    }
+  }
+
   private async _authenticated(): Promise<boolean> {
     const response = await this.httpClient.get<{ authenticated: boolean }>(
       this.ENDPOINTS.authenticated

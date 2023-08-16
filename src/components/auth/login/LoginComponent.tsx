@@ -13,11 +13,14 @@ import { useApp } from "../../../hooks/app-context";
 import { AzureAdSsoButtonComponent } from "../shared/AzureAdSsoButtonComponent";
 import { GoogleSsoButtonComponent } from "../shared/GoogleSsoButtonComponent";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 type ComponentProps = {
   didLogin: (mfa: MfaState, tenantUserId?: string) => void;
   didClickFederatedLogin: (type: FederationType) => void;
 };
+
+type CredentialsInputMode = "USERNAME" | "PASSWORD" | "RESET-PASSWORD";
 
 const LoginComponent: FunctionComponent<ComponentProps> = ({
   didLogin,
@@ -25,12 +28,15 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
 }) => {
   const { authService } = useSecureContext();
   const [username, setUsername] = useState("");
+  const [credentialsInputMode, setCredentialsInputMode] =
+    useState<CredentialsInputMode>("USERNAME");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isloading, setIsLoading] = useState(false);
   const { tenantSignup, authLegacy, demoSSO } = useConfig();
   const { azureAdSsoEnabled, googleSsoEnabled } = useApp();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   // Show SSO Login btn if we have it enabled or demoSSO is true
   const azureAdLogin = !authLegacy && (azureAdSsoEnabled || demoSSO);
@@ -40,12 +46,20 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
     event.preventDefault();
     setIsLoading(true);
     try {
-      const { mfaState, tenantUserId } = await authService.authenticate(
-        username,
-        password
-      );
+      switch (credentialsInputMode) {
+        case "USERNAME":
+          await checkCredentialsConfig();
+          break;
+
+        case "PASSWORD":
+          await loginWithPassword();
+          break;
+
+        case "RESET-PASSWORD":
+          navigate(RouteConfig.password.resetPasswordScreen);
+          break;
+      }
       setIsLoading(false);
-      didLogin(mfaState, tenantUserId);
     } catch (error) {
       console.error(error);
       if (error instanceof UnauthenticatedError) {
@@ -60,6 +74,24 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
         );
       }
       setPassword("");
+    }
+  };
+
+  const loginWithPassword = async () => {
+    const { mfaState, tenantUserId } = await authService.authenticate(
+      username,
+      password
+    );
+    didLogin(mfaState, tenantUserId);
+    setPassword("");
+  };
+
+  const checkCredentialsConfig = async () => {
+    const { hasPassword } = await authService.getCredentialsConfig(username);
+    if (hasPassword) {
+      setCredentialsInputMode("PASSWORD");
+    } else {
+      setCredentialsInputMode("RESET-PASSWORD");
     }
   };
 
@@ -99,6 +131,63 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
     );
   };
 
+  const renderCredentialsInput = () => {
+    switch (credentialsInputMode) {
+      case "USERNAME":
+        return (
+          <InputComponent
+            type="email"
+            label={t("Email address")}
+            placeholder={t("Enter your email")}
+            name="username"
+            onChange={(event) => setUsername(event.target.value)}
+            value={username}
+          />
+        );
+
+      case "PASSWORD":
+        return (
+          <InputComponent
+            type="password"
+            label={t("Password")}
+            placeholder={t("Enter your password")}
+            name="password"
+            onChange={(event) => setPassword(event.target.value)}
+            value={password}
+          />
+        );
+
+      case "RESET-PASSWORD":
+        return <TextComponent>You need to reset your password</TextComponent>;
+    }
+  };
+
+  const getSubmitButtonText = () => {
+    switch (credentialsInputMode) {
+      case "USERNAME":
+        return t("Continue");
+
+      case "PASSWORD":
+        return t("Sign in");
+
+      case "RESET-PASSWORD":
+        return t("Set password");
+    }
+  };
+
+  const getSubmitButtonDisabled = () => {
+    switch (credentialsInputMode) {
+      case "USERNAME":
+        return !username;
+
+      case "PASSWORD":
+        return !username;
+
+      case "RESET-PASSWORD":
+        return false;
+    }
+  };
+
   return (
     <>
       {errorMsg && (
@@ -114,22 +203,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
         onSubmit={(event) => submit(event)}
         className="space-y-6 max-w-sm w-full"
       >
-        <InputComponent
-          type="email"
-          label={t("Email address")}
-          placeholder={t("Enter your email")}
-          name="username"
-          onChange={(event) => setUsername(event.target.value)}
-          value={username}
-        />
-        <InputComponent
-          type="password"
-          label={t("Password")}
-          placeholder={t("Enter your password")}
-          name="password"
-          onChange={(event) => setPassword(event.target.value)}
-          value={password}
-        />
+        {renderCredentialsInput()}
         <div className="flex justify-end">
           <LinkComponent
             to={RouteConfig.password.resetPasswordScreen}
@@ -143,13 +217,13 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
         <div>
           <NblocksButton
             submit={true}
-            disabled={!username || !password}
+            disabled={getSubmitButtonDisabled()}
             size="md"
             type="primary"
             isLoading={isloading}
             fullWidth={true}
           >
-            {t("Sign in")}
+            {getSubmitButtonText()}
           </NblocksButton>
         </div>
         {renderSso()}

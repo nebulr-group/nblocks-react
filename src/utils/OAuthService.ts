@@ -73,6 +73,7 @@ export class OAuthService {
   private readonly AUTH_API_ENDPOINTS = {
     federatedLogin: "/federated",
     authenticate: "/auth/authenticate",
+    credentialsConfig: "/auth/credentialsConfig",
     tenantUsers: "/auth/tenantUsers",
     handover: "/auth/chooseTenantUser",
     logout: "/auth/logout",
@@ -229,6 +230,21 @@ export class OAuthService {
     return this._idToken;
   }
 
+  async getCredentialsConfig(
+    username: string
+  ): Promise<{ hasPassword: boolean }> {
+    const response = await this.httpClient.post<{ hasPassword: boolean }>(
+      this.AUTH_API_ENDPOINTS.credentialsConfig,
+      {
+        username,
+      },
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+
+    const { hasPassword } = response.data;
+    return { hasPassword };
+  }
+
   async authenticate(
     username: string,
     password: string
@@ -302,6 +318,15 @@ export class OAuthService {
       { baseURL: this.oAuthBaseURI, withCredentials: true }
     );
     return response.data;
+  }
+
+  /** Logout via Auth API, this also removes current OAuth ctx */
+  /** User should initiate a new Oauth login flow after */
+  async logout(): Promise<void> {
+    await this.httpClient.get<void>(
+      this.AUTH_API_ENDPOINTS.logout,
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
   }
 
   /**
