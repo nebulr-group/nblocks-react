@@ -14,6 +14,7 @@ import { AzureAdSsoButtonComponent } from "../shared/AzureAdSsoButtonComponent";
 import { GoogleSsoButtonComponent } from "../shared/GoogleSsoButtonComponent";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 
 type ComponentProps = {
   didLogin: (mfa: MfaState, tenantUserId?: string) => void;
@@ -56,7 +57,9 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
           break;
 
         case "RESET-PASSWORD":
-          navigate(RouteConfig.password.resetPasswordScreen);
+          navigate(RouteConfig.password.resetPasswordScreen, {
+            state: { username },
+          });
           break;
       }
       setIsLoading(false);
@@ -93,6 +96,14 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
     } else {
       setCredentialsInputMode("RESET-PASSWORD");
     }
+  };
+
+  const resetFlow = () => {
+    setCredentialsInputMode("USERNAME");
+    setUsername("");
+    setPassword("");
+    setErrorMsg("");
+    setIsLoading(false);
   };
 
   const loginMiddleware = (type: FederationType) => {
@@ -207,6 +218,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
         <div className="flex justify-end">
           <LinkComponent
             to={RouteConfig.password.resetPasswordScreen}
+            handoverProps={{ username }}
             type="primary"
             size="sm"
             className="font-semibold"
@@ -228,6 +240,19 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
         </div>
         {renderSso()}
       </form>
+      {credentialsInputMode != "USERNAME" && (
+        <NblocksButton onClick={() => resetFlow()}>
+          <LinkComponent
+            to={"#"}
+            size="sm"
+            className="font-semibold flex items-center"
+            type={"secondary"}
+          >
+            <ArrowLeftIcon className="w-5 inline-block mr-1" />{" "}
+            {t("Try a different email")}
+          </LinkComponent>
+        </NblocksButton>
+      )}
       {tenantSignup && (
         <div className="mt-8">
           <TextComponent size="sm">

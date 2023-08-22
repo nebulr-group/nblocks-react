@@ -11,6 +11,8 @@ type ConfigObject = {
   type: "primary" | "secondary";
   nativeBehavior?: boolean;
   to: string;
+  /** Handover props to next component using react-router state variable (Only works when !nativeBehavior) */
+  handoverProps?: Record<string, unknown>;
   preventScrollReset?: boolean;
   className?: string;
   disabled?: boolean;
@@ -33,6 +35,7 @@ const LinkComponent: FunctionComponent<ConfigObject> = ({
   nativeBehavior,
   reloadDocument,
   to,
+  handoverProps,
   preventScrollReset,
   className,
   type,
@@ -56,6 +59,7 @@ const LinkComponent: FunctionComponent<ConfigObject> = ({
       ) : (
         <Link
           to={to}
+          state={handoverProps}
           preventScrollReset={preventScrollReset}
           reloadDocument={reloadDocument}
           className={`${className}${getLinkTypeStyle(type)}${getDisabledStyle(

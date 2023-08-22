@@ -1,5 +1,10 @@
 import { useSecureContext } from "../../../hooks/secure-http-context";
-import React, { FormEvent, FunctionComponent, useState } from "react";
+import React, {
+  FormEvent,
+  FunctionComponent,
+  useEffect,
+  useState,
+} from "react";
 import { RouteConfig } from "../../../routes/AuthRoutes";
 import { InputComponent } from "../../shared/InputComponent";
 import { LinkComponent } from "../../shared/LinkComponent";
@@ -9,17 +14,25 @@ import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { useTranslation } from "react-i18next";
 
 type ComponentProps = {
+  init?: string;
   didSendResetPasswordLink: (email: string) => void;
 };
 
 const ResetPasswordComponent: FunctionComponent<ComponentProps> = ({
   didSendResetPasswordLink,
+  init,
 }) => {
   const { authService } = useSecureContext();
   const [email, setEmail] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (init) {
+      setEmail(init);
+    }
+  }, [init]);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
