@@ -134,12 +134,14 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
   };
 
   const renderSso = () => {
-    return (
-      <div className="space-y-2">
-        {renderGoogle()}
-        {renderAzureAd()}
-      </div>
-    );
+    if (credentialsInputMode === "USERNAME") {
+      return (
+        <div className="space-y-2">
+          {renderGoogle()}
+          {renderAzureAd()}
+        </div>
+      );
+    }
   };
 
   const renderCredentialsInput = () => {
@@ -241,17 +243,19 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
         {renderSso()}
       </form>
       {credentialsInputMode != "USERNAME" && (
-        <NblocksButton onClick={() => resetFlow()}>
-          <LinkComponent
-            to={"#"}
-            size="sm"
-            className="font-semibold flex items-center"
-            type={"secondary"}
-          >
-            <ArrowLeftIcon className="w-5 inline-block mr-1" />{" "}
-            {t("Try a different email")}
-          </LinkComponent>
-        </NblocksButton>
+        <div className="mt-8">
+          <NblocksButton onClick={() => resetFlow()}>
+            <LinkComponent
+              to={"#"}
+              size="sm"
+              className="font-semibold flex items-center"
+              type={"secondary"}
+            >
+              <ArrowLeftIcon className="w-5 inline-block mr-1" />{" "}
+              {t("Try a different email")}
+            </LinkComponent>
+          </NblocksButton>
+        </div>
       )}
       {tenantSignup && (
         <div className="mt-8">
