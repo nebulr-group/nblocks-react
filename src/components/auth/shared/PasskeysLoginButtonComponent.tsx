@@ -1,36 +1,31 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent } from "react";
 import { NblocksButton } from "../../shared/NblocksButton";
 import { ImageComponent } from "../../shared/ImageComponent";
 import { useTranslation } from "react-i18next";
 
 type ComponentProps = {
-  mode: "login" | "signup";
+  mode: "login" | "create";
   onClick: () => void;
+  loading?: boolean;
 };
 
-const AzureAdSsoButtonComponent: FunctionComponent<ComponentProps> = ({
+const PasskeysLoginButtonComponent: FunctionComponent<ComponentProps> = ({
   onClick,
   mode,
+  loading,
 }) => {
-  const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
 
-  const azureAdLoginLogo =
-    "https://img.icons8.com/?size=48&id=22989&format=png";
+  const logo = "https://www.passkeys.com/assets/passkeys-logo.svg";
 
   const renderText = () => {
     switch (mode) {
-      case "signup":
-        return t("Sign up with Microsoft");
+      case "create":
+        return t("Create Passkeys");
       case "login":
       default:
-        return t("Sign in with Microsoft");
+        return t("Sign in with Passkeys");
     }
-  };
-
-  const didClick = () => {
-    setLoading(true);
-    onClick();
   };
 
   return (
@@ -39,11 +34,11 @@ const AzureAdSsoButtonComponent: FunctionComponent<ComponentProps> = ({
         size="sm"
         type="tertiary"
         fullWidth={true}
-        onClick={() => didClick()}
+        onClick={() => onClick()}
         isLoading={loading}
       >
         <div style={{ width: 48, height: 48 }}>
-          <ImageComponent src={azureAdLoginLogo}></ImageComponent>
+          <ImageComponent src={logo}></ImageComponent>
         </div>
         {renderText()}
       </NblocksButton>
@@ -51,4 +46,4 @@ const AzureAdSsoButtonComponent: FunctionComponent<ComponentProps> = ({
   );
 };
 
-export { AzureAdSsoButtonComponent };
+export { PasskeysLoginButtonComponent };

@@ -5,6 +5,7 @@ import { GetKeyFunction } from "jose/dist/types/types";
 import { LibConfig } from "../models/lib-config";
 import { FederationType, MfaState } from "./AuthService";
 import { AuthTenantUserResponseDto } from "../models/auth-tenant-user-response.dto";
+import { PublicKeyCredentialCreationOptionsJSON, RegistrationResponseJSON, PublicKeyCredentialRequestOptionsJSON, AuthenticationResponseJSON } from '@simplewebauthn/typescript-types'
 
 //FIXME centralize models
 export type UpdateUserProfileArgs = {
@@ -81,6 +82,10 @@ export class OAuthService {
     startMfaUserSetup: "/auth/startMfaUserSetup",
     finishMfaUserSetup: "/auth/finishMfaUserSetup",
     resetUserMfaSetup: "/auth/resetUserMfaSetup",
+    passkeysRegistrationOptions: "/auth/passkeys/registration-options",
+    passkeysVerifyRegistration: "/auth/passkeys/verify-registration",
+    passkeysAuthenticationOptions: "/auth/passkeys/authentication-options",
+    passkeysVerifyAuthentication: "/auth/passkeys/verify-authentication",
   };
 
   private _accessTokenExpires?: number;
@@ -271,6 +276,39 @@ export class OAuthService {
     }
 
     return { mfaState, tenantUserId };
+  }
+
+  //TODO pass the set-password key so we can tie this to a user
+  async getPasskeysRegistrationOptions(passwordResetToken: string): Promise<PublicKeyCredentialCreationOptionsJSON> {
+    const result = await this.httpClient.get<PublicKeyCredentialCreationOptionsJSON>(
+      `${this.AUTH_API_ENDPOINTS.passkeysRegistrationOptions}?passwordResetToken=${passwordResetToken}`,
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+    return result.data;
+  }
+
+  async passkeysVerifyRegistration(args: RegistrationResponseJSON, passwordResetToken: string): Promise<{ verified: boolean }> {
+    const result = await this.httpClient.post<{ verified: boolean }>(
+      `${this.AUTH_API_ENDPOINTS.passkeysVerifyRegistration}?passwordResetToken=${passwordResetToken}`, args,
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+    return result.data;
+  }
+
+  async getPasskeysAuthenticationOptions(): Promise<PublicKeyCredentialRequestOptionsJSON> {
+    const result = await this.httpClient.get<PublicKeyCredentialRequestOptionsJSON>(
+      this.AUTH_API_ENDPOINTS.passkeysAuthenticationOptions,
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+    return result.data;
+  }
+
+  async passkeysVerifyAuthentication(args: AuthenticationResponseJSON): Promise<PublicKeyCredentialRequestOptionsJSON> {
+    const result = await this.httpClient.post<PublicKeyCredentialRequestOptionsJSON>(
+      this.AUTH_API_ENDPOINTS.passkeysVerifyAuthentication, args,
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+    return result.data;
   }
 
   async commitMfaCode(mfaCode: string): Promise<void> {
