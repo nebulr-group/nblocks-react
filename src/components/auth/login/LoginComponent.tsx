@@ -48,12 +48,9 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
   const [errorMsg, setErrorMsg] = useState("");
   const [isloading, setIsLoading] = useState(false);
   const { tenantSignup, authLegacy, demoSSO } = useConfig();
-  const { azureAdSsoEnabled, googleSsoEnabled } = useApp();
+  const { azureAdSsoEnabled, googleSsoEnabled, passkeysEnabled } = useApp();
   const { t } = useTranslation();
   const navigate = useNavigate();
-
-  //TODO add to useApp()
-  const passkeysEnabled = true;
 
   const passkeysLogin = !authLegacy && passkeysEnabled;
 

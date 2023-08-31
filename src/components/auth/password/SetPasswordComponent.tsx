@@ -30,9 +30,7 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
   const { passwordValidation, passwordComplexityRegex, authLegacy } =
     useConfig();
   const { t } = useTranslation();
-
-  //TODO add to useApp()
-  const passkeysEnabled = true;
+  const { passkeysEnabled } = useApp();
 
   const passkeysLogin = !authLegacy && passkeysEnabled;
 

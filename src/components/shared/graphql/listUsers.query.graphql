@@ -1,6 +1,8 @@
-query ListUsers{
-  listUsers{       
+query ListUsers {
+  listUsers {
     id
+    firstName
+    lastName
     fullName
     email
     username

@@ -1,6 +1,8 @@
 query GetMe {
   getMe {
     id
+    firstName
+    lastName
     fullName
     email
     username
