@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { startRegistration } from "@simplewebauthn/browser";
 import { useSecureContext } from "../../../hooks/secure-http-context";
 import { PasskeysLoginButtonComponent } from "../shared/PasskeysLoginButtonComponent";
