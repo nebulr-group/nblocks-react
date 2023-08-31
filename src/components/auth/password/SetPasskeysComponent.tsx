@@ -18,17 +18,15 @@ const SetPasskeysComponent: FunctionComponent<ComponentProps> = ({
   const registerPasskeys = async () => {
     try {
       setLoading(true);
-      const regOptions =
-        await authService._oauthService?.getPasskeysRegistrationOptions(
-          resetToken
-        );
+      const regOptions = await authService.passkeysRegistrationOptions(
+        resetToken
+      );
       if (regOptions) {
         const registrationResponse = await startRegistration(regOptions);
-        const verifyResponse =
-          await authService._oauthService?.passkeysVerifyRegistration(
-            registrationResponse,
-            resetToken
-          );
+        const verifyResponse = await authService.passkeysRegister(
+          registrationResponse,
+          resetToken
+        );
 
         if (verifyResponse?.verified) {
           didSetPasskeys();

@@ -279,17 +279,17 @@ export class OAuthService {
   }
 
   //TODO pass the set-password key so we can tie this to a user
-  async getPasskeysRegistrationOptions(passwordResetToken: string): Promise<PublicKeyCredentialCreationOptionsJSON> {
+  async getPasskeysRegistrationOptions(forgotPasswordToken: string): Promise<PublicKeyCredentialCreationOptionsJSON> {
     const result = await this.httpClient.get<PublicKeyCredentialCreationOptionsJSON>(
-      `${this.AUTH_API_ENDPOINTS.passkeysRegistrationOptions}?passwordResetToken=${passwordResetToken}`,
+      `${this.AUTH_API_ENDPOINTS.passkeysRegistrationOptions}?forgotPasswordToken=${forgotPasswordToken}`,
       { baseURL: this.oAuthBaseURI, withCredentials: true }
     );
     return result.data;
   }
 
-  async passkeysVerifyRegistration(args: RegistrationResponseJSON, passwordResetToken: string): Promise<{ verified: boolean }> {
+  async passkeysVerifyRegistration(args: RegistrationResponseJSON, forgotPasswordToken: string): Promise<{ verified: boolean }> {
     const result = await this.httpClient.post<{ verified: boolean }>(
-      `${this.AUTH_API_ENDPOINTS.passkeysVerifyRegistration}?passwordResetToken=${passwordResetToken}`, args,
+      `${this.AUTH_API_ENDPOINTS.passkeysVerifyRegistration}?forgotPasswordToken=${forgotPasswordToken}`, args,
       { baseURL: this.oAuthBaseURI, withCredentials: true }
     );
     return result.data;
@@ -303,12 +303,24 @@ export class OAuthService {
     return result.data;
   }
 
-  async passkeysVerifyAuthentication(args: AuthenticationResponseJSON): Promise<PublicKeyCredentialRequestOptionsJSON> {
-    const result = await this.httpClient.post<PublicKeyCredentialRequestOptionsJSON>(
+  async passkeysVerifyAuthentication(args: AuthenticationResponseJSON): Promise<{ mfaState: MfaState; tenantUserId?: string }> {
+    const response = await this.httpClient.post<{
+      session: string;
+      expiresIn: number;
+      mfaState: MfaState;
+      tenantUserId?: string;
+    }>(
       this.AUTH_API_ENDPOINTS.passkeysVerifyAuthentication, args,
       { baseURL: this.oAuthBaseURI, withCredentials: true }
     );
-    return result.data;
+
+    const { session, mfaState, tenantUserId } = response.data;
+
+    if (!session) {
+      throw new Error("Wrong credentials");
+    }
+
+    return { mfaState, tenantUserId };
   }
 
   async commitMfaCode(mfaCode: string): Promise<void> {

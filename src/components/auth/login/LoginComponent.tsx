@@ -82,7 +82,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
 
     try {
       const passkeysAuthOptions =
-        await authService._oauthService?.getPasskeysAuthenticationOptions();
+        await authService.passkeysAuthenticationOptions();
 
       if (passkeysAuthOptions) {
         const authResult = await startAuthentication(
@@ -92,11 +92,9 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
 
         setIsLoading(true);
 
-        //TODO handle login result etc.
-        const verifyResult =
-          await authService._oauthService?.passkeysVerifyAuthentication(
-            authResult
-          );
+        const { mfaState, tenantUserId } =
+          await authService.passkeysAuthenticate(authResult);
+        didLogin(mfaState, tenantUserId);
       }
     } catch (error) {
       console.error(error);
@@ -211,7 +209,11 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
       const hasAlternative = passkeysLogin || googleLogin || azureAdLogin;
       return (
         <>
-          {hasAlternative && <DividerComponent text={t("Or")} />}
+          {hasAlternative && (
+            <div className="py-2">
+              <DividerComponent text={t("Or")} />
+            </div>
+          )}
           <div className="space-y-2">
             {renderPasskeysLogin()}
             {renderGoogle()}

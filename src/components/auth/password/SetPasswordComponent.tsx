@@ -152,7 +152,9 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
         </div>
         {passkeysLogin && browserSupportsWebAuthn() && (
           <>
-            <DividerComponent text={t("Or")} />
+            <div className="py-2">
+              <DividerComponent text={t("Or")} />
+            </div>
             <SetPasskeysComponent
               didSetPasskeys={onDidSetPasskeys}
               resetToken={resetToken}
