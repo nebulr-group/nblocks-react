@@ -222,8 +222,9 @@ export class OAuthService {
 
   getAuthorizeUrl(args: { useShortHand?: boolean, state?: string }): string {
     const { useShortHand, state } = args;
-    const url = useShortHand ? `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.authorizeShorthand}/${this.appId}` : `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.authorize}?response_type=code&client_id=${this.appId}&redirect_uri=${this.redirectUri}&scope=${this.OAUTH_SCOPES}`;
-    return state ? `${url}&state=${state}` : url;
+    const url = useShortHand ? `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.authorizeShorthand}/${this.appId}${state ? `?state=${state}` : ""}` : `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.authorize}?response_type=code&client_id=${this.appId}&redirect_uri=${this.redirectUri}&scope=${this.OAUTH_SCOPES}${state ? `&state=${state}` : ""}`;
+
+    return url;
   }
 
   getHandoverUrl(tenantUserId?: string): string {
