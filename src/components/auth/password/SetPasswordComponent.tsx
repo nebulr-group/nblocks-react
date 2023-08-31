@@ -32,7 +32,8 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
   const { t } = useTranslation();
   const { passkeysEnabled } = useApp();
 
-  const passkeysLogin = !authLegacy && passkeysEnabled;
+  const passkeysLogin =
+    !authLegacy && passkeysEnabled && browserSupportsWebAuthn();
 
   const {
     password: newPassword,
@@ -148,7 +149,7 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
             {t("Set a password")}
           </NblocksButton>
         </div>
-        {passkeysLogin && browserSupportsWebAuthn() && (
+        {passkeysLogin && (
           <>
             <div className="py-2">
               <DividerComponent text={t("Or")} />

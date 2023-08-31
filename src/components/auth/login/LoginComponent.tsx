@@ -52,14 +52,15 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const passkeysLogin = !authLegacy && passkeysEnabled;
+  const passkeysLogin =
+    !authLegacy && passkeysEnabled && browserSupportsWebAuthn();
 
   // Show SSO Login btn if we have it enabled or demoSSO is true
   const azureAdLogin = !authLegacy && (azureAdSsoEnabled || demoSSO);
   const googleLogin = !authLegacy && (googleSsoEnabled || demoSSO);
 
   useEffect(() => {
-    if (passkeysLogin && browserSupportsWebAuthn()) {
+    if (passkeysLogin) {
       browserSupportsWebAuthnAutofill().then((support) => {
         if (support) {
           passkeysAuthenticate(true);

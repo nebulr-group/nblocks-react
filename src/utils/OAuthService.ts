@@ -220,7 +220,6 @@ export class OAuthService {
     return false;
   }
 
-  /** TODO change to simplified login url? auth-api/url/login/:appID */
   getAuthorizeUrl(args: { useShortHand?: boolean, state?: string }): string {
     const { useShortHand, state } = args;
     const url = useShortHand ? `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.authorizeShorthand}/${this.appId}` : `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.authorize}?response_type=code&client_id=${this.appId}&redirect_uri=${this.redirectUri}&scope=${this.OAUTH_SCOPES}`;
@@ -278,7 +277,6 @@ export class OAuthService {
     return { mfaState, tenantUserId };
   }
 
-  //TODO pass the set-password key so we can tie this to a user
   async getPasskeysRegistrationOptions(forgotPasswordToken: string): Promise<PublicKeyCredentialCreationOptionsJSON> {
     const result = await this.httpClient.get<PublicKeyCredentialCreationOptionsJSON>(
       `${this.AUTH_API_ENDPOINTS.passkeysRegistrationOptions}?forgotPasswordToken=${forgotPasswordToken}`,
