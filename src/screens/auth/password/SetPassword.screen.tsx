@@ -40,7 +40,7 @@ const SetPasswordScreen: FunctionComponent = () => {
 
   return (
     <AuthLayoutWrapperComponent
-      heading={passwordReset ? t("Password reset") : t("Set new password")}
+      heading={passwordReset ? t("Password set") : t("Set new password")}
       subHeading={
         passwordReset
           ? t(

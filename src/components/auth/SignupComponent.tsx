@@ -14,6 +14,7 @@ import { FederationType } from "../../utils/AuthService";
 import { AzureAdSsoButtonComponent } from "./shared/AzureAdSsoButtonComponent";
 import { GoogleSsoButtonComponent } from "./shared/GoogleSsoButtonComponent";
 import { useTranslation } from "react-i18next";
+import { DividerComponent } from "../shared/DividerComponent";
 
 type ComponentProps = {
   didSignup: (email: string) => void;
@@ -96,12 +97,20 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
     }
   };
 
-  const renderSso = () => {
+  const renderSignupAlternatives = () => {
+    const hasAlternative = googleLogin || azureAdLogin;
     return (
-      <div className="space-y-2">
-        {renderGoogle()}
-        {renderAzureAd()}
-      </div>
+      <>
+        {hasAlternative && (
+          <div className="py-2">
+            <DividerComponent text={t("Or")} />
+          </div>
+        )}
+        <div className="space-y-2">
+          {renderGoogle()}
+          {renderAzureAd()}
+        </div>
+      </>
     );
   };
 
@@ -156,7 +165,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
             {t("Create account")}
           </NblocksButton>
         </div>
-        {renderSso()}
+        {renderSignupAlternatives()}
       </form>
       <div className="mt-8">
         <TextComponent size="sm">

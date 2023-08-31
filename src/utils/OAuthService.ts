@@ -5,6 +5,7 @@ import { GetKeyFunction } from "jose/dist/types/types";
 import { LibConfig } from "../models/lib-config";
 import { FederationType, MfaState } from "./AuthService";
 import { AuthTenantUserResponseDto } from "../models/auth-tenant-user-response.dto";
+import { PublicKeyCredentialCreationOptionsJSON, RegistrationResponseJSON, PublicKeyCredentialRequestOptionsJSON, AuthenticationResponseJSON } from '@simplewebauthn/typescript-types'
 
 //FIXME centralize models
 export type UpdateUserProfileArgs = {
@@ -81,6 +82,10 @@ export class OAuthService {
     startMfaUserSetup: "/auth/startMfaUserSetup",
     finishMfaUserSetup: "/auth/finishMfaUserSetup",
     resetUserMfaSetup: "/auth/resetUserMfaSetup",
+    passkeysRegistrationOptions: "/auth/passkeys/registration-options",
+    passkeysVerifyRegistration: "/auth/passkeys/verify-registration",
+    passkeysAuthenticationOptions: "/auth/passkeys/authentication-options",
+    passkeysVerifyAuthentication: "/auth/passkeys/verify-authentication",
   };
 
   private _accessTokenExpires?: number;
@@ -215,7 +220,6 @@ export class OAuthService {
     return false;
   }
 
-  /** TODO change to simplified login url? auth-api/url/login/:appID */
   getAuthorizeUrl(args: { useShortHand?: boolean, state?: string }): string {
     const { useShortHand, state } = args;
     const url = useShortHand ? `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.authorizeShorthand}/${this.appId}` : `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.authorize}?response_type=code&client_id=${this.appId}&redirect_uri=${this.redirectUri}&scope=${this.OAUTH_SCOPES}`;
@@ -261,6 +265,50 @@ export class OAuthService {
         username,
         password,
       },
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+
+    const { session, mfaState, tenantUserId } = response.data;
+
+    if (!session) {
+      throw new Error("Wrong credentials");
+    }
+
+    return { mfaState, tenantUserId };
+  }
+
+  async getPasskeysRegistrationOptions(forgotPasswordToken: string): Promise<PublicKeyCredentialCreationOptionsJSON> {
+    const result = await this.httpClient.get<PublicKeyCredentialCreationOptionsJSON>(
+      `${this.AUTH_API_ENDPOINTS.passkeysRegistrationOptions}?forgotPasswordToken=${forgotPasswordToken}`,
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+    return result.data;
+  }
+
+  async passkeysVerifyRegistration(args: RegistrationResponseJSON, forgotPasswordToken: string): Promise<{ verified: boolean }> {
+    const result = await this.httpClient.post<{ verified: boolean }>(
+      `${this.AUTH_API_ENDPOINTS.passkeysVerifyRegistration}?forgotPasswordToken=${forgotPasswordToken}`, args,
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+    return result.data;
+  }
+
+  async getPasskeysAuthenticationOptions(): Promise<PublicKeyCredentialRequestOptionsJSON> {
+    const result = await this.httpClient.get<PublicKeyCredentialRequestOptionsJSON>(
+      this.AUTH_API_ENDPOINTS.passkeysAuthenticationOptions,
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+    return result.data;
+  }
+
+  async passkeysVerifyAuthentication(args: AuthenticationResponseJSON): Promise<{ mfaState: MfaState; tenantUserId?: string }> {
+    const response = await this.httpClient.post<{
+      session: string;
+      expiresIn: number;
+      mfaState: MfaState;
+      tenantUserId?: string;
+    }>(
+      this.AUTH_API_ENDPOINTS.passkeysVerifyAuthentication, args,
       { baseURL: this.oAuthBaseURI, withCredentials: true }
     );
 

@@ -1,6 +1,6 @@
 {
   "name": "@nebulr-group/nblocks-react",
-  "version": "1.4.5-beta.4",
+  "version": "1.4.5-beta.5",
   "main": "lib/index",
   "module": "lib/index",
   "types": "lib/index.d.ts",
@@ -23,6 +23,7 @@
     "@graphql-codegen/client-preset": "^1.1.1",
     "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^2.0.12",
+    "@simplewebauthn/typescript-types": "^8.0.0",
     "@stripe/stripe-js": "^1.44.1",
     "@tanstack/react-table": "^8.5.21",
     "@testing-library/jest-dom": "^5.16.5",
@@ -92,6 +93,7 @@
     ]
   },
   "dependencies": {
+    "@simplewebauthn/browser": "^8.0.2",
     "i18next": "^23.2.6",
     "jose": "^4.11.2",
     "react-i18next": "^13.0.1"

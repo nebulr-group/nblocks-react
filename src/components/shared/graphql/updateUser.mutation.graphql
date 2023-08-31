@@ -1,6 +1,8 @@
-mutation UpdateUser($user:UserInput!){
-  updateUser(user:$user){
+mutation UpdateUser($user: UserInput!) {
+  updateUser(user: $user) {
     id
+    firstName
+    lastName
     fullName
     email
     username

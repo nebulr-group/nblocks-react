@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { NblocksButton } from "../../shared/NblocksButton";
 import { ImageComponent } from "../../shared/ImageComponent";
 import { useTranslation } from "react-i18next";
@@ -12,6 +12,7 @@ const GoogleSsoButtonComponent: FunctionComponent<ComponentProps> = ({
   onClick,
   mode,
 }) => {
+  const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const loginLogo =
     "https://developers.google.com/static/identity/images/g-logo.png";
@@ -25,13 +26,20 @@ const GoogleSsoButtonComponent: FunctionComponent<ComponentProps> = ({
         return t("Sign in with Google");
     }
   };
+
+  const didClick = () => {
+    setLoading(true);
+    onClick();
+  };
+
   return (
     <div>
       <NblocksButton
         size="sm"
         type="tertiary"
         fullWidth={true}
-        onClick={() => onClick()}
+        onClick={() => didClick()}
+        isLoading={loading}
       >
         <div style={{ width: 48, height: 48 }}>
           <ImageComponent src={loginLogo}></ImageComponent>

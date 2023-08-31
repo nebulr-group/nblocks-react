@@ -4,6 +4,7 @@ import { LibConfig } from "../models/lib-config";
 import { RouteConfig } from "../routes/AuthRoutes";
 import { OAuthService } from "./OAuthService";
 import { NblocksStorage } from "./Storage";
+import { AuthenticationResponseJSON, PublicKeyCredentialCreationOptionsJSON, PublicKeyCredentialRequestOptionsJSON, RegistrationResponseJSON } from "@simplewebauthn/typescript-types";
 
 //FIXME centralize models
 export type UpdateUserProfileArgs = {
@@ -133,6 +134,46 @@ export class AuthService {
       AuthService.setAuthToken(response.data.token);
       return { mfaState: response.data.mfaState };
     }
+  }
+
+  async passkeysRegistrationOptions(forgotPasswordToken: string): Promise<PublicKeyCredentialCreationOptionsJSON> {
+    if (!!this._oauthService) {
+      const response = await this._oauthService.getPasskeysRegistrationOptions(forgotPasswordToken);
+      return response;
+    }
+
+    throw new Error("Passkeys are only available via Auth API")
+  }
+
+  async passkeysRegister(args: RegistrationResponseJSON, forgotPasswordToken: string): Promise<{
+    verified: boolean;
+  }> {
+    if (!!this._oauthService) {
+      const response = await this._oauthService.passkeysVerifyRegistration(args, forgotPasswordToken);
+      return response;
+    }
+
+    throw new Error("Passkeys are only available via Auth API")
+  }
+
+  async passkeysAuthenticationOptions(): Promise<PublicKeyCredentialRequestOptionsJSON> {
+    if (!!this._oauthService) {
+      const response = await this._oauthService.getPasskeysAuthenticationOptions();
+      return response;
+    }
+
+    throw new Error("Passkeys are only available via Auth API")
+  }
+
+  async passkeysAuthenticate(
+    args: AuthenticationResponseJSON
+  ): Promise<{ mfaState: MfaState; tenantUserId?: string }> {
+    if (!!this._oauthService) {
+      const response = await this._oauthService.passkeysVerifyAuthentication(args);
+      return response;
+    }
+
+    throw new Error("Passkeys are only available via Auth API")
   }
 
   async getCredentialsConfig(

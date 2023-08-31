@@ -1,5 +1,10 @@
 import { useSecureContext } from "../../../hooks/secure-http-context";
-import React, { FormEvent, FunctionComponent, useState } from "react";
+import React, {
+  FormEvent,
+  FunctionComponent,
+  useEffect,
+  useState,
+} from "react";
 import { LinkComponent } from "../../shared/LinkComponent";
 import { RouteConfig } from "../../../routes/AuthRoutes";
 import { NblocksButton } from "../../shared/NblocksButton";
@@ -15,6 +20,14 @@ import { GoogleSsoButtonComponent } from "../shared/GoogleSsoButtonComponent";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
+import {
+  browserSupportsWebAuthn,
+  browserSupportsWebAuthnAutofill,
+  startAuthentication,
+  platformAuthenticatorIsAvailable,
+} from "@simplewebauthn/browser";
+import { PasskeysLoginButtonComponent } from "../shared/PasskeysLoginButtonComponent";
+import { DividerComponent } from "../../shared/DividerComponent";
 
 type ComponentProps = {
   didLogin: (mfa: MfaState, tenantUserId?: string) => void;
@@ -35,13 +48,58 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
   const [errorMsg, setErrorMsg] = useState("");
   const [isloading, setIsLoading] = useState(false);
   const { tenantSignup, authLegacy, demoSSO } = useConfig();
-  const { azureAdSsoEnabled, googleSsoEnabled } = useApp();
+  const { azureAdSsoEnabled, googleSsoEnabled, passkeysEnabled } = useApp();
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  const passkeysLogin =
+    !authLegacy && passkeysEnabled && browserSupportsWebAuthn();
 
   // Show SSO Login btn if we have it enabled or demoSSO is true
   const azureAdLogin = !authLegacy && (azureAdSsoEnabled || demoSSO);
   const googleLogin = !authLegacy && (googleSsoEnabled || demoSSO);
+
+  useEffect(() => {
+    if (passkeysLogin) {
+      browserSupportsWebAuthnAutofill().then((support) => {
+        if (support) {
+          passkeysAuthenticate(true);
+        }
+      });
+    }
+  }, []);
+
+  /**
+   * Password manager plugins like 1Password can interfare with native browser webauthn autofill
+   * @param autofill
+   */
+  const passkeysAuthenticate = async (autofill: boolean) => {
+    if (!autofill) {
+      setIsLoading(true);
+    }
+
+    try {
+      const passkeysAuthOptions =
+        await authService.passkeysAuthenticationOptions();
+
+      if (passkeysAuthOptions) {
+        const authResult = await startAuthentication(
+          passkeysAuthOptions,
+          autofill
+        );
+
+        setIsLoading(true);
+
+        const { mfaState, tenantUserId } =
+          await authService.passkeysAuthenticate(authResult);
+        didLogin(mfaState, tenantUserId);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -111,6 +169,17 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
     didClickFederatedLogin(type);
   };
 
+  const renderPasskeysLogin = () => {
+    if (passkeysLogin) {
+      return (
+        <PasskeysLoginButtonComponent
+          mode="login"
+          onClick={() => passkeysAuthenticate(false)}
+        ></PasskeysLoginButtonComponent>
+      );
+    }
+  };
+
   const renderAzureAd = () => {
     if (azureAdLogin) {
       return (
@@ -133,13 +202,22 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
     }
   };
 
-  const renderSso = () => {
+  const renderLoginAlternatives = () => {
     if (credentialsInputMode === "USERNAME") {
+      const hasAlternative = passkeysLogin || googleLogin || azureAdLogin;
       return (
-        <div className="space-y-2">
-          {renderGoogle()}
-          {renderAzureAd()}
-        </div>
+        <>
+          {hasAlternative && (
+            <div className="py-2">
+              <DividerComponent text={t("Or")} />
+            </div>
+          )}
+          <div className="space-y-2">
+            {renderPasskeysLogin()}
+            {renderGoogle()}
+            {renderAzureAd()}
+          </div>
+        </>
       );
     }
   };
@@ -155,19 +233,34 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
             name="username"
             onChange={(event) => setUsername(event.target.value)}
             value={username}
+            autoComplete="username webauthn"
+            autoFocus={true}
           />
         );
 
       case "PASSWORD":
         return (
-          <InputComponent
-            type="password"
-            label={t("Password")}
-            placeholder={t("Enter your password")}
-            name="password"
-            onChange={(event) => setPassword(event.target.value)}
-            value={password}
-          />
+          <>
+            <InputComponent
+              type="password"
+              label={t("Password")}
+              placeholder={t("Enter your password")}
+              name="password"
+              onChange={(event) => setPassword(event.target.value)}
+              value={password}
+            />
+            <div className="flex justify-end">
+              <LinkComponent
+                to={RouteConfig.password.resetPasswordScreen}
+                handoverProps={{ username }}
+                type="primary"
+                size="sm"
+                className="font-semibold"
+              >
+                {t("Forgot password")}
+              </LinkComponent>
+            </div>
+          </>
         );
 
       case "RESET-PASSWORD":
@@ -217,17 +310,6 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
         className="space-y-6 max-w-sm w-full"
       >
         {renderCredentialsInput()}
-        <div className="flex justify-end">
-          <LinkComponent
-            to={RouteConfig.password.resetPasswordScreen}
-            handoverProps={{ username }}
-            type="primary"
-            size="sm"
-            className="font-semibold"
-          >
-            {t("Forgot password")}
-          </LinkComponent>
-        </div>
         <div>
           <NblocksButton
             submit={true}
@@ -240,7 +322,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
             {getSubmitButtonText()}
           </NblocksButton>
         </div>
-        {renderSso()}
+        {renderLoginAlternatives()}
       </form>
       {credentialsInputMode != "USERNAME" && (
         <div className="mt-8">

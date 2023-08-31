@@ -10,6 +10,10 @@ import { UnauthenticatedError } from "../../../utils/errors/UnauthenticatedError
 import { AlertComponent } from "../../shared/AlertComponent";
 import { useConfig } from "../../../hooks/config-context";
 import { useTranslation } from "react-i18next";
+import { browserSupportsWebAuthn } from "@simplewebauthn/browser";
+import { SetPasskeysComponent } from "./SetPasskeysComponent";
+import { DividerComponent } from "../../shared/DividerComponent";
+import { useApp } from "../../../hooks/app-context";
 
 type ComponentProps = {
   didSetPassword: () => void;
@@ -23,8 +27,13 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
   const { authService } = useSecureContext();
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { passwordValidation, passwordComplexityRegex } = useConfig();
+  const { passwordValidation, passwordComplexityRegex, authLegacy } =
+    useConfig();
   const { t } = useTranslation();
+  const { passkeysEnabled } = useApp();
+
+  const passkeysLogin =
+    !authLegacy && passkeysEnabled && browserSupportsWebAuthn();
 
   const {
     password: newPassword,
@@ -42,6 +51,10 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
       passwordComplexityRegex,
       !passwordValidation
     );
+  };
+
+  const onDidSetPasskeys = () => {
+    didSetPassword();
   };
 
   const submit = async (event: FormEvent) => {
@@ -136,6 +149,17 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
             {t("Set a password")}
           </NblocksButton>
         </div>
+        {passkeysLogin && (
+          <>
+            <div className="py-2">
+              <DividerComponent text={t("Or")} />
+            </div>
+            <SetPasskeysComponent
+              didSetPasskeys={onDidSetPasskeys}
+              resetToken={resetToken}
+            />
+          </>
+        )}
       </form>
       <div className="mt-8">
         <LinkComponent
