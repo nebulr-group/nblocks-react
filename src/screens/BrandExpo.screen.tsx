@@ -17,6 +17,7 @@ import { CheckCircleIcon, KeyIcon } from "@heroicons/react/20/solid";
 import { NBPlanAccessControlComponent } from "../components/shared/access-control/PlanAccessControllComponent";
 import { NBRoleAccessControlComponent } from "../components/shared/access-control/RoleAccessControllComponent";
 import { NBAccessControlComponent } from "../components/shared/access-control/AccessControllComponent";
+import { useAuth } from "../hooks/auth-context";
 
 export function BrandExpoScreen() {
   const [password, setPassword] = useState("");
@@ -24,6 +25,8 @@ export function BrandExpoScreen() {
 
   const [enabled, setEnabled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
+  const { currentUser } = useAuth();
 
   const image =
     "https://cdn.shopify.com/s/files/1/0980/9736/articles/jessica-felicio-_cvwXhGqG-o-unsplash.jpg?v=1595591981";
@@ -403,10 +406,12 @@ export function BrandExpoScreen() {
             ]}
           />
         </div>
-        <div className="w-full">
-          <h1 className="mt-5 text-3xl">User List Component</h1>
-          <UserListTableComponent />
-        </div>
+        {currentUser?.authenticated && (
+          <div className="w-full">
+            <h1 className="mt-5 text-3xl">User List Component</h1>
+            <UserListTableComponent />
+          </div>
+        )}
       </div>
       <h1 className="mt-5 text-3xl">Role Access control</h1>
       <table>
