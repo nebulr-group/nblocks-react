@@ -173,8 +173,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
             >
               {t("privacy policy")}
             </LinkComponent>
-            &nbsp;
-            {t("and")}&nbsp;
+            &nbsp;&amp;&nbsp;
             <LinkComponent
               type="primary"
               to={termsOfServiceUrl!}
