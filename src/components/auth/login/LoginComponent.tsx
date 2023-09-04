@@ -349,7 +349,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
               size="sm"
               className="font-semibold"
             >
-              {t("Create one")}
+              {t("Sign up")}
             </LinkComponent>
           </TextComponent>
         </div>

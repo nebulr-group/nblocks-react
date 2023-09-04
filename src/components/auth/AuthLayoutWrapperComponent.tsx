@@ -12,12 +12,14 @@ type ComponentProps = {
   children: React.ReactNode;
   heading: string;
   subHeading: string;
+  showPrivacyPolicy?: boolean;
 };
 
 const AuthLayoutWrapperComponent: FunctionComponent<ComponentProps> = ({
   children,
   heading,
   subHeading,
+  showPrivacyPolicy = true,
 }) => {
   const app = useApp();
   const { copyrightFooter } = useConfig();
@@ -47,18 +49,20 @@ const AuthLayoutWrapperComponent: FunctionComponent<ComponentProps> = ({
         <div>
           <TextComponent size="sm">{copyrightFooter}</TextComponent>
         </div>
-        <div>
-          <LinkComponent
-            type="primary"
-            to={app.privacyPolicyUrl!}
-            nativeBehavior={true}
-            target="_blank"
-            size="sm"
-            className="font-semibold"
-          >
-            {t("Privacy policy")}
-          </LinkComponent>
-        </div>
+        {showPrivacyPolicy && (
+          <div>
+            <LinkComponent
+              type="primary"
+              to={app.privacyPolicyUrl!}
+              nativeBehavior={true}
+              target="_blank"
+              size="sm"
+              className="font-semibold"
+            >
+              {t("Privacy policy")}
+            </LinkComponent>
+          </div>
+        )}
       </div>
     </div>
   );

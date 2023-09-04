@@ -29,7 +29,13 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
     CreateTenantAnonymousDocument
   );
   const { authLegacy, demoSSO } = useConfig();
-  const { logo, azureAdSsoEnabled, googleSsoEnabled } = useApp();
+  const {
+    logo,
+    azureAdSsoEnabled,
+    googleSsoEnabled,
+    privacyPolicyUrl,
+    termsOfServiceUrl,
+  } = useApp();
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -153,6 +159,34 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
           onChange={(event) => setLastName(event.target.value)}
           value={lastName}
         />
+        <div className="mt-8">
+          <TextComponent size="sm">
+            {t("By proceeding you agree to the Nblocks")}
+            &nbsp;
+            <LinkComponent
+              type="primary"
+              to={privacyPolicyUrl!}
+              nativeBehavior={true}
+              target="_blank"
+              size="sm"
+              className="font-semibold"
+            >
+              {t("privacy policy")}
+            </LinkComponent>
+            &nbsp;
+            {t("and")}&nbsp;
+            <LinkComponent
+              type="primary"
+              to={termsOfServiceUrl!}
+              nativeBehavior={true}
+              target="_blank"
+              size="sm"
+              className="font-semibold"
+            >
+              {t("terms of use")}
+            </LinkComponent>
+          </TextComponent>
+        </div>
         <div>
           <NblocksButton
             submit={true}
@@ -162,7 +196,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
             type="primary"
             fullWidth={true}
           >
-            {t("Create account")}
+            {t("Sign up")}
           </NblocksButton>
         </div>
         {renderSignupAlternatives()}
