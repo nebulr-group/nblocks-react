@@ -18,6 +18,9 @@ type ComponentProps = {
   didSignup: (data: CreateAppResponse) => void;
 };
 
+/**
+ * @deprecated This component is deprecated, please use /auth/SignupComponent instead
+ */
 const SignupComponent: FunctionComponent<ComponentProps> = ({ didSignup }) => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");

@@ -7,6 +7,9 @@ import {
 import { SignupSuccessComponent } from "../../components/setup/SignupSuccessComponent";
 import { useTranslation } from "react-i18next";
 
+/**
+ * @deprecated This component is deprecated, please use /auth/Signup.screen instead
+ */
 const SignupScreen: FunctionComponent<{}> = () => {
   const [didSignup, setDidSignup] = useState(false);
   const [response, setResponse] = useState<CreateAppResponse>();
