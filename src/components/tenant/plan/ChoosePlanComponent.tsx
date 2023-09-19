@@ -10,22 +10,22 @@ const ChoosePlanComponent: FunctionComponent<{
   didRecieveNoPlans?: () => void;
   didFinishedInitialLoading?: () => void;
 }> = ({ planSelectHandler, didRecieveNoPlans, didFinishedInitialLoading }) => {
-  const [region, setRegion] = useState<string>("");
+  const [currency, setCurrency] = useState<string>("");
   const { data, loading } = useQuery(GetAppPlansDocument);
-  const [regions, setRegions] = useState<string[]>([]);
+  const [currencies, setCurrencies] = useState<string[]>([]);
 
   useEffect(() => {
-    const regions: string[] = [];
+    const _currencies: string[] = [];
 
     if (!loading) {
       if (data && data?.getAppPlans.length > 0) {
         data?.getAppPlans.forEach(({ prices }) => {
-          prices.forEach(({ region }) => {
-            !regions.includes(region) && regions.push(region);
+          prices.forEach(({ currency }) => {
+            !_currencies.includes(currency) && _currencies.push(currency);
           });
         });
-        setRegion(regions[0]);
-        setRegions(regions);
+        setCurrency(_currencies[0]);
+        setCurrencies(_currencies);
         if (didFinishedInitialLoading) {
           didFinishedInitialLoading;
         }
@@ -41,14 +41,14 @@ const ChoosePlanComponent: FunctionComponent<{
     <>
       <div className="flex justify-end w-full">
         <div className="w-24 relative">
-          {loading && regions.length !== 1 && (
+          {loading && currencies.length !== 1 && (
             <SkeletonLoader className="w-full h-12 rounded-md" />
           )}
-          {!loading && regions.length !== 1 && (
+          {!loading && currencies.length !== 1 && (
             <ListBoxComponent
-              items={regions}
-              selected={region}
-              setSelected={setRegion}
+              items={currencies}
+              selected={currency}
+              setSelected={setCurrency}
             ></ListBoxComponent>
           )}
         </div>
@@ -57,7 +57,7 @@ const ChoosePlanComponent: FunctionComponent<{
         plans={data?.getAppPlans}
         loadingCardsData={loading}
         className={"mt-24"}
-        region={region}
+        currency={currency}
         cardPlaceholderCount={2}
         planSelectHandler={planSelectHandler}
       ></PricingCards>

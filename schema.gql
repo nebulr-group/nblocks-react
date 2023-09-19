@@ -16,36 +16,6 @@ type App {
   websiteUrl: String
 }
 
-type AppConfig {
-  apiUrl: String
-  azureAdSsoEnabled: Boolean
-  azureMarketplaceEnabled: Boolean
-  businessModel: BusinessModelGraphql
-  defaultCallbackUri: String
-  defaultRole: String
-  emailSenderEmail: String
-  emailSenderName: String
-  googleSsoEnabled: Boolean
-  id: String
-  logo: String
-  name: String
-  onboardingFlow: String
-  passkeysEnabled: Boolean
-  privacyPolicyUrl: String
-  redirectUris: [String!]
-  roles: [String!]
-  stripeEnabled: Boolean
-  termsOfServiceUrl: String
-  uiUrl: String
-  webhookUrl: String
-  websiteUrl: String
-}
-
-type BusinessModelGraphql {
-  plans: [PlanGraphql!]!
-  taxes: [TaxGraphql!]!
-}
-
 type CheckoutResponse {
   """
   A checkout ID to create a `Stripe` checkout form
@@ -89,10 +59,6 @@ type Mutation {
   sendPasswordResetLink(userId: String!): Boolean!
 
   """
-  """
-  updateAppCredentials(credentials: UpdateCredentialsInput!): Boolean!
-
-  """
   Update current user
   """
   updateMe(user: UserInput!): User!
@@ -105,6 +71,8 @@ type Mutation {
 }
 
 type PlanGraphql {
+  description: String
+  key: String!
   name: String!
   prices: [PriceGraphql!]!
   trialDays: Float
@@ -113,7 +81,8 @@ type PlanGraphql {
 type PriceGraphql {
   amount: Float!
   currency: String!
-  region: String!
+  key: String!
+  recurrenceInterval: String!
 }
 
 type Query {
@@ -121,11 +90,6 @@ type Query {
   Gets useful App configs for the UI to consume
   """
   getAppAnonymous: App!
-
-  """
-  A bunch of more secret properties to render for the app config screen used by developer during quickstart
-  """
-  getAppConfig: AppConfig!
 
   """
   Gets the apps plan. Use this to display pricing instead of the AppConfig resolver
@@ -160,9 +124,9 @@ type Query {
 }
 
 type TaxGraphql {
+  countryCode: String!
   name: String!
   percentage: Float!
-  region: String!
 }
 
 type Tenant {
@@ -195,17 +159,6 @@ input TenantOwnerInput {
   email: String!
   firstName: String
   lastName: String
-}
-
-input UpdateCredentialsInput {
-  microsoftAzureADClientId: String
-  microsoftAzureADClientSecret: String
-  microsoftAzureADTenantId: String
-  microsoftAzureMarketplaceClientId: String
-  microsoftAzureMarketplaceClientSecret: String
-  microsoftAzureMarketplaceTenantId: String
-  stripePublicKey: String
-  stripeSecretKey: String
 }
 
 type User {

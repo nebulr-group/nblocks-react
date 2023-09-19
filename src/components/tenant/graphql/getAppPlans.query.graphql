@@ -1,11 +1,14 @@
 query GetAppPlans {
   getAppPlans {
     name
+    key
+    description
     prices {
+      recurrenceInterval
       amount
       currency
-      region
-      currency
+      key
     }
+    trialDays
   }
 }

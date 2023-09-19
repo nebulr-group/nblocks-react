@@ -1,11 +1,9 @@
 import { useQuery } from "@apollo/client";
-import React, { useState } from "react";
+import React from "react";
 import { HeadingComponent } from "../components/shared/HeadingComponent";
 import {
   GetAppAnonymousDocument,
-  GetAppConfigDocument,
   GetAppPlansDocument,
-  GetTenantAnonymousDocument,
   GetTenantDocument,
   ListUserRolesDocument,
   ListUsersDocument,
@@ -17,7 +15,6 @@ export function GraphqlExpoScreen() {
   const listUsersQuery = useQuery(ListUsersDocument);
   const listUserRolesQuery = useQuery(ListUserRolesDocument);
   const getAppAnonymousQuery = useQuery(GetAppAnonymousDocument);
-  const getAppConfigQuery = useQuery(GetAppConfigDocument);
   const getAppPlansQuery = useQuery(GetAppPlansDocument);
 
   const renderJson = (data?: any) => {
@@ -64,12 +61,6 @@ export function GraphqlExpoScreen() {
           getAppPlans.query.graphql (GetAppPlansDocument (light))
         </HeadingComponent>
         {renderJson(getAppPlansQuery.data?.getAppPlans)}
-      </div>
-      <div>
-        <HeadingComponent type="h2" size="2xl">
-          getAppConfig.query.graphql (GetAppConfigDocument (full))
-        </HeadingComponent>
-        {renderJson(getAppConfigQuery.data?.getAppConfig)}
       </div>
     </div>
   );

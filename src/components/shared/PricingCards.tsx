@@ -21,7 +21,7 @@ type ConfigObject = {
   loadingCardsData: boolean;
   cardPlaceholderCount?: number;
   className?: string;
-  region: string;
+  currency: string;
   planSelectHandler: (paymentsRequired?: boolean) => void;
 };
 
@@ -30,7 +30,7 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
   loadingCardsData,
   cardPlaceholderCount,
   className,
-  region,
+  currency,
   planSelectHandler,
 }) => {
   cardPlaceholderCount = cardPlaceholderCount ? cardPlaceholderCount : 3;
@@ -98,7 +98,7 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
                 </HeadingComponent>
                 <TextComponent className={"text-5xl font-semibold"}>
                   {prices.map((price) => {
-                    if (price.region === region) {
+                    if (price.currency === currency) {
                       return `${getCurrencySymbol(price.currency)} ${
                         price.amount
                       }`;
