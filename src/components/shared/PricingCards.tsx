@@ -1,8 +1,6 @@
 import React from "react";
 import { FunctionComponent } from "react";
-import { HeadingComponent } from "./HeadingComponent";
 import { NblocksButton } from "./NblocksButton";
-import { TextComponent } from "./TextComponent";
 import { SkeletonLoader } from "./SkeletonLoader";
 import {
   GetTenantDocument,
@@ -10,13 +8,10 @@ import {
   PriceGraphql,
   UpdateTenantDocument,
 } from "../../gql/graphql";
-import {
-  classNameFilter,
-  getCurrencySymbol,
-  getRecurIntervalSymbol,
-} from "../../utils/ComponentHelpers";
+import { classNameFilter } from "../../utils/ComponentHelpers";
 import { useMutation, useQuery } from "@apollo/client";
 import { useTranslation } from "react-i18next";
+import { PricingCard } from "./PricingCard";
 
 type ConfigObject = {
   plans?: PlanGraphql[];
@@ -47,9 +42,9 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
   const [updateTenantMutation, updateTenantData] =
     useMutation(UpdateTenantDocument);
 
-  const updatePlan = async (plan: string) => {
+  const updatePlan = async (plankey: string) => {
     const result = await updateTenantMutation({
-      variables: { tenant: { plan: plan } },
+      variables: { tenant: { plan: plankey } },
     });
     if (result.data?.updateTenant) {
       planSelectHandler(result.data.updateTenant.paymentsRequired!);
@@ -67,10 +62,11 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
     ? plans.filter((plan) => plan.prices.some((price) => isPriceValid(price)))
     : [];
 
+  const isLoading = loadingCardsData || loading;
+
   return (
     <div className={classNameFilter(className, "flex gap-4 justify-center")}>
-      {loadingCardsData &&
-        loading &&
+      {isLoading &&
         [...Array(cardPlaceholderCount).keys()].map((_, i) => {
           return (
             <div className="min-h-8 border min-w-8 p-8 rounded-xl" key={i}>
@@ -92,62 +88,17 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
             </div>
           );
         })}
-      {!loadingCardsData &&
-        !loading &&
+      {!isLoading &&
         filteredPlans.map(({ name, description, key, prices }, index) => {
           return (
-            <div className="min-h-8 border min-w-8 p-8 rounded-xl" key={index}>
-              <div className="space-y-2">
-                <HeadingComponent
-                  type={"h2"}
-                  size={"2xl"}
-                  className={"text-purple-700 font-semibold"}
-                >
-                  {name}
-                </HeadingComponent>
-                <TextComponent>{description}</TextComponent>
-                <TextComponent className={"text-5xl font-semibold"}>
-                  {prices
-                    .filter((price) => isPriceValid(price))
-                    .map((price) => {
-                      if (!price.amount || price.amount === 0) {
-                        return (
-                          <span key={price.key}>
-                            {t("FREE")}
-                            <br />
-                          </span>
-                        );
-                      } else {
-                        return (
-                          <span key={price.key}>
-                            {`${getCurrencySymbol(price.currency)} ${
-                              price.amount
-                            }
-                          `}
-                            <span className="text-lg">
-                              /
-                              {getRecurIntervalSymbol(price.recurrenceInterval)}
-                            </span>
-                            <br />
-                          </span>
-                        );
-                      }
-                    })}
-                </TextComponent>
-              </div>
-              <div className="mt-6">
-                <NblocksButton
-                  type={key === data?.getTenant.plan ? "primary" : "secondary"}
-                  size={"md"}
-                  fullWidth={true}
-                  onClick={() => updatePlan(key)}
-                >
-                  {key === data?.getTenant.plan
-                    ? t("Current")
-                    : t("Get Started")}
-                </NblocksButton>
-              </div>
-            </div>
+            <PricingCard
+              key={index}
+              name={name}
+              description={description ? description : ""}
+              price={prices.find((price) => isPriceValid(price))}
+              didSelect={() => updatePlan(key)}
+              selected={key === data?.getTenant.plan}
+            />
           );
         })}
     </div>
