@@ -4,6 +4,7 @@ import { PricingCards } from "../../shared/PricingCards";
 import { GetAppPlansDocument } from "../../../gql/graphql";
 import { ListBoxComponent } from "../../shared/ListBoxComponent";
 import { SkeletonLoader } from "../../shared/SkeletonLoader";
+import { TabsComponent } from "../../shared/TabsComponent";
 
 const ChoosePlanComponent: FunctionComponent<{
   planSelectHandler: (paymentsRequired?: boolean) => void;
@@ -11,21 +12,30 @@ const ChoosePlanComponent: FunctionComponent<{
   didFinishedInitialLoading?: () => void;
 }> = ({ planSelectHandler, didRecieveNoPlans, didFinishedInitialLoading }) => {
   const [currency, setCurrency] = useState<string>("");
-  const { data, loading } = useQuery(GetAppPlansDocument);
   const [currencies, setCurrencies] = useState<string[]>([]);
+
+  const [recurrenceInterval, setRecurrenceInterval] = useState<string>("");
+  const [recurrenceIntervals, setRecurrenceIntervals] = useState<string[]>([]);
+  const { data, loading } = useQuery(GetAppPlansDocument);
 
   useEffect(() => {
     const _currencies: string[] = [];
+    const _recurrenceIntervals: string[] = [];
 
     if (!loading) {
       if (data && data?.getAppPlans.length > 0) {
         data?.getAppPlans.forEach(({ prices }) => {
-          prices.forEach(({ currency }) => {
+          prices.forEach(({ currency, recurrenceInterval }) => {
             !_currencies.includes(currency) && _currencies.push(currency);
+            !_recurrenceIntervals.includes(recurrenceInterval) &&
+              _recurrenceIntervals.push(recurrenceInterval);
           });
         });
         setCurrency(_currencies[0]);
         setCurrencies(_currencies);
+        setRecurrenceInterval(_recurrenceIntervals[0]);
+        setRecurrenceIntervals(_recurrenceIntervals);
+
         if (didFinishedInitialLoading) {
           didFinishedInitialLoading;
         }
@@ -39,6 +49,10 @@ const ChoosePlanComponent: FunctionComponent<{
 
   return (
     <>
+      <TabsComponent
+        categories={recurrenceIntervals}
+        onChange={(index) => setRecurrenceInterval(recurrenceIntervals[index])}
+      />
       <div className="flex justify-end w-full">
         <div className="w-24 relative">
           {loading && currencies.length !== 1 && (
@@ -58,6 +72,7 @@ const ChoosePlanComponent: FunctionComponent<{
         loadingCardsData={loading}
         className={"mt-24"}
         currency={currency}
+        recurrenceInterval={recurrenceInterval}
         cardPlaceholderCount={2}
         planSelectHandler={planSelectHandler}
       ></PricingCards>

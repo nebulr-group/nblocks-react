@@ -25,7 +25,6 @@ const initialContext: LibConfig = {
   passwordValidation: true,
   spa: false,
   tenantSignup: false,
-  appSignup: false,
   oAuthBaseURI: oAuthUrl,
   oauthRedirectUri,
   accountApiBaseUri: accountApi,
@@ -58,7 +57,6 @@ const NblocksConfigContextProvider: FunctionComponent<{
   if (config?.devMode) {
     initialContext.spa = true;
     initialContext.tenantSignup = true;
-    initialContext.appSignup = true;
     initialContext.passwordValidation = false;
     initialContext.demoSSO = true;
   }

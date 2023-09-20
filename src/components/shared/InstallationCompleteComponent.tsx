@@ -52,9 +52,6 @@ const InstallationCompleteComponent: FunctionComponent<{}> = ({}) => {
           <LinkComponent to={"/tenant/plan"} type={"primary"}>
             Change plan
           </LinkComponent>
-          <LinkComponent to={"/setup/config"} type={"primary"}>
-            Configure your app
-          </LinkComponent>
           <LinkComponent
             to={
               "https://nebulr-group.github.io/nblocks-docs/docs/essentials/quickstart"

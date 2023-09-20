@@ -35,10 +35,6 @@ const RouteConfig: NavigationConfig = {
     onboardUserScreen: "/onboard/user",
     onboardTenantScreen: "/onboard/tenant",
   },
-  setup: {
-    signupScreen: "/setup/signup",
-    configScreen: "/setup/config",
-  },
   tenant: {
     signupScreen: "/auth/signup",
     planScreen: "/tenant/plan",

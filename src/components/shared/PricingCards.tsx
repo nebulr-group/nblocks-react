@@ -7,11 +7,13 @@ import { SkeletonLoader } from "./SkeletonLoader";
 import {
   GetTenantDocument,
   PlanGraphql,
+  PriceGraphql,
   UpdateTenantDocument,
 } from "../../gql/graphql";
 import {
   classNameFilter,
   getCurrencySymbol,
+  getRecurIntervalSymbol,
 } from "../../utils/ComponentHelpers";
 import { useMutation, useQuery } from "@apollo/client";
 import { useTranslation } from "react-i18next";
@@ -22,6 +24,7 @@ type ConfigObject = {
   cardPlaceholderCount?: number;
   className?: string;
   currency: string;
+  recurrenceInterval: string;
   planSelectHandler: (paymentsRequired?: boolean) => void;
 };
 
@@ -31,6 +34,7 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
   cardPlaceholderCount,
   className,
   currency,
+  recurrenceInterval,
   planSelectHandler,
 }) => {
   cardPlaceholderCount = cardPlaceholderCount ? cardPlaceholderCount : 3;
@@ -43,11 +47,6 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
   const [updateTenantMutation, updateTenantData] =
     useMutation(UpdateTenantDocument);
 
-  // Checking the selected plan against the tenant picked plan
-  const checkPlan = (plan: PlanGraphql) => {
-    return plan.name === data?.getTenant.plan;
-  };
-
   const updatePlan = async (plan: string) => {
     const result = await updateTenantMutation({
       variables: { tenant: { plan: plan } },
@@ -56,6 +55,17 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
       planSelectHandler(result.data.updateTenant.paymentsRequired!);
     }
   };
+
+  const isPriceValid = (price: PriceGraphql) => {
+    return (
+      price.currency === currency &&
+      price.recurrenceInterval === recurrenceInterval
+    );
+  };
+
+  const filteredPlans = plans
+    ? plans.filter((plan) => plan.prices.some((price) => isPriceValid(price)))
+    : [];
 
   return (
     <div className={classNameFilter(className, "flex gap-4 justify-center")}>
@@ -84,8 +94,7 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
         })}
       {!loadingCardsData &&
         !loading &&
-        plans &&
-        plans?.map(({ name, prices }, index) => {
+        filteredPlans.map(({ name, description, key, prices }, index) => {
           return (
             <div className="min-h-8 border min-w-8 p-8 rounded-xl" key={index}>
               <div className="space-y-2">
@@ -96,29 +105,46 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
                 >
                   {name}
                 </HeadingComponent>
+                <TextComponent>{description}</TextComponent>
                 <TextComponent className={"text-5xl font-semibold"}>
-                  {prices.map((price) => {
-                    if (price.currency === currency) {
-                      return `${getCurrencySymbol(price.currency)} ${
-                        price.amount
-                      }`;
-                    }
-                  })}
-                  <span className="text-lg">/mo</span>
+                  {prices
+                    .filter((price) => isPriceValid(price))
+                    .map((price) => {
+                      if (!price.amount || price.amount === 0) {
+                        return (
+                          <span key={price.key}>
+                            {t("FREE")}
+                            <br />
+                          </span>
+                        );
+                      } else {
+                        return (
+                          <span key={price.key}>
+                            {`${getCurrencySymbol(price.currency)} ${
+                              price.amount
+                            }
+                          `}
+                            <span className="text-lg">
+                              /
+                              {getRecurIntervalSymbol(price.recurrenceInterval)}
+                            </span>
+                            <br />
+                          </span>
+                        );
+                      }
+                    })}
                 </TextComponent>
               </div>
               <div className="mt-6">
                 <NblocksButton
-                  type={
-                    data?.getTenant.plan === name && plans.some(checkPlan)
-                      ? "primary"
-                      : "secondary"
-                  }
+                  type={key === data?.getTenant.plan ? "primary" : "secondary"}
                   size={"md"}
                   fullWidth={true}
-                  onClick={() => updatePlan(name)}
+                  onClick={() => updatePlan(key)}
                 >
-                  {t("Get Started")}
+                  {key === data?.getTenant.plan
+                    ? t("Current")
+                    : t("Get Started")}
                 </NblocksButton>
               </div>
             </div>

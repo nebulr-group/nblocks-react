@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ChoosePlanComponent } from "../../components/tenant/plan/ChoosePlanComponent";
-import { TenantLayoutWrapperComponent } from "../../components/tenant/TenantLayoutWrapperComponent";
+import { BaseLayoutWrapperComponent } from "../../components/tenant/TenantLayoutWrapperComponent";
 import { useConfig } from "../../hooks/config-context";
 import { RouteConfig } from "../../routes/AuthRoutes";
 import { useTranslation } from "react-i18next";
@@ -45,7 +45,7 @@ const PlanScreen: FunctionComponent<{}> = () => {
   };
 
   return (
-    <TenantLayoutWrapperComponent
+    <BaseLayoutWrapperComponent
       heading={t("Pricing plans")}
       subHeading={t(
         "We belive Nblocks should be available to all companies, no matter the size."
@@ -56,7 +56,7 @@ const PlanScreen: FunctionComponent<{}> = () => {
         didRecieveNoPlans={() => onDidRecieveNoPlans()}
         didFinishedInitialLoading={() => onDidFinishInitialLoading()}
       />
-    </TenantLayoutWrapperComponent>
+    </BaseLayoutWrapperComponent>
   );
 };
 

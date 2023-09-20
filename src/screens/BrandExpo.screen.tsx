@@ -18,6 +18,7 @@ import { NBPlanAccessControlComponent } from "../components/shared/access-contro
 import { NBRoleAccessControlComponent } from "../components/shared/access-control/RoleAccessControllComponent";
 import { NBAccessControlComponent } from "../components/shared/access-control/AccessControllComponent";
 import { useAuth } from "../hooks/auth-context";
+import { TabsComponent } from "../components/shared/TabsComponent";
 
 export function BrandExpoScreen() {
   const [password, setPassword] = useState("");
@@ -336,6 +337,13 @@ export function BrandExpoScreen() {
             enabled={enabled}
             setEnabled={setEnabled}
           ></TogglerComponent>
+        </div>
+        <div className="grid">
+          <h1 className="mt-5 text-3xl">Tabs Component</h1>
+          <TabsComponent
+            categories={["Tab1", "Tab2", "Tab3"]}
+            onChange={console.log}
+          ></TabsComponent>
         </div>
         <div className="grid">
           <h1 className="mt-5 text-3xl">Modal Component</h1>
