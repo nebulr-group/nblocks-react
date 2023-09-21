@@ -18,6 +18,8 @@ import { NBPlanAccessControlComponent } from "../components/shared/access-contro
 import { NBRoleAccessControlComponent } from "../components/shared/access-control/RoleAccessControllComponent";
 import { NBAccessControlComponent } from "../components/shared/access-control/AccessControllComponent";
 import { useAuth } from "../hooks/auth-context";
+import { TableComponent } from "../components/shared/TableComponent";
+import { ColumnDef } from "@tanstack/react-table";
 
 export function BrandExpoScreen() {
   const [password, setPassword] = useState("");
@@ -30,6 +32,43 @@ export function BrandExpoScreen() {
 
   const image =
     "https://cdn.shopify.com/s/files/1/0980/9736/articles/jessica-felicio-_cvwXhGqG-o-unsplash.jpg?v=1595591981";
+
+  type Item = {
+    name: string;
+    price: number;
+    quantity: number;
+  };
+
+  const tableMockCols: ColumnDef<Item>[] = [
+    {
+      header: "Name",
+      cell: (row) => row.renderValue(),
+      accessorKey: "name",
+    },
+    {
+      header: "Price",
+      cell: (row) => row.renderValue(),
+      accessorKey: "price",
+    },
+    {
+      header: "Quantity",
+      cell: (row) => row.renderValue(),
+      accessorKey: "quantity",
+    },
+  ];
+
+  const tableMockData = () => {
+    const items = [];
+    for (let i = 0; i < 5; i++) {
+      items.push({
+        id: i,
+        name: `Item ${i}`,
+        price: 100,
+        quantity: 1,
+      });
+    }
+    return items;
+  };
 
   return (
     <>
@@ -412,6 +451,10 @@ export function BrandExpoScreen() {
             <UserListTableComponent />
           </div>
         )}
+        <h1 className="mt-5 text-3xl">Table</h1>
+        <div className="w-full">
+          <TableComponent columns={tableMockCols} data={tableMockData()} />
+        </div>
       </div>
       <h1 className="mt-5 text-3xl">Role Access control</h1>
       <table>
