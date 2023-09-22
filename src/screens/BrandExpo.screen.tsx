@@ -20,6 +20,7 @@ import { NBAccessControlComponent } from "../components/shared/access-control/Ac
 import { useAuth } from "../hooks/auth-context";
 import { TableComponent } from "../components/shared/TableComponent";
 import { ColumnDef } from "@tanstack/react-table";
+import { CheckboxComponent } from "../components/shared/CheckboxComponent";
 
 export function BrandExpoScreen() {
   const [password, setPassword] = useState("");
@@ -323,6 +324,11 @@ export function BrandExpoScreen() {
               onChange={(event) => setPassword(event.target.value)}
               value={password}
             />
+            <CheckboxComponent
+              label="Accept"
+              sublabel=" terms and conditions"
+              name="checkbox"
+            />
             <NblocksButton
               submit={true}
               type={"tertiary"}
@@ -459,11 +465,13 @@ export function BrandExpoScreen() {
       <h1 className="mt-5 text-3xl">Role Access control</h1>
       <table>
         <thead>
-          <th>OWNER</th>
-          <th>ADMIN</th>
-          <th>MANAGER</th>
-          <th>VIEWER</th>
-          <th>OWNER or ADMIN</th>
+          <tr>
+            <th>OWNER</th>
+            <th>ADMIN</th>
+            <th>MANAGER</th>
+            <th>VIEWER</th>
+            <th>OWNER or ADMIN</th>
+          </tr>
         </thead>
         <tbody>
           <tr>
@@ -513,11 +521,13 @@ export function BrandExpoScreen() {
       <h1 className="mt-5 text-3xl">Plan Access control</h1>
       <table>
         <thead>
-          <th>FREEMIUM</th>
-          <th>ESSENTIAL</th>
-          <th>TEAM</th>
-          <th>BASIC</th>
-          <th>TEAM or BASIC</th>
+          <tr>
+            <th>FREEMIUM</th>
+            <th>ESSENTIAL</th>
+            <th>TEAM</th>
+            <th>BASIC</th>
+            <th>TEAM or BASIC</th>
+          </tr>
         </thead>
         <tbody>
           <tr>

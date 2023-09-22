@@ -18,6 +18,10 @@ interface ReactTableProps<T extends object> {
   defaultPageSize?: number;
 }
 
+interface LoadingTableProps<T extends object> {
+  columns: ColumnDef<T>[];
+}
+
 /**
  * Configurable Table component based on TanStack React Table.
  *
@@ -58,44 +62,49 @@ interface ReactTableProps<T extends object> {
  * @returns The a table.
  */
 
+// This empty array needs to be declared outside the component to prevent useReactTable from infinite re-renders
+const emptyArray: any[] = [];
+
 export const TableComponent = <T extends object>({
   data,
   columns,
   loading,
   defaultPageSize = 5,
 }: ReactTableProps<T>) => {
-  // The useReactTable hook crashes unless data is available, therefore the entire component is wrapped
-  if (data && !loading) {
-    const table = useReactTable({
-      data: data,
-      columns: columns,
-      getCoreRowModel: getCoreRowModel(),
-      getFilteredRowModel: getFilteredRowModel(),
-      getPaginationRowModel: getPaginationRowModel(),
-      debugTable: true,
-      initialState: {
-        pagination: {
-          pageSize: defaultPageSize,
-        },
+  const table = useReactTable({
+    data: data ?? emptyArray,
+    columns: columns,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    debugTable: true,
+    initialState: {
+      pagination: {
+        pageSize: defaultPageSize,
       },
-    });
+    },
+  });
 
-    return (
-      <>
-        <div className="w-full h-full overflow-x-visible grow rounded-lg border border-gray-200 bg-white shadow">
-          <table className="w-full text-left table-auto">
-            <thead className="bg-gray-50 text-gray-500 text-xs font-medium">
-              {table.getHeaderGroups().map((headerGroup, hgIndex) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header, hIndex) => (
-                    <th
-                      key={header.id}
-                      style={{
-                        width: `${
-                          (header.column.getSize() / table.getTotalSize()) * 100
-                        }%`,
-                      }}
-                      className={`
+  /**
+   * Uses template literals in classes to dynamically apply border radius to individual corner cells.
+   * Required as a <table> element itself doesn't support border radius.
+   */
+  return (
+    <>
+      <div className="w-full h-full overflow-x-visible grow rounded-lg border border-gray-200 bg-white shadow">
+        <table className="w-full text-left table-auto">
+          <thead className="bg-gray-50 text-gray-500 text-xs font-medium">
+            {table.getHeaderGroups().map((headerGroup, hgIndex) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header, hIndex) => (
+                  <th
+                    key={header.id}
+                    style={{
+                      width: `${
+                        (header.column.getSize() / table.getTotalSize()) * 100
+                      }%`,
+                    }}
+                    className={`
                   px-0 py-4 border-b border-gray-200 text-gray-500
                   ${hIndex === 0 ? "pl-4" : ""}
                   ${hIndex === headerGroup.headers.length - 1 ? "pr-4" : ""}
@@ -107,18 +116,19 @@ export const TableComponent = <T extends object>({
                   }
                   
                 `}
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          {data && table.getRowModel().rows.length > 0 ? (
             <tbody className="bg-white divide-y divide-gray-200">
               {table.getRowModel().rows.map((row, rIndex) => (
                 <tr key={row.id}>
@@ -157,63 +167,63 @@ export const TableComponent = <T extends object>({
                 </tr>
               ))}
             </tbody>
-          </table>
-        </div>
-        <div className="px-6 pb-4 pt-3.5 flex items-center justify-between">
-          <NblocksButton
-            size="lg"
-            type="tertiary"
-            className="hidden md:flex items-center justify-center"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <ArrowLeftIcon className="h-6 w-6 inline-block mr-2" />
-            {"Previous"}
-          </NblocksButton>
-          <NblocksButton
-            type="tertiary"
-            className="md:hidden items-center justify-center p-2"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <ArrowLeftIcon className="h-6 w-6 inline-block" />
-          </NblocksButton>
-          <span className="flex items+center gap-1">
-            <p>Page</p>
-            <strong>
-              {table.getState().pagination.pageIndex + 1} of{" "}
-              {table.getPageCount()}
-            </strong>
-          </span>
-          <NblocksButton
-            type="tertiary"
-            size={"lg"}
-            className="hidden md:flex items-center justify-center"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            {"Next"}
-            <ArrowRightIcon className="h-6 w-6 inline-block md:ml-2" />
-          </NblocksButton>
-          <NblocksButton
-            type="tertiary"
-            className="md:hidden items-center justify-center p-2"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            <ArrowRightIcon className="h-6 w-6 inline-block" />
-          </NblocksButton>
-        </div>
-      </>
-    );
-  } else {
-    return <LoadingTable />;
-  }
+          ) : (
+            <LoadingTable />
+          )}
+        </table>
+      </div>
+      <div className="px-6 pb-4 pt-3.5 flex items-center justify-between">
+        <NblocksButton
+          size="lg"
+          type="tertiary"
+          className="hidden md:flex items-center justify-center"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          <ArrowLeftIcon className="h-6 w-6 inline-block mr-2" />
+          {"Previous"}
+        </NblocksButton>
+        <NblocksButton
+          type="tertiary"
+          className="md:hidden items-center justify-center p-2"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          <ArrowLeftIcon className="h-6 w-6 inline-block" />
+        </NblocksButton>
+        <span className="flex items+center gap-1">
+          <p>Page</p>
+          <strong>
+            {table.getState().pagination.pageIndex + 1} of{" "}
+            {table.getPageCount()}
+          </strong>
+        </span>
+        <NblocksButton
+          type="tertiary"
+          size={"lg"}
+          className="hidden md:flex items-center justify-center"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          {"Next"}
+          <ArrowRightIcon className="h-6 w-6 inline-block md:ml-2" />
+        </NblocksButton>
+        <NblocksButton
+          type="tertiary"
+          className="md:hidden items-center justify-center p-2"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          <ArrowRightIcon className="h-6 w-6 inline-block" />
+        </NblocksButton>
+      </div>
+    </>
+  );
 };
 
-const LoadingTable = (): ReactElement => {
+const LoadingTable = () => {
   return (
-    <>
+    <tbody className="bg-white divide-y divide-gray-200">
       <tr>
         <td className={"relative"}>
           <SkeletonLoader className="h-8 w-full rounded-md" />
@@ -265,6 +275,6 @@ const LoadingTable = (): ReactElement => {
           <SkeletonLoader className="h-8 w-full rounded-md" />
         </td>
       </tr>
-    </>
+    </tbody>
   );
 };

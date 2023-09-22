@@ -1,6 +1,6 @@
 {
   "name": "@nebulr-group/nblocks-react",
-  "version": "1.4.5-beta.9",
+  "version": "1.4.5-beta.10",
   "main": "lib/index",
   "module": "lib/index",
   "types": "lib/index.d.ts",
@@ -74,6 +74,7 @@
     "bootstrap": "yarn example && yarn",
     "build": "yarn babel --config-file ./babel.config.js src --out-dir lib --copy-files --extensions '.ts,.tsx' && tsc -p ./tsconfig.build.json && tailwindcss build -i ./src/index.css -o ./lib/index.css",
     "publish-beta": "yarn build && npm publish --access public --tag beta",
+    "npm-publish-local": "npm run build && npm publish --registry http://verdaccio:4873 --tag alpha",
     "publish": "yarn build && npm publish --access public",
     "generate": "graphql-codegen",
     "prestart": "yarn generate",
