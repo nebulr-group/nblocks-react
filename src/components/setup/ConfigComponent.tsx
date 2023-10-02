@@ -144,7 +144,7 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
           >
             Role Name
           </TextComponent>
-          {data ? (
+          {/* {data ? (
             <ul className="list-none inline-block mt-2 w-full">
               {data?.getAppConfig.roles?.map((role, index) => (
                 <li
@@ -162,7 +162,7 @@ const ConfigComponent: FunctionComponent<{}> = ({}) => {
               <SkeletonLoader className="h-6 w-40 rounded-lg mt-2" />
               <SkeletonLoader className="h-6 w-40 rounded-lg mt-2" />
             </>
-          )}
+          )} */}
         </div>
         <div className="bg-white mt-12">
           <div className="w-full">

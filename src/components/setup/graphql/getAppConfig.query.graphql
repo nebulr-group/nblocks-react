@@ -1,7 +1,6 @@
 query GetAppConfig {
   getAppConfig {
     apiUrl
-    defaultRole
     emailSenderEmail
     emailSenderName
     id
@@ -25,7 +24,6 @@ query GetAppConfig {
       }
     }
     privacyPolicyUrl
-    roles
     termsOfServiceUrl
     uiUrl
     websiteUrl
