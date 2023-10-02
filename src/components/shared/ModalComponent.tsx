@@ -153,13 +153,6 @@ const ModalComponent: FunctionComponent<ConfigObject> = ({
                 {getModalIcon(icon)}
               </div>
             )}
-            <NblocksButton
-              onClick={() => {
-                setIsOpen(false);
-              }}
-            >
-              <XMarkIcon className="w-6 h-6" />
-            </NblocksButton>
           </div>
 
           <div className="mt-5">
