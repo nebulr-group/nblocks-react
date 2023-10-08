@@ -92,7 +92,7 @@ const OnboardingScreen: FunctionComponent<{}> = () => {
     tenant?: Tenant
   ): boolean => {
     return (
-      user.role === "OWNER" && (!tenant?.plan || !tenant?.paymentsRequired)
+      user.role === "OWNER" && (!tenant?.plan || !tenant?.paymentStatus?.shouldSetupPayments)
     );
   };
 

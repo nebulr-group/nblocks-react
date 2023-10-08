@@ -5,9 +5,12 @@ mutation UpdateTenant($tenant: TenantInput!) {
     logo
     locale
     mfa
-    paymentsEnabled
-    paymentsRequired
     name
     plan
+    paymentStatus {
+      shouldSelectPlan
+      shouldSetupPayments
+      paymentsEnabled
+    }
   }
 }

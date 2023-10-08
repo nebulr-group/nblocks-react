@@ -22,7 +22,6 @@ export interface NavigationConfig {
   tenant: {
     signupScreen: string;
     planScreen: string;
-    payment: string;
     paymentCancel: string;
     paymentSuccess: string;
   };

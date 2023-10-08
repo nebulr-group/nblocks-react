@@ -5,10 +5,13 @@ query GetTenant {
     logo
     locale
     mfa
-    paymentsEnabled
-    paymentsRequired
     name
-    plan
     onboarded
+    plan
+    paymentStatus {
+      shouldSelectPlan
+      shouldSetupPayments
+      paymentsEnabled
+    }
   }
 }

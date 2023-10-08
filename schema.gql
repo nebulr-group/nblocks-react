@@ -16,30 +16,6 @@ type App {
   websiteUrl: String
 }
 
-type CheckoutResponse {
-  """
-  A checkout ID to create a `Stripe` checkout form
-  """
-  id: String!
-
-  """
-  Use this key to initiate a Stripe client and use the `id` property to start checkoutSession
-  """
-  publicKey: String!
-}
-
-input CreateCheckoutSessionInput {
-  """
-  The plan the customer which to checkout
-  """
-  plan: String!
-
-  """
-  If there's multi region plans you need to provide the region to fetch the correct currencies and taxes
-  """
-  region: String
-}
-
 input CreateTenantInput {
   logo: String
   name: String
@@ -48,7 +24,6 @@ input CreateTenantInput {
 }
 
 type Mutation {
-  createCheckoutSession(args: CreateCheckoutSessionInput!): CheckoutResponse!
   createTenantAnonymous(tenant: CreateTenantInput!): Tenant!
 
   """
@@ -57,6 +32,13 @@ type Mutation {
   createUsers(userNames: [String!]!): [User!]!
   deleteUser(userId: String!): Boolean!
   sendPasswordResetLink(userId: String!): Boolean!
+
+  """
+  Sets a single tenants payment details
+  """
+  setTenantPlanDetails(
+    details: SetTenantPlanDetailsInput!
+  ): TenantPaymentDetailsGraphql!
 
   """
   Update current user
@@ -70,18 +52,30 @@ type Mutation {
   updateUser(user: UserInput!): User!
 }
 
+type PaymentOptionsGraphql {
+  plans: [PlanGraphql!]
+  taxes: [TaxGraphql!]
+}
+
 type PlanGraphql {
+  createdAt: String
   description: String
+  id: String!
   key: String!
   name: String!
   prices: [PriceGraphql!]!
-  trialDays: Float
+  trial: Boolean!
+  trialDays: Float!
 }
 
 type PriceGraphql {
   amount: Float!
   currency: String!
-  key: String!
+  recurrenceInterval: String!
+}
+
+input PriceOfferInput {
+  currency: String!
   recurrenceInterval: String!
 }
 
@@ -92,25 +86,21 @@ type Query {
   getAppAnonymous: App!
 
   """
-  Gets the apps plan. Use this to display pricing instead of the AppConfig resolver
-  """
-  getAppPlans: [PlanGraphql!]!
-
-  """
-  Obtain an short lived session url to redirect or present the user its Stripe subscription panel for updating payment or subscription data.
-  """
-  getCustomerPortal: String!
-
-  """
   Get current user
   """
   getMe: User!
+  getPaymentOptionsAnonymous: PaymentOptionsGraphql!
 
   """
   Gets a single tenant
   """
   getTenant: Tenant!
   getTenantAnonymous: TenantAnonymous!
+
+  """
+  Gets a single tenants payment details
+  """
+  getTenantPaymentDetails: TenantPaymentDetailsGraphql!
 
   """
   List all available user roles that the current user can assign others
@@ -123,8 +113,15 @@ type Query {
   listUsers: [User!]!
 }
 
+input SetTenantPlanDetailsInput {
+  planKey: String!
+  price: PriceOfferInput!
+}
+
 type TaxGraphql {
   countryCode: String!
+  createdAt: String
+  id: String!
   name: String!
   percentage: Float!
 }
@@ -137,8 +134,7 @@ type Tenant {
   mfa: Boolean
   name: String!
   onboarded: Boolean
-  paymentsEnabled: Boolean
-  paymentsRequired: Boolean
+  paymentStatus: TenantPaymentStatusGraphql
   plan: String
 }
 
@@ -150,15 +146,33 @@ type TenantAnonymous {
 
 input TenantInput {
   locale: String
+  logo: String
   mfa: Boolean
   name: String
-  plan: String
 }
 
 input TenantOwnerInput {
   email: String!
   firstName: String
   lastName: String
+}
+
+type TenantPaymentDetailsGraphql {
+  details: TenantPlanDetailsGraphql!
+  status: TenantPaymentStatusGraphql!
+}
+
+type TenantPaymentStatusGraphql {
+  paymentsEnabled: Boolean!
+  shouldSelectPlan: Boolean!
+  shouldSetupPayments: Boolean!
+}
+
+type TenantPlanDetailsGraphql {
+  plan: PlanGraphql
+  price: PriceGraphql
+  trial: Boolean!
+  trialDaysLeft: Float!
 }
 
 type User {

@@ -29,14 +29,18 @@ const PricingCard: FunctionComponent<ConfigObject> = ({
   const renderPrice = (price: PriceGraphql) => {
     if (!price.amount || price.amount === 0) {
       return (
-        <span key={price.key}>
+        <span
+          key={`${price.amount}-${price.currency}-${price.recurrenceInterval}`}
+        >
           {t("FREE")}
           <br />
         </span>
       );
     } else {
       return (
-        <span key={price.key}>
+        <span
+          key={`${price.amount}-${price.currency}-${price.recurrenceInterval}`}
+        >
           {`${getCurrencySymbol(price.currency)} ${price.amount}
                           `}
           <span className="text-lg">

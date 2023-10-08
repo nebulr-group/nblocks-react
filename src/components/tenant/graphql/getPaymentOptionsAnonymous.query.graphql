@@ -1,0 +1,23 @@
+query GetPaymentOptionsAnonymous {
+  getPaymentOptionsAnonymous {
+    plans {
+      id
+      name
+      key
+      description
+      trial
+      trialDays
+      prices {
+        amount
+        currency
+        recurrenceInterval
+      }
+    }
+    taxes {
+      id
+      name
+      countryCode
+      percentage
+    }
+  }
+}

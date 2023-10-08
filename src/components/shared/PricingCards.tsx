@@ -4,9 +4,11 @@ import { NblocksButton } from "./NblocksButton";
 import { SkeletonLoader } from "./SkeletonLoader";
 import {
   GetTenantDocument,
+  GetTenantPaymentDetailsDocument,
   PlanGraphql,
   PriceGraphql,
-  UpdateTenantDocument,
+  SetTenantPlanDetailsDocument,
+  TenantPaymentStatusGraphql,
 } from "../../gql/graphql";
 import { classNameFilter } from "../../utils/ComponentHelpers";
 import { useMutation, useQuery } from "@apollo/client";
@@ -20,7 +22,7 @@ type ConfigObject = {
   className?: string;
   currency: string;
   recurrenceInterval: string;
-  planSelectHandler: (paymentsRequired?: boolean) => void;
+  planSelectHandler: (paymentStatus: TenantPaymentStatusGraphql) => void;
 };
 
 const PricingCards: FunctionComponent<ConfigObject> = ({
@@ -35,22 +37,38 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
   cardPlaceholderCount = cardPlaceholderCount ? cardPlaceholderCount : 3;
 
   // Getting Tenat instance
-  const { data, loading, error } = useQuery(GetTenantDocument);
   const { t } = useTranslation();
 
-  // Updating Tenant instance
-  const [updateTenantMutation, updateTenantData] =
-    useMutation(UpdateTenantDocument);
+  const { data: paymentDetailsQuery, loading: paymentDetailsLoading } =
+    useQuery(GetTenantPaymentDetailsDocument);
 
-  const updatePlan = async (plankey: string) => {
-    const result = await updateTenantMutation({
-      variables: { tenant: { plan: plankey } },
+  // Updating Tenant instance
+  const [setTenantPaymentDetailsMutation, SetTenantPaymentDetailsData] =
+    useMutation(SetTenantPlanDetailsDocument);
+
+  const setPlanDetails = async (planKey: string, price: PriceGraphql) => {
+    const result = await setTenantPaymentDetailsMutation({
+      variables: {
+        details: {
+          planKey,
+          price: {
+            currency: price.currency,
+            recurrenceInterval: price.recurrenceInterval,
+          },
+        },
+      },
+      refetchQueries: [GetTenantDocument, GetTenantPaymentDetailsDocument],
     });
-    if (result.data?.updateTenant) {
-      planSelectHandler(result.data.updateTenant.paymentsRequired!);
+    if (result.data?.setTenantPlanDetails) {
+      planSelectHandler(result.data.setTenantPlanDetails.status);
     }
   };
 
+  /**
+   * Price should be displayed on this page since currency and recurrenceInterval matches
+   * @param price
+   * @returns
+   */
   const isPriceValid = (price: PriceGraphql) => {
     return (
       price.currency === currency &&
@@ -58,11 +76,28 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
     );
   };
 
+  const isPriceSelected = (planKey: string, price: PriceGraphql) => {
+    const selectedPlan =
+      paymentDetailsQuery?.getTenantPaymentDetails.details.plan;
+    const selectedPrice =
+      paymentDetailsQuery?.getTenantPaymentDetails.details.price;
+
+    if (selectedPlan && selectedPrice) {
+      return (
+        selectedPlan.key === planKey &&
+        selectedPrice.currency === price.currency &&
+        selectedPrice.recurrenceInterval === price.recurrenceInterval
+      );
+    }
+
+    return false;
+  };
+
   const filteredPlans = plans
     ? plans.filter((plan) => plan.prices.some((price) => isPriceValid(price)))
     : [];
 
-  const isLoading = loadingCardsData || loading;
+  const isLoading = loadingCardsData || paymentDetailsLoading;
 
   return (
     <div className={classNameFilter(className, "flex gap-4 justify-center")}>
@@ -90,16 +125,19 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
         })}
       {!isLoading &&
         filteredPlans.map(({ name, description, key, prices }, index) => {
-          return (
-            <PricingCard
-              key={index}
-              name={name}
-              description={description ? description : ""}
-              price={prices.find((price) => isPriceValid(price))}
-              didSelect={() => updatePlan(key)}
-              selected={key === data?.getTenant.plan}
-            />
-          );
+          const price = prices.find((price) => isPriceValid(price));
+          if (price) {
+            return (
+              <PricingCard
+                key={index}
+                name={name}
+                description={description ? description : ""}
+                price={price}
+                didSelect={() => setPlanDetails(key, price)}
+                selected={isPriceSelected(key, price)}
+              />
+            );
+          }
         })}
     </div>
   );
