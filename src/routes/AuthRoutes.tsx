@@ -38,8 +38,6 @@ const RouteConfig: NavigationConfig = {
   tenant: {
     signupScreen: "/auth/signup",
     planScreen: "/tenant/plan",
-    paymentCancel: "/tenant/payment/cancel",
-    paymentSuccess: "/tenant/payment/success",
   },
   user: {
     list: "/user/list",
