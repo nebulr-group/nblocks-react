@@ -8,6 +8,7 @@ import { useSecureContext } from "../../hooks/secure-http-context";
 import { PaymentsService } from "../../utils/PaymentsService";
 import { AuthService } from "../../utils/AuthService";
 import { TenantPaymentStatusGraphql } from "../../gql/graphql";
+import { BackendlessService } from "../../utils/BackendlessService";
 
 const PlanScreen: FunctionComponent<{}> = () => {
   // This is a fix to not show flicker when the chooseUserComponent is loading tenantUsers and redirect if the user has just one
@@ -19,6 +20,11 @@ const PlanScreen: FunctionComponent<{}> = () => {
   const targetUrl = location.state?.targetUrl?.pathname || handoverRoute;
   const { authHttpClient } = useSecureContext();
   const config = useConfig();
+
+  const backendlessService = new BackendlessService(
+    authHttpClient.httpClient,
+    config
+  );
 
   const paymentService = new PaymentsService(authHttpClient.httpClient, config);
 
@@ -32,7 +38,7 @@ const PlanScreen: FunctionComponent<{}> = () => {
         break;
       case false:
       default:
-        navigate(targetUrl);
+        handoverBackToApp();
         break;
     }
   };
@@ -47,8 +53,12 @@ const PlanScreen: FunctionComponent<{}> = () => {
 
   // If there's no plans to show, redirect back to app
   const onDidRecieveNoPlans = () => {
-    log(`No plans configured. Redirecting back to ${targetUrl} `);
-    navigate(targetUrl);
+    log(`No plans configured. Redirecting back`);
+    handoverBackToApp();
+  };
+
+  const handoverBackToApp = () => {
+    backendlessService.handoverToApp();
   };
 
   const log = (msg: string) => {

@@ -20,21 +20,21 @@ export class PaymentsService {
   }
 
   async redirectToAnonymousCheckoutView(): Promise<void> {
-    await this._setCookie();
+    await this._setSecureCookie();
     window.location.href = `${this.apiHost}${this.ENDPOINTS.anonymousCheckoutView}`;
   }
 
   async redirectToCheckoutView(): Promise<void> {
-    await this._setCookie();
+    await this._setSecureCookie();
     window.location.href = `${this.apiHost}${this.ENDPOINTS.checkoutView}`;
   }
 
   async redirectToSubscriptionPortal(): Promise<void> {
-    await this._setCookie();
+    await this._setSecureCookie();
     window.location.href = `${this.apiHost}${this.ENDPOINTS.subscriptionPortal}`;
   }
 
-  private async _setCookie(): Promise<void> {
+  private async _setSecureCookie(): Promise<void> {
     await this.httpClient.post(`${this.apiHost}${this.ENDPOINTS.setCookie}`, {},
       { baseURL: this.apiHost, withCredentials: true });
   }

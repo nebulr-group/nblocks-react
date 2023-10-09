@@ -1,6 +1,6 @@
 {
   "name": "@nebulr-group/nblocks-react",
-  "version": "2.0.0-payment-alpha.1",
+  "version": "2.0.0-payment-alpha.2",
   "main": "lib/index",
   "module": "lib/index",
   "types": "lib/index.d.ts",
@@ -63,9 +63,6 @@
   "homepage": "https://github.com/nebulr-group/nblocks-react#readme",
   "bugs": {
     "url": "https://github.com/nebulr-group/nblocks-react/issues"
-  },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "example": "yarn --cwd example",
