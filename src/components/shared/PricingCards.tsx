@@ -51,7 +51,7 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
       variables: {
         details: {
           planKey,
-          price: {
+          priceOffer: {
             currency: price.currency,
             recurrenceInterval: price.recurrenceInterval,
           },

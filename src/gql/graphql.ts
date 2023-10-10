@@ -34,6 +34,7 @@ export type CreateTenantInput = {
   name?: InputMaybe<Scalars['String']>;
   owner: TenantOwnerInput;
   plan?: InputMaybe<Scalars['String']>;
+  priceOffer?: InputMaybe<PriceOfferInput>;
 };
 
 export type Mutation = {
@@ -142,7 +143,7 @@ export type Query = {
 
 export type SetTenantPlanDetailsInput = {
   planKey: Scalars['String'];
-  price: PriceOfferInput;
+  priceOffer: PriceOfferInput;
 };
 
 export type TaxGraphql = {

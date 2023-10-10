@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import React, { FormEvent, FunctionComponent, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { CreateTenantAnonymousDocument } from "../../gql/graphql";
 import { useApp } from "../../hooks/app-context";
 import { RouteConfig } from "../../routes/AuthRoutes";
@@ -47,7 +47,12 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
   const azureAdLogin = !authLegacy && (azureAdSsoEnabled || demoSSO);
   const googleLogin = !authLegacy && (googleSsoEnabled || demoSSO);
 
-  const { plan } = useParams();
+  const [params] = useSearchParams();
+  const [plan, currency, recurrenceInterval] = [
+    params.get("plan"),
+    params.get("currency"),
+    params.get("recurrenceInterval"),
+  ];
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -59,6 +64,10 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
           tenant: {
             owner: { email, firstName, lastName },
             plan: plan ? plan : undefined,
+            priceOffer:
+              currency && recurrenceInterval
+                ? { currency, recurrenceInterval }
+                : undefined,
             logo,
             name: "",
           },
