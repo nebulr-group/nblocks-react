@@ -18,10 +18,6 @@ interface ReactTableProps<T extends object> {
   defaultPageSize?: number;
 }
 
-interface LoadingTableProps<T extends object> {
-  columns: ColumnDef<T>[];
-}
-
 /**
  * Configurable Table component based on TanStack React Table.
  *
@@ -128,47 +124,51 @@ export const TableComponent = <T extends object>({
               </tr>
             ))}
           </thead>
-          {data && table.getRowModel().rows.length > 0 ? (
-            <tbody className="bg-white divide-y divide-gray-200">
-              {table.getRowModel().rows.map((row, rIndex) => (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map((cell, cIndex) => (
-                    <td
-                      key={cell.id}
-                      style={{
-                        width: `${
-                          (cell.column.getSize() / table.getTotalSize()) * 100
-                        }%`,
-                      }}
-                      className={`
-                  py-4 px-0 text-sm text-gray-900
-                  ${cIndex === 0 ? "pl-4" : ""}
-                  ${cIndex === row.getVisibleCells().length - 1 ? "pr-4" : ""}
-                  ${
-                    rIndex === table.getRowModel().rows.length - 1 &&
-                    cIndex === 0
-                      ? "rounded-bl-lg"
-                      : ""
-                  }
-                  ${
-                    rIndex === table.getRowModel().rows.length - 1 &&
-                    cIndex === row.getVisibleCells().length - 1
-                      ? "rounded-br-lg"
-                      : ""
-                  }
-                `}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          ) : (
+          {loading && !data ? (
             <LoadingTable />
+          ):(
+            <>
+            {data && table.getRowModel().rows.length > 0 && (
+              <tbody className="bg-white divide-y divide-gray-200">
+                {table.getRowModel().rows.map((row, rIndex) => (
+                  <tr key={row.id}>
+                    {row.getVisibleCells().map((cell, cIndex) => (
+                      <td
+                        key={cell.id}
+                        style={{
+                          width: `${
+                            (cell.column.getSize() / table.getTotalSize()) * 100
+                          }%`,
+                        }}
+                        className={`
+                    py-4 px-0 text-sm text-gray-900
+                    ${cIndex === 0 ? "pl-4" : ""}
+                    ${cIndex === row.getVisibleCells().length - 1 ? "pr-4" : ""}
+                    ${
+                      rIndex === table.getRowModel().rows.length - 1 &&
+                      cIndex === 0
+                        ? "rounded-bl-lg"
+                        : ""
+                    }
+                    ${
+                      rIndex === table.getRowModel().rows.length - 1 &&
+                      cIndex === row.getVisibleCells().length - 1
+                        ? "rounded-br-lg"
+                        : ""
+                    }
+                  `}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            )}
+            </>
           )}
         </table>
       </div>
