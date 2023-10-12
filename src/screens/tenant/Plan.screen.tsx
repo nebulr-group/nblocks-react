@@ -6,7 +6,6 @@ import { useConfig } from "../../hooks/config-context";
 import { useTranslation } from "react-i18next";
 import { useSecureContext } from "../../hooks/secure-http-context";
 import { PaymentsService } from "../../utils/PaymentsService";
-import { AuthService } from "../../utils/AuthService";
 import { TenantPaymentStatusGraphql } from "../../gql/graphql";
 import { BackendlessService } from "../../utils/BackendlessService";
 
@@ -70,9 +69,7 @@ const PlanScreen: FunctionComponent<{}> = () => {
   return (
     <BaseLayoutWrapperComponent
       heading={t("Pricing plans")}
-      subHeading={t(
-        "We belive Nblocks should be available to all companies, no matter the size."
-      )}
+      subHeading={t("Select a plan to continue to the app")}
     >
       <ChoosePlanComponent
         planSelectHandler={planSelectHandler}

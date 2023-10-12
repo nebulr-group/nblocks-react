@@ -4,6 +4,7 @@ mutation SetTenantPlanDetails($details: SetTenantPlanDetailsInput!) {
       shouldSelectPlan
       shouldSetupPayments
       paymentsEnabled
+      provider
     }
     details {
       plan {

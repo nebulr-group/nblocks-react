@@ -4,6 +4,7 @@ query GetTenantPaymentDetails {
       shouldSelectPlan
       shouldSetupPayments
       paymentsEnabled
+      provider
     }
     details {
       plan {

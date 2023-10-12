@@ -9,6 +9,7 @@ import {
   TenantPaymentStatusGraphql,
 } from "../../../gql/graphql";
 import { NblocksButton } from "../../shared/NblocksButton";
+import { useTranslation } from "react-i18next";
 
 const ChoosePlanComponent: FunctionComponent<{
   planSelectHandler: (paymentStatus: TenantPaymentStatusGraphql) => void;
@@ -21,6 +22,7 @@ const ChoosePlanComponent: FunctionComponent<{
   didFinishedInitialLoading,
   didClickCustomerPortal,
 }) => {
+  const { t } = useTranslation();
   const [currency, setCurrency] = useState<string>("");
   const [currencies, setCurrencies] = useState<string[]>([]);
 
@@ -29,10 +31,10 @@ const ChoosePlanComponent: FunctionComponent<{
   const { data: paymentOptionsQuery, loading: paymentOptionsLoading } =
     useQuery(GetPaymentOptionsAnonymousDocument);
 
-  const loading = paymentOptionsLoading;
-
   const { data: paymentDetailsQuery, loading: paymentDetailsLoading } =
     useQuery(GetTenantPaymentDetailsDocument);
+
+  const loading = paymentOptionsLoading && paymentDetailsLoading;
 
   useEffect(() => {
     const _currencies: string[] = [];
@@ -110,7 +112,7 @@ const ChoosePlanComponent: FunctionComponent<{
             size="2xl"
             onClick={didClickCustomerPortal}
           >
-            Customer portal
+            {t("Manage payments")}
           </NblocksButton>
         </div>
       )}
