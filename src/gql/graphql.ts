@@ -166,6 +166,7 @@ export type Tenant = {
   onboarded?: Maybe<Scalars['Boolean']>;
   paymentStatus?: Maybe<TenantPaymentStatusGraphql>;
   plan?: Maybe<Scalars['String']>;
+  trial?: Maybe<Scalars['Boolean']>;
 };
 
 export type TenantAnonymous = {
