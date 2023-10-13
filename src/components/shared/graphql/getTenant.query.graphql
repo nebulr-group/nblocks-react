@@ -12,6 +12,7 @@ query GetTenant {
       shouldSelectPlan
       shouldSetupPayments
       paymentsEnabled
+      provider
     }
   }
 }
