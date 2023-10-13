@@ -14,8 +14,11 @@ type ConfigObject = {
   name: string;
   description: string;
   selected: boolean;
+  trial: boolean;
+  trialDays: number;
   price?: PriceGraphql;
   didSelect: () => void;
+  loading: boolean;
 };
 
 const PricingCard: FunctionComponent<ConfigObject> = ({
@@ -24,6 +27,9 @@ const PricingCard: FunctionComponent<ConfigObject> = ({
   selected,
   didSelect,
   price,
+  trial,
+  trialDays,
+  loading,
 }) => {
   const { t } = useTranslation();
   const renderPrice = (price: PriceGraphql) => {
@@ -52,6 +58,18 @@ const PricingCard: FunctionComponent<ConfigObject> = ({
     }
   };
 
+  const renderSelectText = () => {
+    if (selected) {
+      return t("Current");
+    }
+
+    if (trial && trialDays > 0) {
+      return `${trialDays} ${t("day trial")}`;
+    }
+
+    return t("Get Started");
+  };
+
   if (price) {
     return (
       <div className="min-h-8 border min-w-8 p-8 rounded-xl">
@@ -74,8 +92,9 @@ const PricingCard: FunctionComponent<ConfigObject> = ({
             size={"md"}
             fullWidth={true}
             onClick={() => didSelect()}
+            isLoading={loading}
           >
-            {selected ? t("Current") : t("Get Started")}
+            {renderSelectText()}
           </NblocksButton>
         </div>
       </div>

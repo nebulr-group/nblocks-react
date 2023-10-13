@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FunctionComponent } from "react";
 import { NblocksButton } from "./NblocksButton";
 import { SkeletonLoader } from "./SkeletonLoader";
@@ -35,18 +35,25 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
   planSelectHandler,
 }) => {
   cardPlaceholderCount = cardPlaceholderCount ? cardPlaceholderCount : 3;
-
-  // Getting Tenat instance
   const { t } = useTranslation();
 
   const { data: paymentDetailsQuery, loading: paymentDetailsLoading } =
     useQuery(GetTenantPaymentDetailsDocument);
 
+  const [loadingButtonIndex, setLoadingButtonIndex] = useState<
+    number | undefined
+  >();
+
   // Updating Tenant instance
   const [setTenantPaymentDetailsMutation, SetTenantPaymentDetailsData] =
     useMutation(SetTenantPlanDetailsDocument);
 
-  const setPlanDetails = async (planKey: string, price: PriceGraphql) => {
+  const setPlanDetails = async (
+    planKey: string,
+    price: PriceGraphql,
+    index: number
+  ) => {
+    setLoadingButtonIndex(index);
     const result = await setTenantPaymentDetailsMutation({
       variables: {
         details: {
@@ -103,42 +110,52 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
     <div className={classNameFilter(className, "flex gap-4 justify-center")}>
       {isLoading &&
         [...Array(cardPlaceholderCount).keys()].map((_, i) => {
-          return (
-            <div className="min-h-8 border min-w-8 p-8 rounded-xl" key={i}>
-              <div className="space-y-2">
-                <SkeletonLoader className="w-full h-7 rounded-xl" />
-                <SkeletonLoader className="w-14 h-12 mr-1 rounded-xl inline-block" />
-                <SkeletonLoader className="w-8 h-8 rounded-xl inline-block" />
-              </div>
-              <div className="mt-6">
-                <NblocksButton
-                  type={"primary"}
-                  size={"md"}
-                  fullWidth={true}
-                  disabled={true}
-                >
-                  {t("Get Started")}
-                </NblocksButton>
-              </div>
-            </div>
-          );
+          return <SkeletonLoading i={i} />;
         })}
       {!isLoading &&
-        filteredPlans.map(({ name, description, key, prices }, index) => {
-          const price = prices.find((price) => isPriceValid(price));
-          if (price) {
-            return (
-              <PricingCard
-                key={index}
-                name={name}
-                description={description ? description : ""}
-                price={price}
-                didSelect={() => setPlanDetails(key, price)}
-                selected={isPriceSelected(key, price)}
-              />
-            );
+        filteredPlans.map(
+          ({ name, description, key, prices, trial, trialDays }, index) => {
+            const price = prices.find((price) => isPriceValid(price));
+            if (price) {
+              return (
+                <PricingCard
+                  key={index}
+                  name={name}
+                  description={description ? description : ""}
+                  trial={trial}
+                  trialDays={trialDays}
+                  price={price}
+                  didSelect={() => setPlanDetails(key, price, index)}
+                  selected={isPriceSelected(key, price)}
+                  loading={index === loadingButtonIndex}
+                />
+              );
+            }
           }
-        })}
+        )}
+    </div>
+  );
+};
+
+const SkeletonLoading: FunctionComponent<{ i: number }> = ({ i }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="min-h-8 border min-w-8 p-8 rounded-xl" key={i}>
+      <div className="space-y-2">
+        <SkeletonLoader className="w-full h-7 rounded-xl" />
+        <SkeletonLoader className="w-14 h-12 mr-1 rounded-xl inline-block" />
+        <SkeletonLoader className="w-8 h-8 rounded-xl inline-block" />
+      </div>
+      <div className="mt-6">
+        <NblocksButton
+          type={"primary"}
+          size={"md"}
+          fullWidth={true}
+          disabled={true}
+        >
+          {t("Get Started")}
+        </NblocksButton>
+      </div>
     </div>
   );
 };
