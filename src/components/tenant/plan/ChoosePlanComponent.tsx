@@ -1,31 +1,65 @@
 import { useQuery } from "@apollo/client";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { PricingCards } from "../../shared/PricingCards";
-import { GetAppPlansDocument } from "../../../gql/graphql";
 import { ListBoxComponent } from "../../shared/ListBoxComponent";
-import { SkeletonLoader } from "../../shared/SkeletonLoader";
+import { TabsComponent } from "../../shared/TabsComponent";
+import {
+  GetPaymentOptionsAnonymousDocument,
+  GetTenantPaymentDetailsDocument,
+  TenantPaymentStatusGraphql,
+} from "../../../gql/graphql";
+import { NblocksButton } from "../../shared/NblocksButton";
+import { useTranslation } from "react-i18next";
 
 const ChoosePlanComponent: FunctionComponent<{
-  planSelectHandler: (paymentsRequired?: boolean) => void;
+  planSelectHandler: (paymentStatus: TenantPaymentStatusGraphql) => void;
   didRecieveNoPlans?: () => void;
   didFinishedInitialLoading?: () => void;
-}> = ({ planSelectHandler, didRecieveNoPlans, didFinishedInitialLoading }) => {
-  const [region, setRegion] = useState<string>("");
-  const { data, loading } = useQuery(GetAppPlansDocument);
-  const [regions, setRegions] = useState<string[]>([]);
+  didClickCustomerPortal?: () => void;
+}> = ({
+  planSelectHandler,
+  didRecieveNoPlans,
+  didFinishedInitialLoading,
+  didClickCustomerPortal,
+}) => {
+  const { t } = useTranslation();
+  const [currency, setCurrency] = useState<string>("");
+  const [currencies, setCurrencies] = useState<string[]>([]);
+
+  const [recurrenceInterval, setRecurrenceInterval] = useState<string>("");
+  const [recurrenceIntervals, setRecurrenceIntervals] = useState<string[]>([]);
+  const { data: paymentOptionsQuery, loading: paymentOptionsLoading } =
+    useQuery(GetPaymentOptionsAnonymousDocument);
+
+  const { data: paymentDetailsQuery, loading: paymentDetailsLoading } =
+    useQuery(GetTenantPaymentDetailsDocument);
+
+  const loading = paymentOptionsLoading && paymentDetailsLoading;
 
   useEffect(() => {
-    const regions: string[] = [];
+    const _currencies: string[] = [];
+    const _recurrenceIntervals: string[] = [];
 
     if (!loading) {
-      if (data && data?.getAppPlans.length > 0) {
-        data?.getAppPlans.forEach(({ prices }) => {
-          prices.forEach(({ region }) => {
-            !regions.includes(region) && regions.push(region);
-          });
-        });
-        setRegion(regions[0]);
-        setRegions(regions);
+      if (
+        paymentOptionsQuery &&
+        paymentOptionsQuery?.getPaymentOptionsAnonymous.plans &&
+        paymentOptionsQuery?.getPaymentOptionsAnonymous.plans.length > 0
+      ) {
+        paymentOptionsQuery.getPaymentOptionsAnonymous.plans.forEach(
+          ({ prices }) => {
+            prices.forEach(({ currency, recurrenceInterval }) => {
+              !_currencies.includes(currency) && _currencies.push(currency);
+              !_recurrenceIntervals.includes(recurrenceInterval) &&
+                _recurrenceIntervals.push(recurrenceInterval);
+            });
+          }
+        );
+        setCurrency(_currencies[0]);
+        setCurrencies(_currencies);
+        setRecurrenceInterval(_recurrenceIntervals[0]);
+        setRecurrenceIntervals(_recurrenceIntervals);
+
         if (didFinishedInitialLoading) {
           didFinishedInitialLoading;
         }
@@ -39,28 +73,49 @@ const ChoosePlanComponent: FunctionComponent<{
 
   return (
     <>
+      {recurrenceIntervals.length > 1 && (
+        <TabsComponent
+          categories={recurrenceIntervals}
+          onChange={(index) =>
+            setRecurrenceInterval(recurrenceIntervals[index])
+          }
+        />
+      )}
       <div className="flex justify-end w-full">
         <div className="w-24 relative">
-          {loading && regions.length !== 1 && (
-            <SkeletonLoader className="w-full h-12 rounded-md" />
-          )}
-          {!loading && regions.length !== 1 && (
+          {currencies.length > 1 && (
             <ListBoxComponent
-              items={regions}
-              selected={region}
-              setSelected={setRegion}
+              items={currencies}
+              selected={currency}
+              setSelected={setCurrency}
             ></ListBoxComponent>
           )}
         </div>
       </div>
       <PricingCards
-        plans={data?.getAppPlans}
+        plans={
+          paymentOptionsQuery?.getPaymentOptionsAnonymous.plans
+            ? paymentOptionsQuery?.getPaymentOptionsAnonymous.plans
+            : []
+        }
         loadingCardsData={loading}
         className={"mt-24"}
-        region={region}
+        currency={currency}
+        recurrenceInterval={recurrenceInterval}
         cardPlaceholderCount={2}
         planSelectHandler={planSelectHandler}
       ></PricingCards>
+      {paymentDetailsQuery?.getTenantPaymentDetails.status.paymentsEnabled && (
+        <div>
+          <NblocksButton
+            type={"primary"}
+            size="2xl"
+            onClick={didClickCustomerPortal}
+          >
+            {t("Manage payments")}
+          </NblocksButton>
+        </div>
+      )}
     </>
   );
 };

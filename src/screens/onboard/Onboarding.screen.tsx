@@ -34,39 +34,38 @@ const OnboardingScreen: FunctionComponent<{}> = () => {
   };
 
   const onLoad = async (user: AuthTenantUserResponseDto) => {
-    if (!user.onboarded) {
-      log(
-        `User did authenticate but is not onboarded. Redirecting to user onboarding: ${RouteConfig.onboard.onboardUserScreen}`
-      );
-      navigate(RouteConfig.onboard.onboardUserScreen, {
-        state: { targetUrl },
-      });
-    } else {
-      const tenant = data?.getTenant;
-
-      if (tenant) {
-        if (shouldShowTenantOnboarding(user, tenant, app)) {
-          navigate(RouteConfig.onboard.onboardTenantScreen, {
-            state: { targetUrl },
-          });
-          log(
-            `User did authenticate but tenant is required to be onboarded: ${RouteConfig.onboard.onboardTenantScreen}`
-          );
-        } else {
-          if (shouldShowChoosePlanScreen(user, tenant)) {
-            log(
-              `User did authenticate but tenant is required to pick a plan or setup payment. Redirecting to tenant plan selection: ${RouteConfig.tenant.planScreen}`
-            );
-            navigate(RouteConfig.tenant.planScreen, { state: { targetUrl } });
-          } else {
-            log(
-              `User did authenticate. No payments required from Tenant. Redirecting back to: ${targetUrl}`
-            );
-            navigate(targetUrl);
-          }
-        }
-      }
-    }
+    // if (!user.onboarded) {
+    //   log(
+    //     `User did authenticate but is not onboarded. Redirecting to user onboarding: ${RouteConfig.onboard.onboardUserScreen}`
+    //   );
+    //   navigate(RouteConfig.onboard.onboardUserScreen, {
+    //     state: { targetUrl },
+    //   });
+    // } else {
+    //   const tenant = data?.getTenant;
+    //   if (tenant) {
+    //     if (shouldShowTenantOnboarding(user, tenant, app)) {
+    //       navigate(RouteConfig.onboard.onboardTenantScreen, {
+    //         state: { targetUrl },
+    //       });
+    //       log(
+    //         `User did authenticate but tenant is required to be onboarded: ${RouteConfig.onboard.onboardTenantScreen}`
+    //       );
+    //     } else {
+    //       if (shouldShowChoosePlanScreen(user, tenant)) {
+    //         log(
+    //           `User did authenticate but tenant is required to pick a plan or setup payment. Redirecting to tenant plan selection: ${RouteConfig.tenant.planScreen}`
+    //         );
+    //         navigate(RouteConfig.tenant.planScreen, { state: { targetUrl } });
+    //       } else {
+    //         log(
+    //           `User did authenticate. No payments required from Tenant. Redirecting back to: ${targetUrl}`
+    //         );
+    //         navigate(targetUrl);
+    //       }
+    //     }
+    //   }
+    // }
   };
 
   useEffect(() => {
@@ -76,25 +75,25 @@ const OnboardingScreen: FunctionComponent<{}> = () => {
   }, [data, currentUser]);
 
   /** This view should be shown to Owners of tenants that are not onboarded. And just in case app.onboardingFlow is B2B */
-  const shouldShowTenantOnboarding = (
-    user: AuthTenantUserResponseDto,
-    tenant: Tenant,
-    app: App
-  ): boolean => {
-    return (
-      !tenant.onboarded && app.onboardingFlow === "B2B" && user.role === "OWNER"
-    );
-  };
+  // const shouldShowTenantOnboarding = (
+  //   user: AuthTenantUserResponseDto,
+  //   tenant: Tenant,
+  //   app: App
+  // ): boolean => {
+  //   return (
+  //     !tenant.onboarded && app.onboardingFlow === "B2B" && user.role === "OWNER"
+  //   );
+  // };
 
-  // This view should be shown to Owners and in case the tenant needs to setup payment
-  const shouldShowChoosePlanScreen = (
-    user: AuthTenantUserResponseDto,
-    tenant?: Tenant
-  ): boolean => {
-    return (
-      user.role === "OWNER" && (!tenant?.plan || !tenant?.paymentsRequired)
-    );
-  };
+  // // This view should be shown to Owners and in case the tenant needs to setup payment
+  // const shouldShowChoosePlanScreen = (
+  //   user: AuthTenantUserResponseDto,
+  //   tenant?: Tenant
+  // ): boolean => {
+  //   return (
+  //     user.role === "OWNER" && (!tenant?.plan || !tenant?.paymentStatus?.shouldSetupPayments)
+  //   );
+  // };
 
   return <h1>Onboarding...</h1>;
 };

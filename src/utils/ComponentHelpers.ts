@@ -18,5 +18,20 @@ const getCurrencySymbol = (currency: string) => {
   }
 };
 
+/** 'day' | 'month' | 'week' | 'year' */
+const getRecurIntervalSymbol = (recurInterval: string) => {
+  switch (recurInterval) {
+    case "day":
+      return "d";
+    case "month":
+      return "mo";
+    case "week":
+      return "wk";
+    case "year":
+      return "yr";
+  }
+};
 
-export { classNameFilter, getCurrencySymbol };
+
+
+export { classNameFilter, getCurrencySymbol, getRecurIntervalSymbol };

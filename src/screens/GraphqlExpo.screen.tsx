@@ -1,11 +1,8 @@
+import React from "react";
 import { useQuery } from "@apollo/client";
-import React, { useState } from "react";
 import { HeadingComponent } from "../components/shared/HeadingComponent";
 import {
   GetAppAnonymousDocument,
-  GetAppConfigDocument,
-  GetAppPlansDocument,
-  GetTenantAnonymousDocument,
   GetTenantDocument,
   ListUserRolesDocument,
   ListUsersDocument,
@@ -13,12 +10,9 @@ import {
 
 export function GraphqlExpoScreen() {
   const getTenantQuery = useQuery(GetTenantDocument);
-  //const getTenantAnonymousQuery = useQuery(GetTenantAnonymousDocument);
   const listUsersQuery = useQuery(ListUsersDocument);
   const listUserRolesQuery = useQuery(ListUserRolesDocument);
   const getAppAnonymousQuery = useQuery(GetAppAnonymousDocument);
-  const getAppConfigQuery = useQuery(GetAppConfigDocument);
-  const getAppPlansQuery = useQuery(GetAppPlansDocument);
 
   const renderJson = (data?: any) => {
     return data ? <pre>{JSON.stringify(data, null, "\t")}</pre> : "";
@@ -59,18 +53,14 @@ export function GraphqlExpoScreen() {
         </HeadingComponent>
         {renderJson(getAppAnonymousQuery.data?.getAppAnonymous)}
       </div>
-      <div>
+      {/* <div>
         <HeadingComponent type="h2" size="2xl">
           getAppPlans.query.graphql (GetAppPlansDocument (light))
         </HeadingComponent>
-        {renderJson(getAppPlansQuery.data?.getAppPlans)}
-      </div>
-      <div>
-        <HeadingComponent type="h2" size="2xl">
-          getAppConfig.query.graphql (GetAppConfigDocument (full))
-        </HeadingComponent>
-        {renderJson(getAppConfigQuery.data?.getAppConfig)}
-      </div>
+        {renderJson(
+          getPaymentOptionsAnonymousQuery.data?.getPaymentOptionsAnonymous
+        )}
+      </div> */}
     </div>
   );
 }

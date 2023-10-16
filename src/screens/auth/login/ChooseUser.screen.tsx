@@ -25,6 +25,7 @@ export function ChooseUserScreen() {
 
   const onDidSelectUser = async (user: AuthTenantUserResponseDto) => {
     if (!authLegacy) {
+      // Here we initiate the handover back to app
       window.location.replace(authService.getHandoverUrl(user.id)!);
     } else {
       setUser(user);

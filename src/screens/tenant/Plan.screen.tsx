@@ -1,10 +1,13 @@
 import React, { FunctionComponent, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ChoosePlanComponent } from "../../components/tenant/plan/ChoosePlanComponent";
-import { TenantLayoutWrapperComponent } from "../../components/tenant/TenantLayoutWrapperComponent";
+import { BaseLayoutWrapperComponent } from "../../components/tenant/TenantLayoutWrapperComponent";
 import { useConfig } from "../../hooks/config-context";
-import { RouteConfig } from "../../routes/AuthRoutes";
 import { useTranslation } from "react-i18next";
+import { useSecureContext } from "../../hooks/secure-http-context";
+import { PaymentsService } from "../../utils/PaymentsService";
+import { TenantPaymentStatusGraphql } from "../../gql/graphql";
+import { BackendlessService } from "../../utils/BackendlessService";
 
 const PlanScreen: FunctionComponent<{}> = () => {
   // This is a fix to not show flicker when the chooseUserComponent is loading tenantUsers and redirect if the user has just one
@@ -14,18 +17,33 @@ const PlanScreen: FunctionComponent<{}> = () => {
   const { handoverRoute, debug } = useConfig();
   const { t } = useTranslation();
   const targetUrl = location.state?.targetUrl?.pathname || handoverRoute;
+  const { authHttpClient } = useSecureContext();
+  const config = useConfig();
 
-  const planSelectHandler = (paymentsRequired?: boolean) => {
-    switch (paymentsRequired) {
+  const backendlessService = new BackendlessService(
+    authHttpClient.httpClient,
+    config
+  );
+
+  const paymentService = new PaymentsService(authHttpClient.httpClient, config);
+
+  const planSelectHandler = (paymentStatus: TenantPaymentStatusGraphql) => {
+    switch (paymentStatus.shouldSetupPayments) {
       case true:
         log(
-          `The plan selected requires payment to be setup. Redirecting to ${RouteConfig.tenant.payment} `
+          `The plan selected requires payment to be setup. Redirecting to backendless`
         );
-        return navigate(RouteConfig.tenant.payment);
+        paymentService.redirectToCheckoutView();
+        break;
       case false:
       default:
-        return navigate(targetUrl);
+        handoverBackToApp();
+        break;
     }
+  };
+
+  const customerPortalHandler = () => {
+    paymentService.redirectToSubscriptionPortal();
   };
 
   const onDidFinishInitialLoading = () => {
@@ -34,8 +52,12 @@ const PlanScreen: FunctionComponent<{}> = () => {
 
   // If there's no plans to show, redirect back to app
   const onDidRecieveNoPlans = () => {
-    log(`No plans configured. Redirecting back to ${targetUrl} `);
-    navigate(targetUrl);
+    log(`No plans configured. Redirecting back`);
+    handoverBackToApp();
+  };
+
+  const handoverBackToApp = () => {
+    backendlessService.handoverToApp();
   };
 
   const log = (msg: string) => {
@@ -45,18 +67,17 @@ const PlanScreen: FunctionComponent<{}> = () => {
   };
 
   return (
-    <TenantLayoutWrapperComponent
+    <BaseLayoutWrapperComponent
       heading={t("Pricing plans")}
-      subHeading={t(
-        "We belive Nblocks should be available to all companies, no matter the size."
-      )}
+      subHeading={t("Select a plan to continue to the app")}
     >
       <ChoosePlanComponent
         planSelectHandler={planSelectHandler}
         didRecieveNoPlans={() => onDidRecieveNoPlans()}
         didFinishedInitialLoading={() => onDidFinishInitialLoading()}
+        didClickCustomerPortal={() => customerPortalHandler()}
       />
-    </TenantLayoutWrapperComponent>
+    </BaseLayoutWrapperComponent>
   );
 };
 

@@ -3,7 +3,6 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { NBAuthGuard } from "./AuthGuard";
 import { AuthRoutes } from "./AuthRoutes";
 import { OnboardRoutes } from "./OnboardRoutes";
-import { SetupRoutes } from "./SetupRoutes";
 import { UserRoutes } from "./UserRoutes";
 import { BrandExpoScreen } from "../screens/BrandExpo.screen";
 import { GraphqlExpoScreen } from "../screens/GraphqlExpo.screen";
@@ -17,7 +16,6 @@ const SpaRouter: FunctionComponent<{
       <Routes>
         <Route path="/auth/*" element={<AuthRoutes />} />
         <Route path="/onboard/*" element={<OnboardRoutes />} />
-        <Route path="/setup/*" element={<SetupRoutes />} />
         <Route path="/tenant/*" element={<TenantRoutes />} />
         <Route
           path="/user/*"
