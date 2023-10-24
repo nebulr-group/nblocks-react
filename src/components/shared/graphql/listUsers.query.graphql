@@ -12,4 +12,7 @@ query ListUsers {
     role
     teams
   }
+  getTenant {
+    mfa
+  }
 }
