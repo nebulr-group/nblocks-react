@@ -9,13 +9,20 @@ import {
 } from "@tanstack/react-table";
 import { NblocksButton } from "./NblocksButton";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/solid";
-import { ListUsersDocument, User } from "../../gql/graphql";
-import { useQuery } from "@apollo/client";
+import {
+  ListUsersDocument,
+  UpdateTenantDocument,
+  User,
+} from "../../gql/graphql";
+import { useMutation, useQuery } from "@apollo/client";
 import { UserTableRowComponent } from "./UserTableRowComponent";
 import { ModalComponent } from "./ModalComponent";
 import { SafeUserNameComponent } from "./SafeUserNameComponent";
 import { SkeletonLoader } from "./SkeletonLoader";
 import { useTranslation } from "react-i18next";
+import { TogglerComponent } from "./TogglerComponent";
+import { useApp } from "../../hooks/app-context";
+import { TextComponent } from "./TextComponent";
 
 /**
  *
@@ -33,6 +40,8 @@ export type ModalState = {
 const UserListTableComponent: FunctionComponent<ConfigObject> = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation();
+  const { mfaEnabled: mfaAppEnabled } = useApp();
+  const [mfaTenantEnabled, setMfaTenantEnabled] = useState<boolean>(false);
 
   const [modalState, setModalState] = useState<ModalState>({
     heading: "",
@@ -42,6 +51,23 @@ const UserListTableComponent: FunctionComponent<ConfigObject> = () => {
   });
 
   const { data, loading } = useQuery(ListUsersDocument);
+
+  const [updateTenantMutation, updateTenantProps] =
+    useMutation(UpdateTenantDocument);
+
+  const { data: updateTenantData } = updateTenantProps;
+
+  useEffect(() => {
+    setMfaTenantEnabled(
+      updateTenantData
+        ? !!updateTenantData.updateTenant.mfa
+        : !!data?.getTenant.mfa
+    );
+  }, [data, updateTenantData]);
+
+  const onMfaTenantEnabledChange = (enabledState: boolean) => {
+    updateTenantMutation({ variables: { tenant: { mfa: enabledState } } });
+  };
 
   const columnHelper = createColumnHelper<User>();
 
@@ -141,6 +167,17 @@ const UserListTableComponent: FunctionComponent<ConfigObject> = () => {
   return (
     <>
       <div className="w-full h-full overflow-x-auto grow">
+        {mfaAppEnabled && data && (
+          <div className="flex items-center px-6 mb-5">
+            <TextComponent className="mr-4">
+              {t("Two-factor authentication")}
+            </TextComponent>
+            <TogglerComponent
+              enabled={mfaTenantEnabled}
+              setEnabled={(value) => onMfaTenantEnabledChange(value as boolean)}
+            />
+          </div>
+        )}
         <table className="w-full text-left">
           <thead className="h-11 bg-gray-50 border-t border-b border-gray-200">
             {table.getHeaderGroups().map((headerGroup) => (
