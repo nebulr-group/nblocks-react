@@ -161,9 +161,9 @@ export type Tenant = {
   createdAt?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   locale?: Maybe<Scalars['String']>;
-  logo: Scalars['String'];
+  logo?: Maybe<Scalars['String']>;
   mfa?: Maybe<Scalars['Boolean']>;
-  name: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
   onboarded?: Maybe<Scalars['Boolean']>;
   paymentStatus?: Maybe<TenantPaymentStatusGraphql>;
   plan?: Maybe<Scalars['String']>;
@@ -214,6 +214,7 @@ export type TenantPlanDetailsGraphql = {
 
 export type User = {
   __typename?: 'User';
+  consentsToPrivacyPolicy?: Maybe<Scalars['Boolean']>;
   createdAt?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
   enabled?: Maybe<Scalars['Boolean']>;
@@ -221,6 +222,7 @@ export type User = {
   fullName?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   lastName?: Maybe<Scalars['String']>;
+  lastSeen?: Maybe<Scalars['String']>;
   onboarded?: Maybe<Scalars['Boolean']>;
   role?: Maybe<Scalars['String']>;
   teams?: Maybe<Array<Scalars['String']>>;
@@ -238,7 +240,7 @@ export type CreateTenantAnonymousMutationVariables = Exact<{
 }>;
 
 
-export type CreateTenantAnonymousMutation = { __typename?: 'Mutation', createTenantAnonymous: { __typename?: 'Tenant', id: string, name: string, locale?: string | null, logo: string, plan?: string | null, mfa?: boolean | null, createdAt?: string | null } };
+export type CreateTenantAnonymousMutation = { __typename?: 'Mutation', createTenantAnonymous: { __typename?: 'Tenant', id: string, name?: string | null, locale?: string | null, logo?: string | null, plan?: string | null, mfa?: boolean | null, createdAt?: string | null } };
 
 export type CreateUsersMutationVariables = Exact<{
   userNames: Array<Scalars['String']> | Scalars['String'];
@@ -262,7 +264,7 @@ export type GetMeQuery = { __typename?: 'Query', getMe: { __typename?: 'User', i
 export type GetTenantQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTenantQuery = { __typename?: 'Query', getTenant: { __typename?: 'Tenant', createdAt?: string | null, id: string, logo: string, locale?: string | null, mfa?: boolean | null, name: string, onboarded?: boolean | null, plan?: string | null, paymentStatus?: { __typename?: 'TenantPaymentStatusGraphql', shouldSelectPlan: boolean, shouldSetupPayments: boolean, paymentsEnabled: boolean, provider: string } | null } };
+export type GetTenantQuery = { __typename?: 'Query', getTenant: { __typename?: 'Tenant', createdAt?: string | null, id: string, logo?: string | null, locale?: string | null, mfa?: boolean | null, name?: string | null, onboarded?: boolean | null, plan?: string | null, paymentStatus?: { __typename?: 'TenantPaymentStatusGraphql', shouldSelectPlan: boolean, shouldSetupPayments: boolean, paymentsEnabled: boolean, provider: string } | null } };
 
 export type GetTenantAnonymousQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -298,7 +300,7 @@ export type UpdateTenantMutationVariables = Exact<{
 }>;
 
 
-export type UpdateTenantMutation = { __typename?: 'Mutation', updateTenant: { __typename?: 'Tenant', createdAt?: string | null, id: string, logo: string, locale?: string | null, mfa?: boolean | null, name: string, plan?: string | null, paymentStatus?: { __typename?: 'TenantPaymentStatusGraphql', shouldSelectPlan: boolean, shouldSetupPayments: boolean, paymentsEnabled: boolean, provider: string } | null } };
+export type UpdateTenantMutation = { __typename?: 'Mutation', updateTenant: { __typename?: 'Tenant', createdAt?: string | null, id: string, logo?: string | null, locale?: string | null, mfa?: boolean | null, name?: string | null, plan?: string | null, paymentStatus?: { __typename?: 'TenantPaymentStatusGraphql', shouldSelectPlan: boolean, shouldSetupPayments: boolean, paymentsEnabled: boolean, provider: string } | null } };
 
 export type UpdateUserMutationVariables = Exact<{
   user: UserInput;

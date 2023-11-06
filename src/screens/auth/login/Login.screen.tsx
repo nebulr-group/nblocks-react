@@ -23,6 +23,9 @@ export function LoginScreen() {
   // Target url when authentication finished
   const targetUrl = location.state?.from?.pathname || handoverRoute;
 
+  const urlSearch = new URLSearchParams(location.search);
+  const initalError = !!urlSearch.get("error");
+
   useEffect(() => {
     if (currentUser.authenticated) {
       logout();
@@ -72,6 +75,7 @@ export function LoginScreen() {
       subHeading={t("Welcome back! Please enter your details.")}
     >
       <LoginComponent
+        initalError={initalError}
         didLogin={(mfa, tenantUserId) => onDidLogin(mfa, tenantUserId)}
         didClickFederatedLogin={(type) => onDidClickFederatedLogin(type)}
       />

@@ -24,12 +24,12 @@ import {
   browserSupportsWebAuthn,
   browserSupportsWebAuthnAutofill,
   startAuthentication,
-  platformAuthenticatorIsAvailable,
 } from "@simplewebauthn/browser";
 import { PasskeysLoginButtonComponent } from "../shared/PasskeysLoginButtonComponent";
 import { DividerComponent } from "../../shared/DividerComponent";
 
 type ComponentProps = {
+  initalError?: boolean;
   didLogin: (mfa: MfaState, tenantUserId?: string) => void;
   didClickFederatedLogin: (type: FederationType) => void;
 };
@@ -37,6 +37,7 @@ type ComponentProps = {
 type CredentialsInputMode = "USERNAME" | "PASSWORD" | "RESET-PASSWORD";
 
 const LoginComponent: FunctionComponent<ComponentProps> = ({
+  initalError,
   didLogin,
   didClickFederatedLogin,
 }) => {
@@ -51,6 +52,14 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
   const { azureAdSsoEnabled, googleSsoEnabled, passkeysEnabled } = useApp();
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  const wrongCredentialsErrorMsg = t("Wrong credentials, please try again.");
+  const generalErrorMsg = t(
+    "There was an error when logging in. Try again, otherwise contact support."
+  );
+  const initialError = t(
+    "There was an error when logging in. Are you sure you already have signed up for an account?"
+  );
 
   const passkeysLogin =
     !authLegacy && passkeysEnabled && browserSupportsWebAuthn();
@@ -68,6 +77,12 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
       });
     }
   }, []);
+
+  useEffect(() => {
+    if (initalError) {
+      setErrorMsg(initialError);
+    }
+  }, [initalError]);
 
   /**
    * Password manager plugins like 1Password can interfare with native browser webauthn autofill
@@ -125,14 +140,10 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
       console.error(error);
       if (error instanceof UnauthenticatedError) {
         setIsLoading(false);
-        setErrorMsg(t("Wrong credentials, please try again."));
+        setErrorMsg(wrongCredentialsErrorMsg);
       } else {
         setIsLoading(false);
-        setErrorMsg(
-          t(
-            "There was an error when logging in. Try again, otherwise contact support."
-          )
-        );
+        setErrorMsg(generalErrorMsg);
       }
       setPassword("");
     }
@@ -300,7 +311,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
         <div className="max-w-sm w-full mb-6">
           <AlertComponent
             type="danger"
-            title={t("An error occured")}
+            title={t("Could not login")}
             messages={[errorMsg]}
           />
         </div>
