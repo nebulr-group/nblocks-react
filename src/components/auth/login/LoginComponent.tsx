@@ -57,7 +57,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
   const generalErrorMsg = t(
     "There was an error when logging in. Try again, otherwise contact support."
   );
-  const initialError = t(
+  const initialErrorMsg = t(
     "There was an error when logging in. Are you sure you already have signed up for an account?"
   );
 
@@ -80,7 +80,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
 
   useEffect(() => {
     if (initalError) {
-      setErrorMsg(initialError);
+      setErrorMsg(initialErrorMsg);
     }
   }, [initalError]);
 
