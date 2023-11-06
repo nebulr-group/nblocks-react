@@ -31,9 +31,9 @@ const OnboardTenantComponent: FunctionComponent<ComponentProps> = ({
   useEffect(() => {
     if (data && data.getTenant) {
       const tenant = data.getTenant;
-      setName(tenant.name);
+      setName(tenant.name || "");
       setLocale(tenant.locale ? tenant.locale : "");
-      setLogo(tenant.logo);
+      setLogo(tenant.logo || "");
     }
   }, [data]);
 
