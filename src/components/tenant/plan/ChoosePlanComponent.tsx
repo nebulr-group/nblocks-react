@@ -14,14 +14,8 @@ import { useTranslation } from "react-i18next";
 const ChoosePlanComponent: FunctionComponent<{
   planSelectHandler: (paymentStatus: TenantPaymentStatusGraphql) => void;
   didRecieveNoPlans?: () => void;
-  didFinishedInitialLoading?: () => void;
   didClickCustomerPortal?: () => void;
-}> = ({
-  planSelectHandler,
-  didRecieveNoPlans,
-  didFinishedInitialLoading,
-  didClickCustomerPortal,
-}) => {
+}> = ({ planSelectHandler, didRecieveNoPlans, didClickCustomerPortal }) => {
   const { t } = useTranslation();
   const [currency, setCurrency] = useState<string>("");
   const [currencies, setCurrencies] = useState<string[]>([]);
@@ -40,36 +34,27 @@ const ChoosePlanComponent: FunctionComponent<{
     const _currencies: string[] = [];
     const _recurrenceIntervals: string[] = [];
 
-    if (!loading) {
-      if (
-        paymentOptionsQuery &&
-        paymentOptionsQuery?.getPaymentOptionsAnonymous.plans &&
-        paymentOptionsQuery?.getPaymentOptionsAnonymous.plans.length > 0
-      ) {
-        paymentOptionsQuery.getPaymentOptionsAnonymous.plans.forEach(
-          ({ prices }) => {
-            prices.forEach(({ currency, recurrenceInterval }) => {
-              !_currencies.includes(currency) && _currencies.push(currency);
-              !_recurrenceIntervals.includes(recurrenceInterval) &&
-                _recurrenceIntervals.push(recurrenceInterval);
-            });
-          }
-        );
+    if (paymentOptionsQuery?.getPaymentOptionsAnonymous) {
+      const plans = paymentOptionsQuery.getPaymentOptionsAnonymous.plans || [];
+      if (plans.length > 0) {
+        plans.forEach(({ prices }) => {
+          prices.forEach(({ currency, recurrenceInterval }) => {
+            !_currencies.includes(currency) && _currencies.push(currency);
+            !_recurrenceIntervals.includes(recurrenceInterval) &&
+              _recurrenceIntervals.push(recurrenceInterval);
+          });
+        });
         setCurrency(_currencies[0]);
         setCurrencies(_currencies);
         setRecurrenceInterval(_recurrenceIntervals[0]);
         setRecurrenceIntervals(_recurrenceIntervals);
-
-        if (didFinishedInitialLoading) {
-          didFinishedInitialLoading;
-        }
       } else {
         if (didRecieveNoPlans) {
           didRecieveNoPlans();
         }
       }
     }
-  }, [loading]);
+  }, [paymentOptionsQuery]);
 
   return (
     <>

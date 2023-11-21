@@ -1,5 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { FunctionComponent } from "react";
 import { ChoosePlanComponent } from "../../components/tenant/plan/ChoosePlanComponent";
 import { BaseLayoutWrapperComponent } from "../../components/tenant/TenantLayoutWrapperComponent";
 import { useConfig } from "../../hooks/config-context";
@@ -10,13 +9,8 @@ import { TenantPaymentStatusGraphql } from "../../gql/graphql";
 import { BackendlessService } from "../../utils/BackendlessService";
 
 const PlanScreen: FunctionComponent<{}> = () => {
-  // This is a fix to not show flicker when the chooseUserComponent is loading tenantUsers and redirect if the user has just one
-  const [showContent, setShowContent] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { handoverRoute, debug } = useConfig();
+  const { debug } = useConfig();
   const { t } = useTranslation();
-  const targetUrl = location.state?.targetUrl?.pathname || handoverRoute;
   const { authHttpClient } = useSecureContext();
   const config = useConfig();
 
@@ -37,6 +31,7 @@ const PlanScreen: FunctionComponent<{}> = () => {
         break;
       case false:
       default:
+        log(`The plan selected doesn't require more config. Returning to app`);
         handoverBackToApp();
         break;
     }
@@ -44,10 +39,6 @@ const PlanScreen: FunctionComponent<{}> = () => {
 
   const customerPortalHandler = () => {
     paymentService.redirectToSubscriptionPortal();
-  };
-
-  const onDidFinishInitialLoading = () => {
-    setShowContent(true);
   };
 
   // If there's no plans to show, redirect back to app
@@ -74,7 +65,6 @@ const PlanScreen: FunctionComponent<{}> = () => {
       <ChoosePlanComponent
         planSelectHandler={planSelectHandler}
         didRecieveNoPlans={() => onDidRecieveNoPlans()}
-        didFinishedInitialLoading={() => onDidFinishInitialLoading()}
         didClickCustomerPortal={() => customerPortalHandler()}
       />
     </BaseLayoutWrapperComponent>
