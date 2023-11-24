@@ -2,6 +2,7 @@ import React, { FunctionComponent } from "react";
 import { NblocksButton } from "../../shared/NblocksButton";
 import { ImageComponent } from "../../shared/ImageComponent";
 import { useTranslation } from "react-i18next";
+import { PasskeyLogo } from "./logos/passkey.logo";
 
 type ComponentProps = {
   mode: "login" | "create";
@@ -15,8 +16,6 @@ const PasskeysLoginButtonComponent: FunctionComponent<ComponentProps> = ({
   loading,
 }) => {
   const { t } = useTranslation();
-
-  const logo = "https://www.passkeys.com/assets/passkeys-logo.svg";
 
   const renderText = () => {
     switch (mode) {
@@ -37,8 +36,8 @@ const PasskeysLoginButtonComponent: FunctionComponent<ComponentProps> = ({
         onClick={() => onClick()}
         isLoading={loading}
       >
-        <div style={{ width: 48, height: 48 }}>
-          <ImageComponent src={logo}></ImageComponent>
+        <div className={"mr-3 rounded-lg w-10 h-10 overflow-hidden"}>
+          <PasskeyLogo />
         </div>
         {renderText()}
       </NblocksButton>

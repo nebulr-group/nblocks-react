@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from "react";
 import { NblocksButton } from "../../shared/NblocksButton";
-import { ImageComponent } from "../../shared/ImageComponent";
 import { useTranslation } from "react-i18next";
+import { MicrosoftLogo } from "./logos/microsoft.logo";
 
 type ComponentProps = {
   mode: "login" | "signup";
@@ -14,9 +14,6 @@ const AzureAdSsoButtonComponent: FunctionComponent<ComponentProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
-
-  const azureAdLoginLogo =
-    "https://img.icons8.com/?size=48&id=22989&format=png";
 
   const renderText = () => {
     switch (mode) {
@@ -42,8 +39,8 @@ const AzureAdSsoButtonComponent: FunctionComponent<ComponentProps> = ({
         onClick={() => didClick()}
         isLoading={loading}
       >
-        <div style={{ width: 48, height: 48 }}>
-          <ImageComponent src={azureAdLoginLogo}></ImageComponent>
+        <div className={"mr-3 rounded-lg w-10 h-10 overflow-hidden"}>
+          <MicrosoftLogo />
         </div>
         {renderText()}
       </NblocksButton>
