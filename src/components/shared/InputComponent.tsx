@@ -179,7 +179,7 @@ const InputComponent: FunctionComponent<ConfigObject> = ({
       {label && (
         <label
           htmlFor={name}
-          className={`text-gray-900 mb-1 ${labelClassName}`}
+          className={`text-gray-900 mb-1 ${labelClassName} customizable`}
         >
           {label}
         </label>
@@ -200,7 +200,7 @@ const InputComponent: FunctionComponent<ConfigObject> = ({
             inputError
               ? getInputPadding(errorLabel?.position)
               : getInputPadding(infoLabel?.position)
-          }`}
+          } customizable`}
           disabled={disabled}
           required={required}
           minLength={minLength}

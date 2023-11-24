@@ -55,7 +55,7 @@ const HeadingComponent: FunctionComponent<ConfigObject> = ({
   size,
   style,
 }) => {
-  className = className ? className : "";
+  className = className ? className + " customizable" : "customizable";
   return (
     <>
       {type === "h1" && (

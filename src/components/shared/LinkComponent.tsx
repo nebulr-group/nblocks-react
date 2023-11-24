@@ -51,7 +51,7 @@ const LinkComponent: FunctionComponent<ConfigObject> = ({
           href={to}
           className={`${className}${getLinkTypeStyle(type)}${getDisabledStyle(
             disabled
-          )}${getLinkBaseFontSizeStyle(size)}`}
+          )}${getLinkBaseFontSizeStyle(size)} customizable`}
           target={target}
         >
           {children}
@@ -64,7 +64,7 @@ const LinkComponent: FunctionComponent<ConfigObject> = ({
           reloadDocument={reloadDocument}
           className={`${className}${getLinkTypeStyle(type)}${getDisabledStyle(
             disabled
-          )}${getLinkBaseFontSizeStyle(size)}`}
+          )}${getLinkBaseFontSizeStyle(size)} customizable`}
         >
           {children}
         </Link>

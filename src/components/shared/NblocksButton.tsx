@@ -78,7 +78,7 @@ const NblocksButton: FunctionComponent<ConfigObject> = ({
         buttonTypeStyle,
         buttonPadding,
         `${fullWidth ? " w-full" : ""}`,
-        "flex items-center justify-center"
+        "flex items-center justify-center customizable"
       )}
       disabled={disabled}
       onClick={onClick}
