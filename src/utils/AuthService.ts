@@ -2,7 +2,7 @@ import { AxiosInstance } from "axios";
 import { AuthTenantUserResponseDto } from "../models/auth-tenant-user-response.dto";
 import { LibConfig } from "../models/lib-config";
 import { RouteConfig } from "../routes/AuthRoutes";
-import { OAuthService } from "./OAuthService";
+import { CredentialsConfig, OAuthService } from "./OAuthService";
 import { NblocksStorage } from "./Storage";
 import { AuthenticationResponseJSON, PublicKeyCredentialCreationOptionsJSON, PublicKeyCredentialRequestOptionsJSON, RegistrationResponseJSON } from "@simplewebauthn/typescript-types";
 
@@ -15,7 +15,7 @@ export type UpdateUserProfileArgs = {
 };
 
 export type MfaState = "DISABLED" | "REQUIRED" | "SETUP";
-export type FederationType = "ms-azure-ad" | "google";
+export type FederationType = "ms-azure-ad" | "google" | "saml" | "oidc";
 
 export class AuthService {
   private readonly ENDPOINTS = {
@@ -70,9 +70,9 @@ export class AuthService {
     }
   }
 
-  getFederatedLoginUrl(type: FederationType): string | undefined {
+  getFederatedLoginUrl(type: FederationType, connectionId?: string): string | undefined {
     if (!!this._oauthService) {
-      return this._oauthService.getFederatedLoginUrl(type);
+      return this._oauthService.getFederatedLoginUrl(type, connectionId);
     }
   }
 
@@ -178,14 +178,14 @@ export class AuthService {
 
   async getCredentialsConfig(
     username: string
-  ): Promise<{ hasPassword: boolean }> {
+  ): Promise<CredentialsConfig> {
     if (!!this._oauthService) {
       const response = await this._oauthService.getCredentialsConfig(
         username
       );
       return response;
     } else {
-      return { hasPassword: true }
+      return { hasPassword: true, hasPasskeys: false, federationConnections: [] }
     }
   }
 
