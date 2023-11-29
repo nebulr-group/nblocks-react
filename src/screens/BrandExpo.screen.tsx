@@ -22,6 +22,9 @@ import { TabsComponent } from "../components/shared/TabsComponent";
 import { TableComponent } from "../components/shared/TableComponent";
 import { ColumnDef } from "@tanstack/react-table";
 import { CheckboxComponent } from "../components/shared/CheckboxComponent";
+import { GoogleSsoButtonComponent } from "../components/auth/shared/GoogleSsoButtonComponent";
+import { AzureAdSsoButtonComponent } from "../components/auth/shared/AzureAdSsoButtonComponent";
+import { PasskeysLoginButtonComponent } from "../components/auth/shared/PasskeysLoginButtonComponent";
 
 export function BrandExpoScreen() {
   const [password, setPassword] = useState("");
@@ -340,8 +343,14 @@ export function BrandExpoScreen() {
             </NblocksButton>
           </FormComponent>
         </div>
+        <div className="grid space-y-2 w-1/4">
+          <h1 className="mt-5 text-3xl">Social Login</h1>
+          <PasskeysLoginButtonComponent mode="login" onClick={() => {}} />
+          <GoogleSsoButtonComponent mode="login" onClick={() => {}} />
+          <AzureAdSsoButtonComponent mode="login" onClick={() => {}} />
+        </div>
         <div className="grid">
-          <h1 className="mt-5 text-3xl">Text Comopnent</h1>
+          <h1 className="mt-5 text-3xl">Text Component</h1>
           <TextComponent size={"base"}>This is text component.</TextComponent>
           <TextComponent size={"sm"}>This is text component.</TextComponent>
         </div>

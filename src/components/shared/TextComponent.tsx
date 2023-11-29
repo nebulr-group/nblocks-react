@@ -14,6 +14,7 @@ type ConfigObject = {
   breakType?: "normal" | "words" | "all";
   whitespaceType?: "normal" | "nowrap" | "pre" | "pre-line" | "pre-wrap";
   overflowType?: "turnicate" | "ellipsis" | "clip";
+  customizableClass?: boolean;
 };
 
 /**
@@ -31,6 +32,7 @@ const TextComponent: FunctionComponent<ConfigObject> = ({
   whitespaceType,
   overflowType,
   colorName,
+  customizableClass = true,
 }) => {
   className = className ? className : "";
   return (
@@ -41,7 +43,8 @@ const TextComponent: FunctionComponent<ConfigObject> = ({
         getTextBreakType(breakType),
         getWhitespaceType(whitespaceType),
         getTextOverflowType(overflowType),
-        getTextColor(colorName)
+        getTextColor(colorName),
+        customizableClass && "customizable"
       )}
       style={style}
     >

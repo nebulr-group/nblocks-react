@@ -35,12 +35,18 @@ const AlertComponent: FunctionComponent<ComponentProps> = ({
             size="sm"
             colorName={getTextColor(type)}
             className="font-semibold"
+            customizableClass={false}
           >
             {title}
           </TextComponent>
           <div className="">
             {messages.map((message, i) => (
-              <TextComponent key={i} size="sm" colorName={getTextColor(type)}>
+              <TextComponent
+                key={i}
+                size="sm"
+                colorName={getTextColor(type)}
+                customizableClass={false}
+              >
                 {message}
               </TextComponent>
             ))}
