@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { FunctionComponent, ReactElement } from "react";
 import {
   getCoreRowModel,
   useReactTable,
@@ -16,6 +16,7 @@ interface ReactTableProps<T extends object> {
   columns: ColumnDef<T>[];
   loading?: boolean;
   defaultPageSize?: number;
+  emptyStateContent?: JSX.Element;
 }
 
 /**
@@ -66,6 +67,7 @@ export const TableComponent = <T extends object>({
   columns,
   loading,
   defaultPageSize = 5,
+  emptyStateContent,
 }: ReactTableProps<T>) => {
   const table = useReactTable({
     data: data ?? emptyArray,
@@ -126,21 +128,22 @@ export const TableComponent = <T extends object>({
           </thead>
           {loading && !data ? (
             <LoadingTable />
-          ):(
+          ) : (
             <>
-            {data && table.getRowModel().rows.length > 0 && (
-              <tbody className="bg-white divide-y divide-gray-200">
-                {table.getRowModel().rows.map((row, rIndex) => (
-                  <tr key={row.id}>
-                    {row.getVisibleCells().map((cell, cIndex) => (
-                      <td
-                        key={cell.id}
-                        style={{
-                          width: `${
-                            (cell.column.getSize() / table.getTotalSize()) * 100
-                          }%`,
-                        }}
-                        className={`
+              {data && table.getRowModel().rows.length > 0 && (
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {table.getRowModel().rows.map((row, rIndex) => (
+                    <tr key={row.id}>
+                      {row.getVisibleCells().map((cell, cIndex) => (
+                        <td
+                          key={cell.id}
+                          style={{
+                            width: `${
+                              (cell.column.getSize() / table.getTotalSize()) *
+                              100
+                            }%`,
+                          }}
+                          className={`
                     py-4 px-0 text-sm text-gray-900
                     ${cIndex === 0 ? "pl-4" : ""}
                     ${cIndex === row.getVisibleCells().length - 1 ? "pr-4" : ""}
@@ -157,66 +160,73 @@ export const TableComponent = <T extends object>({
                         : ""
                     }
                   `}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            )}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              )}
             </>
           )}
         </table>
+        <>
+          {table.getRowModel().rows.length === 0 && emptyStateContent && (
+            <>{emptyStateContent}</>
+          )}
+        </>
       </div>
-      <div className="px-6 pb-4 pt-3.5 flex items-center justify-between">
-        <NblocksButton
-          size="lg"
-          type="tertiary"
-          className="hidden md:flex items-center justify-center"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          <ArrowLeftIcon className="h-6 w-6 inline-block mr-2" />
-          {"Previous"}
-        </NblocksButton>
-        <NblocksButton
-          type="tertiary"
-          className="md:hidden items-center justify-center p-2"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          <ArrowLeftIcon className="h-6 w-6 inline-block" />
-        </NblocksButton>
-        <span className="flex items+center gap-1">
-          <p>Page</p>
-          <strong>
-            {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
-          </strong>
-        </span>
-        <NblocksButton
-          type="tertiary"
-          size={"lg"}
-          className="hidden md:flex items-center justify-center"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          {"Next"}
-          <ArrowRightIcon className="h-6 w-6 inline-block md:ml-2" />
-        </NblocksButton>
-        <NblocksButton
-          type="tertiary"
-          className="md:hidden items-center justify-center p-2"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          <ArrowRightIcon className="h-6 w-6 inline-block" />
-        </NblocksButton>
-      </div>
+      {table.getRowModel().rows.length !== 0 && (
+        <div className="px-6 pb-4 pt-3.5 flex items-center justify-between">
+          <NblocksButton
+            size="lg"
+            type="tertiary"
+            className="hidden md:flex items-center justify-center"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <ArrowLeftIcon className="h-6 w-6 inline-block mr-2" />
+            {"Previous"}
+          </NblocksButton>
+          <NblocksButton
+            type="tertiary"
+            className="md:hidden items-center justify-center p-2"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <ArrowLeftIcon className="h-6 w-6 inline-block" />
+          </NblocksButton>
+          <span className="flex items+center gap-1">
+            <p>Page</p>
+            <strong>
+              {table.getState().pagination.pageIndex + 1} of{" "}
+              {table.getPageCount()}
+            </strong>
+          </span>
+          <NblocksButton
+            type="tertiary"
+            size={"lg"}
+            className="hidden md:flex items-center justify-center"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            {"Next"}
+            <ArrowRightIcon className="h-6 w-6 inline-block md:ml-2" />
+          </NblocksButton>
+          <NblocksButton
+            type="tertiary"
+            className="md:hidden items-center justify-center p-2"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            <ArrowRightIcon className="h-6 w-6 inline-block" />
+          </NblocksButton>
+        </div>
+      )}
     </>
   );
 };
