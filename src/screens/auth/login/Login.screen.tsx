@@ -8,6 +8,7 @@ import { AuthLayoutWrapperComponent } from "../../../components/auth/AuthLayoutW
 import { FederationType, MfaState } from "../../../utils/AuthService";
 import { useSecureContext } from "../../../hooks/secure-http-context";
 import { useTranslation } from "react-i18next";
+import { FederationConnection } from "../../../utils/OAuthService";
 
 export function LoginScreen() {
   const { t } = useTranslation();
@@ -63,6 +64,14 @@ export function LoginScreen() {
     window.location.href = url!;
   };
 
+  const onDidClickFederationConnection = (connection: FederationConnection) => {
+    const url = authService.getFederatedLoginUrl(
+      connection.type,
+      connection.id
+    );
+    window.location.href = url!;
+  };
+
   const log = (msg: string) => {
     if (debug) {
       console.log(msg);
@@ -76,8 +85,9 @@ export function LoginScreen() {
     >
       <LoginComponent
         initalError={initalError}
-        didLogin={(mfa, tenantUserId) => onDidLogin(mfa, tenantUserId)}
-        didClickFederatedLogin={(type) => onDidClickFederatedLogin(type)}
+        didLogin={onDidLogin}
+        didClickFederatedLogin={onDidClickFederatedLogin}
+        didClickFederationConnection={onDidClickFederationConnection}
       />
     </AuthLayoutWrapperComponent>
   );

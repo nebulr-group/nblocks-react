@@ -113,10 +113,10 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
   };
 
   const renderSignupAlternatives = () => {
-    const hasAlternative = googleLogin || azureAdLogin;
+    const hasAlternatives = googleLogin || azureAdLogin;
     return (
       <>
-        {hasAlternative && (
+        {hasAlternatives && (
           <div className="py-2">
             <DividerComponent text={t("Or")} />
           </div>

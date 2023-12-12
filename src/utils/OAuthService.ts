@@ -15,6 +15,10 @@ export type UpdateUserProfileArgs = {
   consentsToPrivacyPolicy?: boolean;
 };
 
+export type FederationConnectionType = 'saml' | 'oidc';
+export interface FederationConnection { id: string, type: FederationConnectionType, name: string }
+export interface CredentialsConfig { hasPassword: boolean, hasPasskeys: boolean, federationConnections: FederationConnection[] }
+
 export type OpenIDClaim = {
   iat: number;
   exp: number;
@@ -136,8 +140,15 @@ export class OAuthService {
     }
   }
 
-  getFederatedLoginUrl(type: FederationType): string {
-    return `${this.oAuthBaseURI}${this.AUTH_API_ENDPOINTS.federatedLogin}/${type}/login`;
+  getFederatedLoginUrl(type: FederationType, connectionId?: string): string {
+    switch (type) {
+      case 'saml':
+      case 'oidc':
+        return `${this.oAuthBaseURI}${this.AUTH_API_ENDPOINTS.federatedLogin}/${type}/login/${connectionId}`;
+
+      default:
+        return `${this.oAuthBaseURI}${this.AUTH_API_ENDPOINTS.federatedLogin}/${type}/login`;
+    }
   }
 
   getFederatedSignupUrl(type: FederationType): string {
@@ -237,8 +248,8 @@ export class OAuthService {
 
   async getCredentialsConfig(
     username: string
-  ): Promise<{ hasPassword: boolean }> {
-    const response = await this.httpClient.post<{ hasPassword: boolean }>(
+  ): Promise<CredentialsConfig> {
+    const response = await this.httpClient.post<CredentialsConfig>(
       this.AUTH_API_ENDPOINTS.credentialsConfig,
       {
         username,
@@ -246,8 +257,7 @@ export class OAuthService {
       { baseURL: this.oAuthBaseURI, withCredentials: true }
     );
 
-    const { hasPassword } = response.data;
-    return { hasPassword };
+    return response.data;
   }
 
   async authenticate(

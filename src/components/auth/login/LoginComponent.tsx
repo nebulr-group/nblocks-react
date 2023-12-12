@@ -14,42 +14,44 @@ import { useConfig } from "../../../hooks/config-context";
 import { FederationType, MfaState } from "../../../utils/AuthService";
 import { AlertComponent } from "../../shared/AlertComponent";
 import { UnauthenticatedError } from "../../../utils/errors/UnauthenticatedError";
-import { useApp } from "../../../hooks/app-context";
-import { AzureAdSsoButtonComponent } from "../shared/AzureAdSsoButtonComponent";
-import { GoogleSsoButtonComponent } from "../shared/GoogleSsoButtonComponent";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
-import {
-  browserSupportsWebAuthn,
-  browserSupportsWebAuthnAutofill,
-  startAuthentication,
-} from "@simplewebauthn/browser";
-import { PasskeysLoginButtonComponent } from "../shared/PasskeysLoginButtonComponent";
-import { DividerComponent } from "../../shared/DividerComponent";
+import { startAuthentication } from "@simplewebauthn/browser";
+import { FederationConnection } from "../../../utils/OAuthService";
+import { LoginAlternativesComponent } from "./LoginAlternativesComponent";
+import { FederationConnectionsComponent } from "./FederationConnectionsComponent";
 
 type ComponentProps = {
   initalError?: boolean;
   didLogin: (mfa: MfaState, tenantUserId?: string) => void;
   didClickFederatedLogin: (type: FederationType) => void;
+  didClickFederationConnection: (connection: FederationConnection) => void;
 };
 
-type CredentialsInputMode = "USERNAME" | "PASSWORD" | "RESET-PASSWORD";
+type CredentialsInputMode =
+  | "USERNAME"
+  | "PASSWORD"
+  | "FEDERATION-CONNECTIONS"
+  | "RESET-PASSWORD";
 
 const LoginComponent: FunctionComponent<ComponentProps> = ({
   initalError,
   didLogin,
   didClickFederatedLogin,
+  didClickFederationConnection,
 }) => {
   const { authService } = useSecureContext();
   const [username, setUsername] = useState("");
   const [credentialsInputMode, setCredentialsInputMode] =
     useState<CredentialsInputMode>("USERNAME");
+  const [federationConnections, setFederationConnections] = useState<
+    FederationConnection[]
+  >([]);
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isloading, setIsLoading] = useState(false);
-  const { tenantSignup, authLegacy, demoSSO } = useConfig();
-  const { azureAdSsoEnabled, googleSsoEnabled, passkeysEnabled } = useApp();
+  const { tenantSignup } = useConfig();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -61,23 +63,6 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
     "There was an error when logging in. Are you sure you already have signed up for an account?"
   );
 
-  const passkeysLogin =
-    !authLegacy && passkeysEnabled && browserSupportsWebAuthn();
-
-  // Show SSO Login btn if we have it enabled or demoSSO is true
-  const azureAdLogin = !authLegacy && (azureAdSsoEnabled || demoSSO);
-  const googleLogin = !authLegacy && (googleSsoEnabled || demoSSO);
-
-  useEffect(() => {
-    if (passkeysLogin) {
-      browserSupportsWebAuthnAutofill().then((support) => {
-        if (support) {
-          passkeysAuthenticate(true);
-        }
-      });
-    }
-  }, []);
-
   useEffect(() => {
     if (initalError) {
       setErrorMsg(initialErrorMsg);
@@ -88,7 +73,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
    * Password manager plugins like 1Password can interfare with native browser webauthn autofill
    * @param autofill
    */
-  const passkeysAuthenticate = async (autofill: boolean) => {
+  const onDidPasskeysAuthenticate = async (autofill: boolean) => {
     if (!autofill) {
       setIsLoading(true);
     }
@@ -159,11 +144,17 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
   };
 
   const checkCredentialsConfig = async () => {
-    const { hasPassword } = await authService.getCredentialsConfig(username);
-    if (hasPassword) {
-      setCredentialsInputMode("PASSWORD");
+    const { hasPassword, federationConnections } =
+      await authService.getCredentialsConfig(username);
+    if (federationConnections.length > 0) {
+      setFederationConnections(federationConnections);
+      setCredentialsInputMode("FEDERATION-CONNECTIONS");
     } else {
-      setCredentialsInputMode("RESET-PASSWORD");
+      if (hasPassword) {
+        setCredentialsInputMode("PASSWORD");
+      } else {
+        setCredentialsInputMode("RESET-PASSWORD");
+      }
     }
   };
 
@@ -178,59 +169,6 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
   const loginMiddleware = (type: FederationType) => {
     setIsLoading(true);
     didClickFederatedLogin(type);
-  };
-
-  const renderPasskeysLogin = () => {
-    if (passkeysLogin) {
-      return (
-        <PasskeysLoginButtonComponent
-          mode="login"
-          onClick={() => passkeysAuthenticate(false)}
-        ></PasskeysLoginButtonComponent>
-      );
-    }
-  };
-
-  const renderAzureAd = () => {
-    if (azureAdLogin) {
-      return (
-        <AzureAdSsoButtonComponent
-          mode="login"
-          onClick={() => loginMiddleware("ms-azure-ad")}
-        ></AzureAdSsoButtonComponent>
-      );
-    }
-  };
-
-  const renderGoogle = () => {
-    if (googleLogin) {
-      return (
-        <GoogleSsoButtonComponent
-          mode="login"
-          onClick={() => loginMiddleware("google")}
-        ></GoogleSsoButtonComponent>
-      );
-    }
-  };
-
-  const renderLoginAlternatives = () => {
-    if (credentialsInputMode === "USERNAME") {
-      const hasAlternative = passkeysLogin || googleLogin || azureAdLogin;
-      return (
-        <>
-          {hasAlternative && (
-            <div className="py-2">
-              <DividerComponent text={t("Or")} />
-            </div>
-          )}
-          <div className="space-y-2">
-            {renderPasskeysLogin()}
-            {renderGoogle()}
-            {renderAzureAd()}
-          </div>
-        </>
-      );
-    }
   };
 
   const renderCredentialsInput = () => {
@@ -321,7 +259,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
         className="space-y-6 max-w-sm w-full"
       >
         {renderCredentialsInput()}
-        <div>
+        {credentialsInputMode !== "FEDERATION-CONNECTIONS" && (
           <NblocksButton
             submit={true}
             disabled={getSubmitButtonDisabled()}
@@ -332,8 +270,19 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
           >
             {getSubmitButtonText()}
           </NblocksButton>
-        </div>
-        {renderLoginAlternatives()}
+        )}
+        {credentialsInputMode === "USERNAME" && (
+          <LoginAlternativesComponent
+            didClickPasskeysAuthenticate={onDidPasskeysAuthenticate}
+            didClickSocialLogin={loginMiddleware}
+          />
+        )}
+        {credentialsInputMode === "FEDERATION-CONNECTIONS" && (
+          <FederationConnectionsComponent
+            connections={federationConnections}
+            didClickConnection={didClickFederationConnection}
+          />
+        )}
       </form>
       {credentialsInputMode != "USERNAME" && (
         <div className="mt-8">

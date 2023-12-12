@@ -159,6 +159,7 @@ export type TaxGraphql = {
 export type Tenant = {
   __typename?: 'Tenant';
   createdAt?: Maybe<Scalars['String']>;
+  federationConnection?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   locale?: Maybe<Scalars['String']>;
   logo?: Maybe<Scalars['String']>;
@@ -178,6 +179,7 @@ export type TenantAnonymous = {
 };
 
 export type TenantInput = {
+  federationConnection?: InputMaybe<Scalars['String']>;
   locale?: InputMaybe<Scalars['String']>;
   logo?: InputMaybe<Scalars['String']>;
   mfa?: InputMaybe<Scalars['Boolean']>;
