@@ -39,6 +39,7 @@ const SignupScreen: FunctionComponent<{}> = () => {
     <AuthLayoutWrapperComponent
       heading={didSignup ? t("Check your email") : t("Create an account")}
       subHeading={didSignup ? `We sent an invite link to ${email}.` : ""}
+      showPrivacyPolicy={didSignup}
     >
       {renderChild()}
     </AuthLayoutWrapperComponent>

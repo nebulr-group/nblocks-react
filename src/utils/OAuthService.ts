@@ -5,6 +5,7 @@ import { GetKeyFunction } from "jose/dist/types/types";
 import { LibConfig } from "../models/lib-config";
 import { FederationType, MfaState } from "./AuthService";
 import { AuthTenantUserResponseDto } from "../models/auth-tenant-user-response.dto";
+import { PublicKeyCredentialCreationOptionsJSON, RegistrationResponseJSON, PublicKeyCredentialRequestOptionsJSON, AuthenticationResponseJSON } from '@simplewebauthn/typescript-types'
 
 //FIXME centralize models
 export type UpdateUserProfileArgs = {
@@ -13,6 +14,10 @@ export type UpdateUserProfileArgs = {
   phoneNumber?: string;
   consentsToPrivacyPolicy?: boolean;
 };
+
+export type FederationConnectionType = 'saml' | 'oidc';
+export interface FederationConnection { id: string, type: FederationConnectionType, name: string }
+export interface CredentialsConfig { hasPassword: boolean, hasPasskeys: boolean, federationConnections: FederationConnection[] }
 
 export type OpenIDClaim = {
   iat: number;
@@ -63,7 +68,9 @@ export type AccesTokenClaim = {
 export class OAuthService {
   private readonly OAUTH_ENDPOINTS = {
     authorize: "/authorize",
+    authorizeShorthand: "/url/login",
     token: "/token",
+    tokenCodeShorthand: "/token/code",
     refresh: "/token",
     jwks: "/.well-known/jwks.json",
   };
@@ -71,6 +78,7 @@ export class OAuthService {
   private readonly AUTH_API_ENDPOINTS = {
     federatedLogin: "/federated",
     authenticate: "/auth/authenticate",
+    credentialsConfig: "/auth/credentialsConfig",
     tenantUsers: "/auth/tenantUsers",
     handover: "/auth/chooseTenantUser",
     logout: "/auth/logout",
@@ -78,6 +86,10 @@ export class OAuthService {
     startMfaUserSetup: "/auth/startMfaUserSetup",
     finishMfaUserSetup: "/auth/finishMfaUserSetup",
     resetUserMfaSetup: "/auth/resetUserMfaSetup",
+    passkeysRegistrationOptions: "/auth/passkeys/registration-options",
+    passkeysVerifyRegistration: "/auth/passkeys/verify-registration",
+    passkeysAuthenticationOptions: "/auth/passkeys/authentication-options",
+    passkeysVerifyAuthentication: "/auth/passkeys/verify-authentication",
   };
 
   private _accessTokenExpires?: number;
@@ -128,8 +140,15 @@ export class OAuthService {
     }
   }
 
-  getFederatedLoginUrl(type: FederationType): string {
-    return `${this.oAuthBaseURI}${this.AUTH_API_ENDPOINTS.federatedLogin}/${type}/login`;
+  getFederatedLoginUrl(type: FederationType, connectionId?: string): string {
+    switch (type) {
+      case 'saml':
+      case 'oidc':
+        return `${this.oAuthBaseURI}${this.AUTH_API_ENDPOINTS.federatedLogin}/${type}/login/${connectionId}`;
+
+      default:
+        return `${this.oAuthBaseURI}${this.AUTH_API_ENDPOINTS.federatedLogin}/${type}/login`;
+    }
   }
 
   getFederatedSignupUrl(type: FederationType): string {
@@ -144,19 +163,48 @@ export class OAuthService {
         OAuthService.getRefreshToken(),
       ];
 
-      if (openIdToken) {
-        const decoded = await this._verifyToken(openIdToken);
-        this._idToken = decoded.payload as OpenIDClaim;
+      try {
+        if (refreshToken) {
+          const decoded = await this._verifyToken(refreshToken);
+          this._refreshTokenExpires = decoded.payload.exp;
+        }
+
+        if (openIdToken) {
+          const decoded = await this._verifyToken(openIdToken);
+          this._idToken = decoded.payload as OpenIDClaim;
+        }
+
+        if (accessToken) {
+          const decoded = await this._verifyToken(accessToken);
+          this._accessTokenExpires = decoded.payload.exp;
+        }
+      } catch (error) {
+        if (this.debug) {
+          console.error(`OAuthService: Encountered error when restoring tokens from localStorage`, error);
+        }
+
+        if (this._refreshTokenExpires) {
+          // We have a valid refresh token, so let's try to refresh the access and ID token.
+          if (this.debug) {
+            console.log(`OAuthService: Recovering from error by Refreshing tokens since refreshToken exists`);
+          }
+          await this.refreshTokens();
+        } else {
+          console.log(`OAuthService: No refreshToken exists. Waiting for observers to understand the user is unauthenticated`);
+          return;
+        }
+      } finally {
+        if ((!this._accessTokenExpires || !this._idToken) && this._refreshTokenExpires) {
+          // We have a valid refresh token, so let's try to refresh the access and ID token.
+          if (this.debug) {
+            console.log(`OAuthService: Some tokens could not be restored. Refreshing tokens since refreshToken exists`);
+          }
+          await this.refreshTokens();
+        }
       }
 
-      if (accessToken) {
-        const decoded = await this._verifyToken(accessToken);
-        this._accessTokenExpires = decoded.payload.exp;
-      }
-
-      if (refreshToken) {
-        const decoded = await this._verifyToken(refreshToken);
-        this._refreshTokenExpires = decoded.payload.exp;
+      if (this.debug) {
+        console.log(`OAuthService: Did try to restore tokens from Local storage and successfully restored [${this._refreshTokenExpires ? 'refreshToken' : ''} ${this._accessTokenExpires ? 'accessToken' : ''} ${this._idToken ? 'idToken' : ''}]`);
       }
 
       // Start scheduler
@@ -183,10 +231,11 @@ export class OAuthService {
     return false;
   }
 
-  /** TODO change to simplified login url? auth-api/url/login/:appID */
-  getAuthorizeUrl(state?: string): string {
-    const url = `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.authorize}?response_type=code&client_id=${this.appId}&redirect_uri=${this.redirectUri}&scope=${this.OAUTH_SCOPES}`;
-    return state ? `${url}&state=${state}` : url;
+  getAuthorizeUrl(args: { useShortHand?: boolean, state?: string }): string {
+    const { useShortHand, state } = args;
+    const url = useShortHand ? `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.authorizeShorthand}/${this.appId}${state ? `?state=${state}` : ""}` : `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.authorize}?response_type=code&client_id=${this.appId}&redirect_uri=${this.redirectUri}&scope=${this.OAUTH_SCOPES}${state ? `&state=${state}` : ""}`;
+
+    return url;
   }
 
   getHandoverUrl(tenantUserId?: string): string {
@@ -195,6 +244,20 @@ export class OAuthService {
 
   getIdToken(): OpenIDClaim | undefined {
     return this._idToken;
+  }
+
+  async getCredentialsConfig(
+    username: string
+  ): Promise<CredentialsConfig> {
+    const response = await this.httpClient.post<CredentialsConfig>(
+      this.AUTH_API_ENDPOINTS.credentialsConfig,
+      {
+        username,
+      },
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+
+    return response.data;
   }
 
   async authenticate(
@@ -213,6 +276,50 @@ export class OAuthService {
         username,
         password,
       },
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+
+    const { session, mfaState, tenantUserId } = response.data;
+
+    if (!session) {
+      throw new Error("Wrong credentials");
+    }
+
+    return { mfaState, tenantUserId };
+  }
+
+  async getPasskeysRegistrationOptions(forgotPasswordToken: string): Promise<PublicKeyCredentialCreationOptionsJSON> {
+    const result = await this.httpClient.get<PublicKeyCredentialCreationOptionsJSON>(
+      `${this.AUTH_API_ENDPOINTS.passkeysRegistrationOptions}?forgotPasswordToken=${forgotPasswordToken}`,
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+    return result.data;
+  }
+
+  async passkeysVerifyRegistration(args: RegistrationResponseJSON, forgotPasswordToken: string): Promise<{ verified: boolean }> {
+    const result = await this.httpClient.post<{ verified: boolean }>(
+      `${this.AUTH_API_ENDPOINTS.passkeysVerifyRegistration}?forgotPasswordToken=${forgotPasswordToken}`, args,
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+    return result.data;
+  }
+
+  async getPasskeysAuthenticationOptions(): Promise<PublicKeyCredentialRequestOptionsJSON> {
+    const result = await this.httpClient.get<PublicKeyCredentialRequestOptionsJSON>(
+      this.AUTH_API_ENDPOINTS.passkeysAuthenticationOptions,
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+    return result.data;
+  }
+
+  async passkeysVerifyAuthentication(args: AuthenticationResponseJSON): Promise<{ mfaState: MfaState; tenantUserId?: string }> {
+    const response = await this.httpClient.post<{
+      session: string;
+      expiresIn: number;
+      mfaState: MfaState;
+      tenantUserId?: string;
+    }>(
+      this.AUTH_API_ENDPOINTS.passkeysVerifyAuthentication, args,
       { baseURL: this.oAuthBaseURI, withCredentials: true }
     );
 
@@ -272,6 +379,15 @@ export class OAuthService {
     return response.data;
   }
 
+  /** Logout via Auth API, this also removes current OAuth ctx */
+  /** User should initiate a new Oauth login flow after */
+  async logout(): Promise<void> {
+    await this.httpClient.get<void>(
+      this.AUTH_API_ENDPOINTS.logout,
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+  }
+
   /**
    * JOSE methods throws Errors
    * @param token
@@ -289,8 +405,26 @@ export class OAuthService {
     return result;
   }
 
-  async getTokens(code: string): Promise<boolean> {
-    const response = await this.httpClient.post<{
+  /**
+   *
+   * @param code 
+   * @param useShortHand used by cloud views when redirectUri is default
+   * @returns 
+   */
+  async getTokens(code: string, useShortHand?: boolean): Promise<boolean> {
+    const response = useShortHand ? await this.httpClient.post<{
+      access_token: string;
+      refresh_token: string;
+      token_type: string;
+      expiresIn: number;
+      id_token?: string;
+    }>(
+      `${this.OAUTH_ENDPOINTS.tokenCodeShorthand}/${this.appId}`,
+      {
+        code,
+      },
+      { baseURL: this.oAuthBaseURI }
+    ) : await this.httpClient.post<{
       access_token: string;
       refresh_token: string;
       token_type: string;
@@ -344,6 +478,7 @@ export class OAuthService {
     if (this._accessTokenExpires) {
       const expiresInMs = this._accessTokenExpires * 1000 - Date.now();
       const threshold = expiresInMs * 0.8;
+      this.log(`OAuthService: Will schedule refresher`);
       this.log(
         `AccessToken expires in ${expiresInMs / 1000
         } seconds. Therefore we refresh it after ${threshold / 1000} seconds`
@@ -352,6 +487,10 @@ export class OAuthService {
         await this.refreshTokens();
         this.setRefreshTokenScheduler();
       }, threshold);
+    } else {
+      if (this.debug) {
+        console.log(`OAuthService: Will not schedule refresher since there's no accessToken`);
+      }
     }
   }
 
@@ -415,7 +554,7 @@ export class OAuthService {
   }
 
   static async hasFullAuthContext(): Promise<boolean> {
-    return !!this.getAccessToken() && !!this.getIDToken();
+    return !!this.getRefreshToken(); //!!this.getAccessToken() && !!this.getIDToken();
   }
   // Setters
 

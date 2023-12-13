@@ -1,0 +1,32 @@
+query GetTenantPaymentDetails {
+  getTenantPaymentDetails {
+    status {
+      shouldSelectPlan
+      shouldSetupPayments
+      paymentsEnabled
+      provider
+    }
+    details {
+      plan {
+        id
+        name
+        key
+        description
+        trial
+        trialDays
+        prices {
+          amount
+          currency
+          recurrenceInterval
+        }
+      }
+      price {
+        amount
+        currency
+        recurrenceInterval
+      }
+      trial
+      trialDaysLeft
+    }
+  }
+}

@@ -36,19 +36,17 @@ const ListBoxComponent: FunctionComponent<ConfigObject> = ({
         >
           {items.map((item, index) => {
             return (
-              <>
-                <Listbox.Option
-                  key={index}
-                  value={item}
-                  className={(active) =>
-                    `relative cursor-default select-none py-2 pl-10 pr-4 hover:bg-gray-100 ${
-                      active ? "text-gray-900" : "text-gray-900"
-                    }`
-                  }
-                >
-                  {item}
-                </Listbox.Option>
-              </>
+              <Listbox.Option
+                key={index}
+                value={item}
+                className={(active) =>
+                  `relative cursor-default select-none py-2 pl-10 pr-4 hover:bg-gray-100 ${
+                    active ? "text-gray-900" : "text-gray-900"
+                  }`
+                }
+              >
+                {item}
+              </Listbox.Option>
             );
           })}
         </Listbox.Options>

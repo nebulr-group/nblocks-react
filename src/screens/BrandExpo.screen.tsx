@@ -17,6 +17,14 @@ import { CheckCircleIcon, KeyIcon } from "@heroicons/react/20/solid";
 import { NBPlanAccessControlComponent } from "../components/shared/access-control/PlanAccessControllComponent";
 import { NBRoleAccessControlComponent } from "../components/shared/access-control/RoleAccessControllComponent";
 import { NBAccessControlComponent } from "../components/shared/access-control/AccessControllComponent";
+import { useAuth } from "../hooks/auth-context";
+import { TabsComponent } from "../components/shared/TabsComponent";
+import { TableComponent } from "../components/shared/TableComponent";
+import { ColumnDef } from "@tanstack/react-table";
+import { CheckboxComponent } from "../components/shared/CheckboxComponent";
+import { GoogleSsoButtonComponent } from "../components/auth/shared/GoogleSsoButtonComponent";
+import { AzureAdSsoButtonComponent } from "../components/auth/shared/AzureAdSsoButtonComponent";
+import { PasskeysLoginButtonComponent } from "../components/auth/shared/PasskeysLoginButtonComponent";
 
 export function BrandExpoScreen() {
   const [password, setPassword] = useState("");
@@ -25,8 +33,47 @@ export function BrandExpoScreen() {
   const [enabled, setEnabled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
+  const { currentUser } = useAuth();
+
   const image =
     "https://cdn.shopify.com/s/files/1/0980/9736/articles/jessica-felicio-_cvwXhGqG-o-unsplash.jpg?v=1595591981";
+
+  type Item = {
+    name: string;
+    price: number;
+    quantity: number;
+  };
+
+  const tableMockCols: ColumnDef<Item>[] = [
+    {
+      header: "Name",
+      cell: (row) => row.renderValue(),
+      accessorKey: "name",
+    },
+    {
+      header: "Price",
+      cell: (row) => row.renderValue(),
+      accessorKey: "price",
+    },
+    {
+      header: "Quantity",
+      cell: (row) => row.renderValue(),
+      accessorKey: "quantity",
+    },
+  ];
+
+  const tableMockData = () => {
+    const items = [];
+    for (let i = 0; i < 5; i++) {
+      items.push({
+        id: i,
+        name: `Item ${i}`,
+        price: 100,
+        quantity: 1,
+      });
+    }
+    return items;
+  };
 
   return (
     <>
@@ -281,6 +328,11 @@ export function BrandExpoScreen() {
               onChange={(event) => setPassword(event.target.value)}
               value={password}
             />
+            <CheckboxComponent
+              label="Accept"
+              sublabel=" terms and conditions"
+              name="checkbox"
+            />
             <NblocksButton
               submit={true}
               type={"tertiary"}
@@ -291,8 +343,14 @@ export function BrandExpoScreen() {
             </NblocksButton>
           </FormComponent>
         </div>
+        <div className="grid space-y-2 w-1/4">
+          <h1 className="mt-5 text-3xl">Social Login</h1>
+          <PasskeysLoginButtonComponent mode="login" onClick={() => {}} />
+          <GoogleSsoButtonComponent mode="login" onClick={() => {}} />
+          <AzureAdSsoButtonComponent mode="login" onClick={() => {}} />
+        </div>
         <div className="grid">
-          <h1 className="mt-5 text-3xl">Text Comopnent</h1>
+          <h1 className="mt-5 text-3xl">Text Component</h1>
           <TextComponent size={"base"}>This is text component.</TextComponent>
           <TextComponent size={"sm"}>This is text component.</TextComponent>
         </div>
@@ -335,6 +393,13 @@ export function BrandExpoScreen() {
           ></TogglerComponent>
         </div>
         <div className="grid">
+          <h1 className="mt-5 text-3xl">Tabs Component</h1>
+          <TabsComponent
+            categories={["Tab1", "Tab2", "Tab3"]}
+            onChange={console.log}
+          ></TabsComponent>
+        </div>
+        <div className="grid">
           <h1 className="mt-5 text-3xl">Modal Component</h1>
           <div>
             <NblocksButton
@@ -350,6 +415,7 @@ export function BrandExpoScreen() {
               isOpen={isOpen}
               setIsOpen={setIsOpen}
               heading={"Reset Password"}
+              width="5xl"
               description={
                 "Do you want to send a reset password link to Candice Wu?"
               }
@@ -402,19 +468,27 @@ export function BrandExpoScreen() {
             ]}
           />
         </div>
+        {currentUser?.authenticated && (
+          <div className="w-full">
+            <h1 className="mt-5 text-3xl">User List Component</h1>
+            <UserListTableComponent />
+          </div>
+        )}
+        <h1 className="mt-5 text-3xl">Table</h1>
         <div className="w-full">
-          <h1 className="mt-5 text-3xl">User List Component</h1>
-          <UserListTableComponent />
+          <TableComponent columns={tableMockCols} data={tableMockData()} />
         </div>
       </div>
       <h1 className="mt-5 text-3xl">Role Access control</h1>
       <table>
         <thead>
-          <th>OWNER</th>
-          <th>ADMIN</th>
-          <th>MANAGER</th>
-          <th>VIEWER</th>
-          <th>OWNER or ADMIN</th>
+          <tr>
+            <th>OWNER</th>
+            <th>ADMIN</th>
+            <th>MANAGER</th>
+            <th>VIEWER</th>
+            <th>OWNER or ADMIN</th>
+          </tr>
         </thead>
         <tbody>
           <tr>
@@ -464,11 +538,13 @@ export function BrandExpoScreen() {
       <h1 className="mt-5 text-3xl">Plan Access control</h1>
       <table>
         <thead>
-          <th>FREEMIUM</th>
-          <th>ESSENTIAL</th>
-          <th>TEAM</th>
-          <th>BASIC</th>
-          <th>TEAM or BASIC</th>
+          <tr>
+            <th>FREEMIUM</th>
+            <th>ESSENTIAL</th>
+            <th>TEAM</th>
+            <th>BASIC</th>
+            <th>TEAM or BASIC</th>
+          </tr>
         </thead>
         <tbody>
           <tr>

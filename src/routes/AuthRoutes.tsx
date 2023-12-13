@@ -35,16 +35,9 @@ const RouteConfig: NavigationConfig = {
     onboardUserScreen: "/onboard/user",
     onboardTenantScreen: "/onboard/tenant",
   },
-  setup: {
-    signupScreen: "/setup/signup",
-    configScreen: "/setup/config",
-  },
   tenant: {
     signupScreen: "/auth/signup",
     planScreen: "/tenant/plan",
-    payment: "/tenant/payment",
-    paymentCancel: "/tenant/payment/cancel",
-    paymentSuccess: "/tenant/payment/success",
   },
   user: {
     list: "/user/list",
@@ -65,12 +58,7 @@ const AuthRoutes = () => {
       <Route path="set-password/:token" element={<SetPasswordScreen />}></Route>
       <Route path="choose-user" element={<ChooseUserScreen />}></Route>
       <Route path="oauth-callback" element={<CallbackScreen />}></Route>
-      {tenantSignup && (
-        <Route path="signup/:planName" element={<SignupScreen />}></Route>
-      )}
-      {tenantSignup && (
-        <Route path="signup/" element={<SignupScreen />}></Route>
-      )}
+      {tenantSignup && <Route path="signup" element={<SignupScreen />}></Route>}
       <Route path="mfa">
         <Route path="required" element={<RequireMfaScreen />}></Route>
         <Route path="recover" element={<RecoverMfaScreen />}></Route>

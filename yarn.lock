@@ -1667,15 +1667,22 @@
   resolved "https://registry.yarnpkg.com/@repeaterjs/repeater/-/repeater-3.0.4.tgz#a04d63f4d1bf5540a41b01a921c9a7fddc3bd1ca"
   integrity sha512-AW8PKd6iX3vAZ0vA43nOUOnbq/X5ihgU+mSXXqunMkeQADGiqw/PY0JNeYtD5sr0PAy51YPgAPbDoeapv9r8WA==
 
+"@simplewebauthn/browser@^8.0.2":
+  version "8.0.2"
+  resolved "https://registry.yarnpkg.com/@simplewebauthn/browser/-/browser-8.0.2.tgz#a46497084a79c9504cedf0fdbec4f5b13d7ffb67"
+  integrity sha512-VZ/PZuRErAP2P95f3l1do9XcyB4tSwuSFPSaPCB/YTFQ+/IuTdBv5j44KG1fLxHF3CI8IPyHAmD5//17GCaxLg==
+  dependencies:
+    "@simplewebauthn/typescript-types" "^8.0.0"
+
+"@simplewebauthn/typescript-types@^8.0.0":
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/@simplewebauthn/typescript-types/-/typescript-types-8.0.0.tgz#1698a7228aba880c5c1deba1f13a4f9fd8851cb3"
+  integrity sha512-d7Izb2H+LZJteXMkS8DmpAarD6mZdpIOu/av/yH4/u/3Pd6DKFLyBM3j8BMmUvUqpzvJvHARNrRfQYto58mtTQ==
+
 "@sinclair/typebox@^0.24.1":
   version "0.24.51"
   resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.24.51.tgz#645f33fe4e02defe26f2f5c0410e1c094eac7f5f"
   integrity sha512-1P1OROm/rdubP5aFDSZQILU0vrLCJ4fvHt6EoqHEM+2D/G5MK3bIaymUKLit8Js9gbns5UyJnkP/TZROLw4tUA==
-
-"@stripe/stripe-js@^1.44.1":
-  version "1.44.1"
-  resolved "https://registry.yarnpkg.com/@stripe/stripe-js/-/stripe-js-1.44.1.tgz#376fdbed2b394c84deaa2041b8029b97e7eab3a7"
-  integrity sha512-DKj3U6tS+sCNsSXsoZbOl5gDrAVD3cAZ9QCiVSykLC3iJo085kkmw/3BAACRH54Bq2bN34yySuH6G1SLh2xHXA==
 
 "@tanstack/react-table@^8.5.21":
   version "8.5.22"

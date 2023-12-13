@@ -1,6 +1,8 @@
-mutation CreateUsers($userNames:[String!]!){
-  createUsers(userNames:$userNames){
+mutation CreateUsers($userNames: [String!]!) {
+  createUsers(userNames: $userNames) {
     id
+    firstName
+    lastName
     fullName
     email
     username
@@ -8,6 +10,6 @@ mutation CreateUsers($userNames:[String!]!){
     onboarded
     enabled
     role
-    teams   
+    teams
   }
 }

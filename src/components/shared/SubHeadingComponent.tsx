@@ -46,7 +46,7 @@ const SubHeadingComponent: FunctionComponent<ConfigObject> = ({
     <p
       className={`${className}${getSubHeadingBaseStyle(
         size
-      )}${getSubHeadingTypeStyle(type)}`}
+      )}${getSubHeadingTypeStyle(type)} customizable`}
       style={style}
     >
       {children}

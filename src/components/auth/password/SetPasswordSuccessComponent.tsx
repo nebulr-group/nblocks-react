@@ -1,17 +1,21 @@
 import React, { FunctionComponent } from "react";
-import { RouteConfig } from "../../../routes/AuthRoutes";
 import { LinkComponent } from "../../shared/LinkComponent";
 import { useTranslation } from "react-i18next";
+import { useSecureContext } from "../../../hooks/secure-http-context";
 
 type ComponentProps = {};
 
 const SetPasswordSuccessComponent: FunctionComponent<ComponentProps> = ({}) => {
   const { t } = useTranslation();
+  const { authService } = useSecureContext();
+
+  const loginUrl = authService.getLoginUrl({ useShortHand: true });
+
   return (
     <>
       <div>
         <LinkComponent
-          to={RouteConfig.login.loginScreen}
+          to={loginUrl}
           type={"secondary"}
           size="sm"
           className="font-semibold"

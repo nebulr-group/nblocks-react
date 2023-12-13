@@ -5,6 +5,9 @@ query GetAppAnonymous {
     privacyPolicyUrl
     termsOfServiceUrl
     onboardingFlow
+    passkeysEnabled
     azureAdSsoEnabled
+    googleSsoEnabled
+    mfaEnabled
   }
 }

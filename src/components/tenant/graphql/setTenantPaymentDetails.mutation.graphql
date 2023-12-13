@@ -1,0 +1,32 @@
+mutation SetTenantPlanDetails($details: SetTenantPlanDetailsInput!) {
+  setTenantPlanDetails(details: $details) {
+    status {
+      shouldSelectPlan
+      shouldSetupPayments
+      paymentsEnabled
+      provider
+    }
+    details {
+      plan {
+        id
+        name
+        key
+        description
+        trial
+        trialDays
+        prices {
+          amount
+          currency
+          recurrenceInterval
+        }
+      }
+      price {
+        amount
+        currency
+        recurrenceInterval
+      }
+      trial
+      trialDaysLeft
+    }
+  }
+}

@@ -19,16 +19,9 @@ export interface NavigationConfig {
     onboardUserScreen: string;
     onboardTenantScreen: string;
   };
-  setup: {
-    signupScreen: string;
-    configScreen: string;
-  };
   tenant: {
     signupScreen: string;
     planScreen: string;
-    payment: string;
-    paymentCancel: string;
-    paymentSuccess: string;
   };
   user: {
     list: string;

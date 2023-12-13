@@ -2,8 +2,9 @@ import { AxiosInstance } from "axios";
 import { AuthTenantUserResponseDto } from "../models/auth-tenant-user-response.dto";
 import { LibConfig } from "../models/lib-config";
 import { RouteConfig } from "../routes/AuthRoutes";
-import { OAuthService } from "./OAuthService";
+import { CredentialsConfig, OAuthService } from "./OAuthService";
 import { NblocksStorage } from "./Storage";
+import { AuthenticationResponseJSON, PublicKeyCredentialCreationOptionsJSON, PublicKeyCredentialRequestOptionsJSON, RegistrationResponseJSON } from "@simplewebauthn/typescript-types";
 
 //FIXME centralize models
 export type UpdateUserProfileArgs = {
@@ -14,7 +15,7 @@ export type UpdateUserProfileArgs = {
 };
 
 export type MfaState = "DISABLED" | "REQUIRED" | "SETUP";
-export type FederationType = "ms-azure-ad" | "google";
+export type FederationType = "ms-azure-ad" | "google" | "saml" | "oidc";
 
 export class AuthService {
   private readonly ENDPOINTS = {
@@ -52,9 +53,9 @@ export class AuthService {
    * @param returnUrl
    * @returns
    */
-  getLoginUrl(returnUrl: string): string {
+  getLoginUrl(args?: { useShortHand?: boolean, state?: string }): string {
     return !!this._oauthService
-      ? this._oauthService.getAuthorizeUrl(returnUrl)
+      ? this._oauthService.getAuthorizeUrl(args ? args : {})
       : RouteConfig.login.loginScreen;
   }
 
@@ -69,9 +70,9 @@ export class AuthService {
     }
   }
 
-  getFederatedLoginUrl(type: FederationType): string | undefined {
+  getFederatedLoginUrl(type: FederationType, connectionId?: string): string | undefined {
     if (!!this._oauthService) {
-      return this._oauthService.getFederatedLoginUrl(type);
+      return this._oauthService.getFederatedLoginUrl(type, connectionId);
     }
   }
 
@@ -86,14 +87,14 @@ export class AuthService {
    * @param code
    * @returns
    */
-  async handleCallbackCode(code: string): Promise<void> {
+  async handleCallbackCode(code: string, useShortHand?: boolean): Promise<void> {
     if (!!this._oauthService) {
-      await this._oauthService.getTokens(code);
+      await this._oauthService.getTokens(code, useShortHand);
     }
   }
 
   /**
-   * Application boot should start by calling this method
+   * Application boot should start by calling this method and not render children before it has resolved
    * @returns
    */
   async checkCurrentUserAuthenticated(): Promise<boolean> {
@@ -132,6 +133,59 @@ export class AuthService {
 
       AuthService.setAuthToken(response.data.token);
       return { mfaState: response.data.mfaState };
+    }
+  }
+
+  async passkeysRegistrationOptions(forgotPasswordToken: string): Promise<PublicKeyCredentialCreationOptionsJSON> {
+    if (!!this._oauthService) {
+      const response = await this._oauthService.getPasskeysRegistrationOptions(forgotPasswordToken);
+      return response;
+    }
+
+    throw new Error("Passkeys are only available via Auth API")
+  }
+
+  async passkeysRegister(args: RegistrationResponseJSON, forgotPasswordToken: string): Promise<{
+    verified: boolean;
+  }> {
+    if (!!this._oauthService) {
+      const response = await this._oauthService.passkeysVerifyRegistration(args, forgotPasswordToken);
+      return response;
+    }
+
+    throw new Error("Passkeys are only available via Auth API")
+  }
+
+  async passkeysAuthenticationOptions(): Promise<PublicKeyCredentialRequestOptionsJSON> {
+    if (!!this._oauthService) {
+      const response = await this._oauthService.getPasskeysAuthenticationOptions();
+      return response;
+    }
+
+    throw new Error("Passkeys are only available via Auth API")
+  }
+
+  async passkeysAuthenticate(
+    args: AuthenticationResponseJSON
+  ): Promise<{ mfaState: MfaState; tenantUserId?: string }> {
+    if (!!this._oauthService) {
+      const response = await this._oauthService.passkeysVerifyAuthentication(args);
+      return response;
+    }
+
+    throw new Error("Passkeys are only available via Auth API")
+  }
+
+  async getCredentialsConfig(
+    username: string
+  ): Promise<CredentialsConfig> {
+    if (!!this._oauthService) {
+      const response = await this._oauthService.getCredentialsConfig(
+        username
+      );
+      return response;
+    } else {
+      return { hasPassword: true, hasPasskeys: false, federationConnections: [] }
     }
   }
 

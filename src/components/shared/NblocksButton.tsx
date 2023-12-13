@@ -78,7 +78,7 @@ const NblocksButton: FunctionComponent<ConfigObject> = ({
         buttonTypeStyle,
         buttonPadding,
         `${fullWidth ? " w-full" : ""}`,
-        "flex items-center justify-center"
+        "flex items-center justify-center customizable"
       )}
       disabled={disabled}
       onClick={onClick}
@@ -104,11 +104,11 @@ const getButtonTypeStyle = (type: string | null = null) => {
   const baseStyle = "rounded-md font-semibold";
   switch (type) {
     case "primary":
-      return ` bg-purple-500 hover:bg-purple-600 active:text-purple-200 text-white disabled:text-white disabled:bg-purple-300 ${baseStyle}`;
+      return ` primary bg-purple-500 hover:bg-purple-600 active:text-purple-200 text-white disabled:text-white disabled:bg-purple-300 ${baseStyle}`;
     case "secondary":
-      return ` bg-purple-200 text-purple-500 hover:bg-purple-500 hover:text-purple-300 active:text-purple-600 active:bg-purple-200 disabled:text-purple-300 disabled:bg-purple-200 ${baseStyle}`;
+      return ` secondary bg-purple-200 text-purple-500 hover:bg-purple-500 hover:text-purple-300 active:text-purple-600 active:bg-purple-200 disabled:text-purple-300 disabled:bg-purple-200 ${baseStyle}`;
     case "tertiary":
-      return ` bg-white text-gray-900 border border-gray-200 hover:bg-gray-50 hover:border-gray-300 active:text-gray-500 disabled:text-gray-400 ${baseStyle}`;
+      return ` tertiary bg-white text-gray-900 border border-gray-200 hover:bg-gray-50 hover:border-gray-300 active:text-gray-500 disabled:text-gray-400 ${baseStyle}`;
     case "success":
       return ` bg-green-500 text-white hover:bg-green-600 active:text-green-200 disabled:text-white disabled:bg-green-200 ${baseStyle}`;
     case "warning":

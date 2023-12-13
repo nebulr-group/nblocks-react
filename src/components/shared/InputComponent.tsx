@@ -32,6 +32,8 @@ type ConfigObject = {
   labelClassName?: string;
   name?: string;
   placeholder?: string;
+  autoFocus?: boolean;
+  autoComplete?: string;
   disabled?: boolean;
   required?: boolean;
   readonly?: boolean | undefined;
@@ -104,6 +106,8 @@ const InputComponent: FunctionComponent<ConfigObject> = ({
   labelClassName,
   name,
   placeholder,
+  autoFocus,
+  autoComplete,
   disabled,
   required,
   readonly,
@@ -175,7 +179,7 @@ const InputComponent: FunctionComponent<ConfigObject> = ({
       {label && (
         <label
           htmlFor={name}
-          className={`text-gray-900 mb-1 ${labelClassName}`}
+          className={`text-gray-900 mb-1 ${labelClassName} customizable`}
         >
           {label}
         </label>
@@ -187,6 +191,8 @@ const InputComponent: FunctionComponent<ConfigObject> = ({
           id={name}
           name={name}
           placeholder={placeholder}
+          autoComplete={autoComplete}
+          autoFocus={autoFocus ? true : false}
           className={`box-border w-full shadow-sm placeholder:text-gray-500 py-3 border rounded-md disabled:bg-gray-50 ${getInputValidationStyle(
             inputError,
             onSuccessValidation
@@ -194,7 +200,7 @@ const InputComponent: FunctionComponent<ConfigObject> = ({
             inputError
               ? getInputPadding(errorLabel?.position)
               : getInputPadding(infoLabel?.position)
-          }`}
+          } customizable`}
           disabled={disabled}
           required={required}
           minLength={minLength}

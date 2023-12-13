@@ -15,6 +15,9 @@ export function LogoutScreen() {
   }, []);
 
   return (
-    <Navigate to={authService.getLoginUrl(handoverRoute)} replace={true} />
+    <Navigate
+      to={authService.getLoginUrl({ useShortHand: true, state: handoverRoute })}
+      replace={true}
+    />
   );
 }

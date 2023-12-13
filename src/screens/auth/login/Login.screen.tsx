@@ -8,6 +8,7 @@ import { AuthLayoutWrapperComponent } from "../../../components/auth/AuthLayoutW
 import { FederationType, MfaState } from "../../../utils/AuthService";
 import { useSecureContext } from "../../../hooks/secure-http-context";
 import { useTranslation } from "react-i18next";
+import { FederationConnection } from "../../../utils/OAuthService";
 
 export function LoginScreen() {
   const { t } = useTranslation();
@@ -22,6 +23,9 @@ export function LoginScreen() {
 
   // Target url when authentication finished
   const targetUrl = location.state?.from?.pathname || handoverRoute;
+
+  const urlSearch = new URLSearchParams(location.search);
+  const initalError = !!urlSearch.get("error");
 
   useEffect(() => {
     if (currentUser.authenticated) {
@@ -60,6 +64,14 @@ export function LoginScreen() {
     window.location.href = url!;
   };
 
+  const onDidClickFederationConnection = (connection: FederationConnection) => {
+    const url = authService.getFederatedLoginUrl(
+      connection.type,
+      connection.id
+    );
+    window.location.href = url!;
+  };
+
   const log = (msg: string) => {
     if (debug) {
       console.log(msg);
@@ -72,8 +84,10 @@ export function LoginScreen() {
       subHeading={t("Welcome back! Please enter your details.")}
     >
       <LoginComponent
-        didLogin={(mfa, tenantUserId) => onDidLogin(mfa, tenantUserId)}
-        didClickFederatedLogin={(type) => onDidClickFederatedLogin(type)}
+        initalError={initalError}
+        didLogin={onDidLogin}
+        didClickFederatedLogin={onDidClickFederatedLogin}
+        didClickFederationConnection={onDidClickFederationConnection}
       />
     </AuthLayoutWrapperComponent>
   );
