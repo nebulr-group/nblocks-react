@@ -13,7 +13,7 @@ export type Option = {
   /** Displayed label */
   label: string;
   /** Displayed position of the button label */
-  labelPosition?: "left" | "center" | "right";
+  labelPosition?: "start" | "center" | "end";
   /** Displayed icon on the left side of label and description */
   icon?: React.ReactNode;
   type?: "danger";
@@ -101,9 +101,10 @@ const HorizontalEllipsisMenu: FunctionComponent<ConfigObject> = ({
               <NblocksButton
                 key={index}
                 onClick={option.onClick}
-                className={`flex items-center w-full py-2 px-2 rounded-lg font-medium${getOptionStyle(
-                  option.type
-                )}${getOptionLabelPosition(option.labelPosition)}`}
+                className={`w-full py-2 pl-2 ${
+                  option.labelPosition !== "start" ? "pr-2" : "pr-40"
+                } rounded-lg font-medium${getOptionStyle(option.type)}`}
+                justifyPosition={option.labelPosition ?? "start"}
               >
                 {option.icon && getButtonIcon(option.icon)}
                 {option.label}
@@ -114,24 +115,6 @@ const HorizontalEllipsisMenu: FunctionComponent<ConfigObject> = ({
       </Popover.Panel>
     </Popover>
   );
-};
-
-/**
- *
- * @param position
- * @returns
- */
-const getOptionLabelPosition = (position: Option["labelPosition"]) => {
-  switch (position) {
-    case "left":
-      return " justify-start";
-    case "center":
-      return " justify-center";
-    case "right":
-      return " justify-end";
-    default:
-      return " justify-left";
-  }
 };
 
 /**
