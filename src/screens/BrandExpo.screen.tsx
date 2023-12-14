@@ -466,6 +466,7 @@ export function BrandExpoScreen() {
                 onClick: () => alert("Option 3 was clicked!"),
               },
             ]}
+            position="right"
           />
         </div>
         {currentUser?.authenticated && (

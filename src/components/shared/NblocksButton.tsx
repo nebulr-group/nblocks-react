@@ -25,6 +25,7 @@ type ConfigObject = {
   /**Allows the button to take full width. This overrides the width constraints for `size`*/
   fullWidth?: boolean;
   className?: string;
+  justifyPosition?: "start" | "center" | "end";
 };
 
 /**
@@ -67,18 +68,21 @@ const NblocksButton: FunctionComponent<ConfigObject> = ({
   disabled,
   children,
   fullWidth,
+  justifyPosition,
   isLoading,
 }) => {
   const buttonTypeStyle = getButtonTypeStyle(type);
   const buttonPadding = getPadding(size);
+  const buttonJustifyPosition = getJustifyPosition(justifyPosition);
   return (
     <button
       className={classNameFilter(
         className,
         buttonTypeStyle,
         buttonPadding,
+        buttonJustifyPosition,
         `${fullWidth ? " w-full" : ""}`,
-        "flex items-center justify-center customizable"
+        "flex items-center customizable"
       )}
       disabled={disabled}
       onClick={onClick}
@@ -140,6 +144,19 @@ const getPadding = (size: string | null = null) => {
       return " px-8 py-4";
     default:
       return "";
+  }
+};
+
+const getJustifyPosition = (position: ConfigObject["justifyPosition"]) => {
+  switch (position) {
+    case "start":
+      return " justify-start";
+    case "center":
+      return " justify-center";
+    case "end":
+      return " justify-end";
+    default:
+      return " justify-center";
   }
 };
 
