@@ -4,21 +4,23 @@ import { useTranslation } from "react-i18next";
 import { GoogleLogo } from "./logos/google.logo";
 
 type ComponentProps = {
-  mode: "login" | "signup";
+  label: "login" | "signup" | "continue";
   onClick: () => void;
 };
 
 const GoogleSsoButtonComponent: FunctionComponent<ComponentProps> = ({
   onClick,
-  mode,
+  label,
 }) => {
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
 
   const renderText = () => {
-    switch (mode) {
+    switch (label) {
       case "signup":
         return t("Sign up with Google");
+      case "continue":
+        return t("Continue with Google");
       case "login":
       default:
         return t("Sign in with Google");

@@ -4,21 +4,23 @@ import { useTranslation } from "react-i18next";
 import { MicrosoftLogo } from "./logos/microsoft.logo";
 
 type ComponentProps = {
-  mode: "login" | "signup";
+  label: "login" | "signup" | "continue";
   onClick: () => void;
 };
 
 const AzureAdSsoButtonComponent: FunctionComponent<ComponentProps> = ({
   onClick,
-  mode,
+  label,
 }) => {
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
 
   const renderText = () => {
-    switch (mode) {
+    switch (label) {
       case "signup":
         return t("Sign up with Microsoft");
+      case "continue":
+        return t("Continue with Microsoft");
       case "login":
       default:
         return t("Sign in with Microsoft");
