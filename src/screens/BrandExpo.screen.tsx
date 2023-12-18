@@ -346,8 +346,8 @@ export function BrandExpoScreen() {
         <div className="grid space-y-2 w-1/4">
           <h1 className="mt-5 text-3xl">Social Login</h1>
           <PasskeysLoginButtonComponent mode="login" onClick={() => {}} />
-          <GoogleSsoButtonComponent mode="login" onClick={() => {}} />
-          <AzureAdSsoButtonComponent mode="login" onClick={() => {}} />
+          <GoogleSsoButtonComponent label="login" onClick={() => {}} />
+          <AzureAdSsoButtonComponent label="login" onClick={() => {}} />
         </div>
         <div className="grid">
           <h1 className="mt-5 text-3xl">Text Component</h1>

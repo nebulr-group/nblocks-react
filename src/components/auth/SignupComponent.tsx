@@ -94,7 +94,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
     if (azureAdLogin) {
       return (
         <AzureAdSsoButtonComponent
-          mode="signup"
+          label="signup"
           onClick={() => signupMiddleware("ms-azure-ad")}
         ></AzureAdSsoButtonComponent>
       );
@@ -105,7 +105,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
     if (googleLogin) {
       return (
         <GoogleSsoButtonComponent
-          mode="signup"
+          label="signup"
           onClick={() => signupMiddleware("google")}
         ></GoogleSsoButtonComponent>
       );
