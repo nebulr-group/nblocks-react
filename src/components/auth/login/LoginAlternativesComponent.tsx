@@ -56,7 +56,7 @@ const LoginAlternativesComponent: FunctionComponent<
     if (azureAdLogin) {
       return (
         <AzureAdSsoButtonComponent
-          mode="login"
+          label="login"
           onClick={() => didClickSocialLogin("ms-azure-ad")}
         ></AzureAdSsoButtonComponent>
       );
@@ -67,7 +67,7 @@ const LoginAlternativesComponent: FunctionComponent<
     if (googleLogin) {
       return (
         <GoogleSsoButtonComponent
-          mode="login"
+          label="login"
           onClick={() => didClickSocialLogin("google")}
         ></GoogleSsoButtonComponent>
       );
