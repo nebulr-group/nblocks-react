@@ -19,7 +19,7 @@ const SignupMissingUserComponent: FunctionComponent<ComponentProps> = ({
   didClickFederatedSignup,
   federation,
 }) => {
-  const { authLegacy, demoSSO } = useConfig();
+  const { authLegacy } = useConfig();
   const {
     azureAdSsoEnabled,
     googleSsoEnabled,
@@ -28,9 +28,9 @@ const SignupMissingUserComponent: FunctionComponent<ComponentProps> = ({
   } = useApp();
   const { t } = useTranslation();
 
-  // Show SSO Login btn if we have it enabled or demoSSO is true
-  const azureAdLogin = !authLegacy && (azureAdSsoEnabled || demoSSO);
-  const googleLogin = !authLegacy && (googleSsoEnabled || demoSSO);
+  // Show SSO Login btn if we have it enabled
+  const azureAdLogin = !authLegacy && (azureAdSsoEnabled);
+  const googleLogin = !authLegacy && (googleSsoEnabled);
 
   const signupMiddleware = (type: FederationType) => {
     didClickFederatedSignup(type);

@@ -19,7 +19,7 @@ export type FederationConnectionType = 'saml' | 'oidc';
 export interface FederationConnection { id: string, type: FederationConnectionType, name: string }
 export interface CredentialsConfig { hasPassword: boolean, hasPasskeys: boolean, federationConnections: FederationConnection[] }
 
-export type OpenIDClaim = {
+export type OpenIDClaims = {
   iat: number;
   exp: number;
   aud: string[];
@@ -51,9 +51,10 @@ export type RefreshTokenClaim = {
   tid: string;
 };
 
-export type AccesTokenClaim = {
+export type AccessTokenClaims = {
   scope: string;
   role: string;
+  trial: boolean;
   aid: string;
   tid: string;
   iat: number;
@@ -94,7 +95,8 @@ export class OAuthService {
 
   private _accessTokenExpires?: number;
   private _refreshTokenExpires?: number;
-  private _idToken?: OpenIDClaim;
+  private _idTokenClaims?: OpenIDClaims;
+  private _accessTokenClaims?: AccessTokenClaims;
   private _initializePromise: Promise<void>;
 
   private readonly _JWKS: GetKeyFunction<
@@ -158,9 +160,9 @@ export class OAuthService {
   private async restoreTokensFromLocalStorage(): Promise<void> {
     try {
       const [openIdToken, accessToken, refreshToken] = [
-        OAuthService.getIDToken(),
+        OAuthService._getIDToken(),
         OAuthService.getAccessToken(),
-        OAuthService.getRefreshToken(),
+        OAuthService._getRefreshToken(),
       ];
 
       try {
@@ -171,11 +173,12 @@ export class OAuthService {
 
         if (openIdToken) {
           const decoded = await this._verifyToken(openIdToken);
-          this._idToken = decoded.payload as OpenIDClaim;
+          this._setIDTokenClaims(decoded.payload as OpenIDClaims);
         }
 
         if (accessToken) {
           const decoded = await this._verifyToken(accessToken);
+          this._setAccessTokenClaims(decoded.payload as AccessTokenClaims);
           this._accessTokenExpires = decoded.payload.exp;
         }
       } catch (error) {
@@ -194,7 +197,7 @@ export class OAuthService {
           return;
         }
       } finally {
-        if ((!this._accessTokenExpires || !this._idToken) && this._refreshTokenExpires) {
+        if ((!this._accessTokenExpires || !this._idTokenClaims) && this._refreshTokenExpires) {
           // We have a valid refresh token, so let's try to refresh the access and ID token.
           if (this.debug) {
             console.log(`OAuthService: Some tokens could not be restored. Refreshing tokens since refreshToken exists`);
@@ -204,7 +207,7 @@ export class OAuthService {
       }
 
       if (this.debug) {
-        console.log(`OAuthService: Did try to restore tokens from Local storage and successfully restored [${this._refreshTokenExpires ? 'refreshToken' : ''} ${this._accessTokenExpires ? 'accessToken' : ''} ${this._idToken ? 'idToken' : ''}]`);
+        console.log(`OAuthService: Did try to restore tokens from Local storage and successfully restored [${this._refreshTokenExpires ? 'refreshToken' : ''} ${this._accessTokenExpires ? 'accessToken' : ''} ${this._idTokenClaims ? 'idToken' : ''}]`);
       }
 
       // Start scheduler
@@ -242,8 +245,12 @@ export class OAuthService {
     return `${this.oAuthBaseURI}${this.AUTH_API_ENDPOINTS.handover}/${tenantUserId}`;
   }
 
-  getIdToken(): OpenIDClaim | undefined {
-    return this._idToken;
+  getIdTokenClaims(): OpenIDClaims | undefined {
+    return this._idTokenClaims;
+  }
+
+  getAccessTokenClaims(): AccessTokenClaims | undefined {
+    return this._accessTokenClaims;
   }
 
   async getCredentialsConfig(
@@ -411,7 +418,7 @@ export class OAuthService {
    * @param useShortHand used by cloud views when redirectUri is default
    * @returns 
    */
-  async getTokens(code: string, useShortHand?: boolean): Promise<boolean> {
+  async getTokensFromCode(code: string, useShortHand?: boolean): Promise<boolean> {
     const response = useShortHand ? await this.httpClient.post<{
       access_token: string;
       refresh_token: string;
@@ -449,19 +456,20 @@ export class OAuthService {
       const decodedAccessToken = await this._verifyToken(
         response.data.access_token
       );
+      this._setAccessTokenClaims(decodedAccessToken.payload as AccessTokenClaims);
       this._accessTokenExpires = decodedAccessToken.payload.exp!;
-      OAuthService.setAccessToken(response.data.access_token);
+      OAuthService._setAccessToken(response.data.access_token);
 
       const decodedRefreshToken = await this._verifyToken(
         response.data.refresh_token
       );
       this._refreshTokenExpires = decodedRefreshToken.payload.exp!;
-      OAuthService.setRefreshToken(response.data.refresh_token);
+      OAuthService._setRefreshToken(response.data.refresh_token);
 
       if (response.data.id_token) {
         const idTokenVerify = await this._verifyToken(response.data.id_token);
-        this._idToken = idTokenVerify.payload as OpenIDClaim;
-        OAuthService.setIDToken(response.data.id_token);
+        this._setIDTokenClaims(idTokenVerify.payload as OpenIDClaims);
+        OAuthService._setIDToken(response.data.id_token);
       }
 
       // Schedule a future that will refresh the tokens
@@ -497,7 +505,7 @@ export class OAuthService {
   private async _authenticated(): Promise<boolean> {
     // User is authenticated if the application has obtained id_token
     await this._initializePromise;
-    const open_id = this._idToken;
+    const open_id = this._idTokenClaims;
 
     if (!open_id) {
       return false;
@@ -517,7 +525,7 @@ export class OAuthService {
       {
         client_id: this.appId,
         grant_type: "refresh_token",
-        refresh_token: OAuthService.getRefreshToken(),
+        refresh_token: OAuthService._getRefreshToken(),
       },
       { baseURL: this.oAuthBaseURI }
     );
@@ -531,19 +539,19 @@ export class OAuthService {
         response.data.access_token
       );
       this._accessTokenExpires = decodedAccessToken.payload.exp!;
-      OAuthService.setAccessToken(response.data.access_token);
+      this._setAccessTokenClaims(decodedAccessToken.payload as AccessTokenClaims);
+      OAuthService._setAccessToken(response.data.access_token);
 
       const decodedRefreshToken = await this._verifyToken(
         response.data.refresh_token
       );
       this._refreshTokenExpires = decodedRefreshToken.payload.exp!;
-      OAuthService.setRefreshToken(response.data.refresh_token);
+      OAuthService._setRefreshToken(response.data.refresh_token);
 
       if (response.data.id_token) {
         const idTokenVerify = await this._verifyToken(response.data.id_token);
-
-        this._idToken = idTokenVerify.payload as OpenIDClaim;
-        OAuthService.setIDToken(response.data.id_token);
+        this._setIDTokenClaims(idTokenVerify.payload as OpenIDClaims)
+        OAuthService._setIDToken(response.data.id_token);
       }
 
       return true;
@@ -554,24 +562,32 @@ export class OAuthService {
   }
 
   static async hasFullAuthContext(): Promise<boolean> {
-    return !!this.getRefreshToken(); //!!this.getAccessToken() && !!this.getIDToken();
+    return !!this._getRefreshToken(); //!!this.getAccessToken() && !!this.getIDToken();
   }
-  // Setters
 
-  static setAccessToken(token: string): void {
+  // Setters
+  _setAccessTokenClaims(claims: AccessTokenClaims): void {
+    this._accessTokenClaims = claims;
+  }
+
+  static _setAccessToken(token: string): void {
     NblocksStorage.setItem(this.ACCCESS_TOKEN, token);
   }
 
-  static setIDToken(token: string): void {
+  _setIDTokenClaims(claims: OpenIDClaims): void {
+    this._idTokenClaims = claims;
+  }
+
+  static _setIDToken(token: string): void {
     NblocksStorage.setItem(this.ID_TOKEN, token);
   }
 
-  static setRefreshToken(token: string): void {
+  static _setRefreshToken(token: string): void {
     NblocksStorage.setItem(this.REFRESH_TOKEN, token);
   }
 
   // Getters
-  static getRefreshToken(): string | null {
+  static _getRefreshToken(): string | null {
     return NblocksStorage.getItem(this.REFRESH_TOKEN);
   }
 
@@ -579,7 +595,7 @@ export class OAuthService {
     return NblocksStorage.getItem(this.ACCCESS_TOKEN);
   }
 
-  static getIDToken(): string | null {
+  static _getIDToken(): string | null {
     return NblocksStorage.getItem(this.ID_TOKEN);
   }
 

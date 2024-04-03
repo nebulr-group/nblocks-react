@@ -28,7 +28,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
   const [createTenantAnonymous, { loading }] = useMutation(
     CreateTenantAnonymousDocument
   );
-  const { authLegacy, demoSSO } = useConfig();
+  const { authLegacy } = useConfig();
   const {
     logo,
     azureAdSsoEnabled,
@@ -43,9 +43,9 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
 
-  // Show SSO Login btn if we have it enabled or demoSSO is true
-  const azureAdLogin = !authLegacy && (azureAdSsoEnabled || demoSSO);
-  const googleLogin = !authLegacy && (googleSsoEnabled || demoSSO);
+  // Show SSO Login btn
+  const azureAdLogin = !authLegacy && (azureAdSsoEnabled);
+  const googleLogin = !authLegacy && (googleSsoEnabled);
 
   const [params] = useSearchParams();
   const [plan, currency, recurrenceInterval] = [

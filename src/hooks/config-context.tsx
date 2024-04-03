@@ -29,7 +29,6 @@ const initialContext: LibConfig = {
   oauthRedirectUri,
   accountApiBaseUri: accountApi,
   copyrightFooter: `©${new Date().getUTCFullYear()} Nblocks. All Rights Reserved.`,
-  demoSSO: false,
 };
 
 const Context = React.createContext<LibConfig>(initialContext);
@@ -58,7 +57,6 @@ const NblocksConfigContextProvider: FunctionComponent<{
     initialContext.spa = true;
     initialContext.tenantSignup = true;
     initialContext.passwordValidation = false;
-    initialContext.demoSSO = true;
   }
 
   return (
