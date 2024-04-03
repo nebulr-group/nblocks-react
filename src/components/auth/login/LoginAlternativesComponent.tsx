@@ -21,15 +21,15 @@ const LoginAlternativesComponent: FunctionComponent<
   LoginAlternativesComponentProps
 > = ({ didClickPasskeysAuthenticate, didClickSocialLogin }) => {
   const { t } = useTranslation();
-  const { authLegacy, demoSSO } = useConfig();
+  const { authLegacy } = useConfig();
   const { azureAdSsoEnabled, googleSsoEnabled, passkeysEnabled } = useApp();
 
   const passkeysLogin =
     !authLegacy && passkeysEnabled && browserSupportsWebAuthn();
 
-  // Show SSO Login btn if we have it enabled or demoSSO is true
-  const azureAdLogin = !authLegacy && (azureAdSsoEnabled || demoSSO);
-  const googleLogin = !authLegacy && (googleSsoEnabled || demoSSO);
+  // Show SSO Login btn if we have it enabled
+  const azureAdLogin = !authLegacy && (azureAdSsoEnabled);
+  const googleLogin = !authLegacy && (googleSsoEnabled);
 
   useEffect(() => {
     if (passkeysLogin) {

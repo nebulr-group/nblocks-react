@@ -39,8 +39,8 @@ const NblocksAuthContextProvider: FunctionComponent<NblocksContextProps> = ({
   const [currentUser, setCurrentUser] = useState(new CurrentUser());
 
   const logout = async () => {
+    await authApolloClient.client.resetStore();
     if (authenticated) {
-      await authApolloClient.client.resetStore();
       didAuthenticate(false);
       log(`Did logout`);
     } else {
