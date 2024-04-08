@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import { PlanScreen } from "../screens/tenant/Plan.screen";
+import { PlansScreen } from "../screens/tenant/Plans.screen";
 import { NBAuthGuard } from "./AuthGuard";
 
 const TenantRoutes = () => {
@@ -10,7 +10,7 @@ const TenantRoutes = () => {
         path="plan"
         element={
           <NBAuthGuard>
-            <PlanScreen />
+            <PlansScreen />
           </NBAuthGuard>
         }
       ></Route>

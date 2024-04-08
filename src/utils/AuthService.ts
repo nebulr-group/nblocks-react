@@ -60,6 +60,17 @@ export class AuthService {
   }
 
   /**
+   * Returns either the
+   * @param returnUrl
+   * @returns
+   */
+  getLogoutUrl(): string {
+    return !!this._oauthService
+      ? this._oauthService.getLogoutUrl()
+      : RouteConfig.login.logoutScreen;
+  }
+
+  /**
    * FIXME, this shouldnt be here
    * @param tenantUserId
    * @returns

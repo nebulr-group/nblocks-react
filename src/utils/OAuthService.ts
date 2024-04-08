@@ -70,6 +70,7 @@ export class OAuthService {
   private readonly OAUTH_ENDPOINTS = {
     authorize: "/authorize",
     authorizeShorthand: "/url/login",
+    logoutShorthand: "/url/logout",
     token: "/token",
     tokenCodeShorthand: "/token/code",
     refresh: "/token",
@@ -239,6 +240,10 @@ export class OAuthService {
     const url = useShortHand ? `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.authorizeShorthand}/${this.appId}${state ? `?state=${state}` : ""}` : `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.authorize}?response_type=code&client_id=${this.appId}&redirect_uri=${this.redirectUri}&scope=${this.OAUTH_SCOPES}${state ? `&state=${state}` : ""}`;
 
     return url;
+  }
+
+  getLogoutUrl(): string {
+    return `${this.oAuthBaseURI}${this.OAUTH_ENDPOINTS.logoutShorthand}/${this.appId}`;
   }
 
   getHandoverUrl(tenantUserId?: string): string {
