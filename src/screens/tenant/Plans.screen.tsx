@@ -8,7 +8,7 @@ import { PaymentsService } from "../../utils/PaymentsService";
 import { TenantPaymentStatusGraphql } from "../../gql/graphql";
 import { BackendlessService } from "../../utils/BackendlessService";
 
-const PlanScreen: FunctionComponent<{}> = () => {
+const PlansScreen: FunctionComponent<{}> = () => {
   const { debug } = useConfig();
   const { t } = useTranslation();
   const { authHttpClient } = useSecureContext();
@@ -60,7 +60,7 @@ const PlanScreen: FunctionComponent<{}> = () => {
   return (
     <BaseLayoutWrapperComponent
       heading={t("Pricing plans")}
-      subHeading={t("Select a plan to continue to the app")}
+      subHeading={t("Click to change your subscription")}
     >
       <ChoosePlanComponent
         planSelectHandler={planSelectHandler}
@@ -71,4 +71,4 @@ const PlanScreen: FunctionComponent<{}> = () => {
   );
 };
 
-export { PlanScreen };
+export { PlansScreen };

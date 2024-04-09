@@ -21,7 +21,7 @@ export interface NavigationConfig {
   };
   tenant: {
     signupScreen: string;
-    planScreen: string;
+    plansScreen: string;
   };
   user: {
     list: string;

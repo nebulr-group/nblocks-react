@@ -12,7 +12,7 @@ import { OAuthService } from "../utils/OAuthService";
 
 const initialAuthContext = {
   currentUser: new CurrentUser(),
-  logout: async () => {},
+  logout: async (skipAuthenticationBroadcast?: boolean) => {},
   switchUser: async (tenantUserId: string) => {},
   refreshCurrentUser: () => {},
 };
@@ -38,10 +38,13 @@ const NblocksAuthContextProvider: FunctionComponent<NblocksContextProps> = ({
   } = useSecureContext();
   const [currentUser, setCurrentUser] = useState(new CurrentUser());
 
-  const logout = async () => {
+  // Supports logging out without using didAuthenticate from secureContext which notifies all listners
+  const logout = async (skipAuthenticationBroadcast?: boolean) => {
+    await authApolloClient.client.resetStore();
     if (authenticated) {
-      await authApolloClient.client.resetStore();
-      didAuthenticate(false);
+      if (!skipAuthenticationBroadcast) {
+        didAuthenticate(false);
+      }
       log(`Did logout`);
     } else {
       log(`User is already logged out`);

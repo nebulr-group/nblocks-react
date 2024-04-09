@@ -37,7 +37,7 @@ const RouteConfig: NavigationConfig = {
   },
   tenant: {
     signupScreen: "/auth/signup",
-    planScreen: "/tenant/plan",
+    plansScreen: "/tenant/plan",
   },
   user: {
     list: "/user/list",

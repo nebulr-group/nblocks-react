@@ -1,23 +1,19 @@
 import React, { useEffect } from "react";
-
-import { Navigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/auth-context";
-import { useConfig } from "../../../hooks/config-context";
 import { useSecureContext } from "../../../hooks/secure-http-context";
 
 export function LogoutScreen() {
   const { logout } = useAuth();
-  const { handoverRoute } = useConfig();
   const { authService } = useSecureContext();
 
   useEffect(() => {
-    logout();
+    doLogout();
   }, []);
 
-  return (
-    <Navigate
-      to={authService.getLoginUrl({ useShortHand: true, state: handoverRoute })}
-      replace={true}
-    />
-  );
+  const doLogout = async () => {
+    await logout(true);
+    window.location.replace(authService.getLogoutUrl());
+  };
+
+  return null;
 }

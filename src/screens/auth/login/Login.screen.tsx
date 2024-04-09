@@ -29,9 +29,13 @@ export function LoginScreen() {
 
   useEffect(() => {
     if (currentUser.authenticated) {
-      logout();
+      doLogout();
     }
   }, [currentUser]);
+
+  const doLogout = async () => {
+    await logout();
+  };
 
   // Callback when the LoginComponent completed login
   const onDidLogin = async (mfa: MfaState, tenantUserId?: string) => {

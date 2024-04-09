@@ -60,6 +60,17 @@ export class AuthService {
   }
 
   /**
+   * Returns either the
+   * @param returnUrl
+   * @returns
+   */
+  getLogoutUrl(): string {
+    return !!this._oauthService
+      ? this._oauthService.getLogoutUrl()
+      : RouteConfig.login.logoutScreen;
+  }
+
+  /**
    * FIXME, this shouldnt be here
    * @param tenantUserId
    * @returns
@@ -89,7 +100,7 @@ export class AuthService {
    */
   async handleCallbackCode(code: string, useShortHand?: boolean): Promise<void> {
     if (!!this._oauthService) {
-      await this._oauthService.getTokens(code, useShortHand);
+      await this._oauthService.getTokensFromCode(code, useShortHand);
     }
   }
 
@@ -270,16 +281,17 @@ export class AuthService {
   async currentUser(): Promise<AuthTenantUserResponseDto> {
     // Map to older structure
     if (!!this._oauthService) {
-      const token = this._oauthService.getIdToken();
-      return token
+      const idToken = this._oauthService.getIdTokenClaims();
+      const accessToken = this._oauthService.getAccessTokenClaims();
+      return idToken && accessToken
         ? {
-          email: token.email!,
-          id: token.sub!,
-          onboarded: token.onboarded!,
-          role: "",
-          tenant: { id: token.tenant_id!, locale: token.locale!, logo: token.tenant_logo, name: token.tenant_name },
-          username: token.email!,
-          fullName: token.name,
+          email: idToken.email!,
+          id: idToken.sub!,
+          onboarded: idToken.onboarded!,
+          role: accessToken.role,
+          tenant: { id: idToken.tenant_id!, locale: idToken.locale!, logo: idToken.tenant_logo, name: idToken.tenant_name },
+          username: idToken.email!,
+          fullName: idToken.name,
         }
         : {
           email: "",
