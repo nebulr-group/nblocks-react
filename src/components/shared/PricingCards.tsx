@@ -110,7 +110,7 @@ const PricingCards: FunctionComponent<ConfigObject> = ({
     <div className={classNameFilter(className, "flex gap-4 justify-center")}>
       {isLoading &&
         [...Array(cardPlaceholderCount).keys()].map((_, i) => {
-          return <SkeletonLoading i={i} />;
+          return <SkeletonLoading i={i} key={`skeleton-loading-${i}`} />;
         })}
       {!isLoading &&
         filteredPlans.map(
