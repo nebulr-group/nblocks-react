@@ -7,7 +7,7 @@ import { ConfigContextProvider, LibConfig } from "./ConfigProvider";
  * @returns
  */
 const NblocksProvider: FunctionComponent<{
-    config: LibConfig;
+    config: Partial<LibConfig>;
     children: JSX.Element;
   }> = ({ children, config, }) => {
   
