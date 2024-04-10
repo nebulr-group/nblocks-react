@@ -1,0 +1,36 @@
+{
+    "name": "nblocks-react-slim",
+    // https://code.visualstudio.com/docs/remote/containers-tutorial
+    "build": {
+      "dockerfile": "../Dockerfile",
+    },
+    // In development and are subject to breaking changes
+    // once stable, add them https://code.visualstudio.com/docs/remote/containers#_create-a-devcontainerjson-file:~:text=devcontainers/features%20repository
+    //"features": {},
+    "containerEnv": {},
+    "runArgs": [
+      "--network=nblocks-stack_shared-network"
+    ],
+  
+    "customizations": {
+      // Configure properties specific to VS Code.
+      "vscode": {
+        // Add the IDs of extensions you want installed when the container is created.
+        "extensions": [
+          "dbaeumer.vscode-eslint",
+          "esbenp.prettier-vscode",
+          "mikestead.dotenv",
+          "redhat.vscode-yaml"
+        ]
+      }
+    },
+    "workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind",
+    "workspaceFolder": "/app",
+    //this improves container performance
+    "mounts": [
+      "target=${containerWorkspaceFolder}/node_modules,type=volume",
+      "target=${containerWorkspaceFolder}/dist,type=volume"
+      // "source=serverless,target=${containerWorkspaceFolder}/.serverless,type=volume",  Docker complains that resource is busy or locked when running sls deploy
+    ],
+  }
+  

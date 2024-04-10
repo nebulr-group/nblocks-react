@@ -1,0 +1,37 @@
+{
+  "name": "@nebulr-group/nblocks-react-slim",
+  "version": "1.0.0-alpha.1",
+  "description": "A slim react library from Nblocks",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/",
+    "package.json",
+    "Readme.md"
+  ],
+  "scripts": {
+    "build": "rollup -c --bundleConfigAsCjs",
+    "npm-publish": "npm run build && npm publish --access public",
+    "npm-publish-beta": "npm run build && npm publish --access public --tag beta",
+    "npm-publish-local": "npm run build && npm publish --registry http://verdaccio:4873 --tag alpha",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "peerDependencies": {
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/react": "^18.2.75",
+    "rollup": "^4.14.1",
+    "rollup-plugin-dts": "^6.1.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "tslib": "^2.6.2",
+    "typescript": "^5.4.4"
+  }
+}
