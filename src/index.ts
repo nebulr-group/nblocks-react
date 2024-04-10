@@ -1,2 +1,3 @@
-export {TestComponent} from "./components/Test";
-export {useButtonSuccess} from "./hooks/use-button-success";
+export { TestComponent } from "./components/Test";
+export { NblocksProvider } from "./providers/NblocksProvider";
+export { useNblocksClient } from "./hooks/UseNblocksClient";

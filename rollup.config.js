@@ -4,6 +4,7 @@ import typescript from "@rollup/plugin-typescript";
 import dts from "rollup-plugin-dts";
 import terser from "@rollup/plugin-terser";
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
+import json from "@rollup/plugin-json";
 
 const packageJson = require("./package.json");
 
@@ -28,8 +29,9 @@ export default [
       commonjs(),
       typescript({ tsconfig: "./tsconfig.json" }),
       terser(),
+      json()
     ],
-    external: ["react", "react-dom"],
+    external: ["react", "react-dom", "@nebulr-group/nblocks-ts-client"],
   },
   {
     input: "src/index.ts",

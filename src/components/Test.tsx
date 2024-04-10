@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
+import { useConfig } from "../providers/ConfigProvider";
 
 const TestComponent = () => {
 
-	return (<p>Hello world</p>)
+	const { appId } = useConfig()
 
+	return (<p>Hello world from Nblocks with app id {appId}!</p>)
 }
-
 
 export {TestComponent};
