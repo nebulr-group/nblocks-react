@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from "react";
 import { ConfigContextProvider, LibConfig } from "./ConfigProvider";
+import { TokenRefresherComponent } from "../components/TokenRefresher";
 
 /**
  * Wrap your code into this Provider to get access to the Nblocks world
@@ -17,6 +18,7 @@ const NblocksProvider: FunctionComponent<{
   
     return (
       <ConfigContextProvider config={config}>
+        <TokenRefresherComponent />
         {children}
       </ConfigContextProvider>
     );
