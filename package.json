@@ -1,6 +1,6 @@
 {
   "name": "@nebulr-group/nblocks-react-slim",
-  "version": "1.0.0-alpha.7",
+  "version": "1.0.0-alpha.10",
   "description": "A slim react library from Nblocks",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -20,11 +20,11 @@
   "author": "",
   "license": "ISC",
   "peerDependencies": {
-    "@nebulr-group/nblocks-ts-client": "^5.0.0 || ^5.0.0-alpha.2",
+    "@nebulr-group/nblocks-ts-client": "^5.0.0 || ^5.0.0-alpha.3",
     "react": "^18.2.0"
   },
   "devDependencies": {
-    "@nebulr-group/nblocks-ts-client": "^5.0.0-alpha.2",
+    "@nebulr-group/nblocks-ts-client": "^5.0.0-alpha.3",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
