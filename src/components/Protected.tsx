@@ -14,7 +14,7 @@ interface ComponentProps {
 }
 
 // Protect either its children or a whole route
-const Protected: FunctionComponent<ComponentProps> = ({ roles, privileges, redirectTo, children }) => {
+const ProtectedComponent: FunctionComponent<ComponentProps> = ({ roles, privileges, redirectTo, children }) => {
 
     const { log } = useLog();
     const { nblocksClient } = useNblocksClient()
@@ -68,4 +68,4 @@ const Protected: FunctionComponent<ComponentProps> = ({ roles, privileges, redir
 
 }
 
-export { Protected }
+export { ProtectedComponent }

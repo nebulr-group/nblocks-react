@@ -9,7 +9,7 @@ interface ComponentProps {
 }
 
 // Protect either its children or a whole route
-const FeatureFlag: FunctionComponent<ComponentProps> = ({ flagKey, context, children }) => {
+const FeatureFlagComponent: FunctionComponent<ComponentProps> = ({ flagKey, context, children }) => {
 
     const { flagsStorage, flagEnabled } = useFlags();
 
@@ -26,4 +26,4 @@ const FeatureFlag: FunctionComponent<ComponentProps> = ({ flagKey, context, chil
 
 }
 
-export { FeatureFlag }
+export { FeatureFlagComponent }
