@@ -8,6 +8,7 @@ import { FederationType } from "../../utils/AuthService";
 import { AzureAdSsoButtonComponent } from "./shared/AzureAdSsoButtonComponent";
 import { GoogleSsoButtonComponent } from "./shared/GoogleSsoButtonComponent";
 import { useTranslation } from "react-i18next";
+import { LinkedinSsoButtonComponent } from "./shared/LinkedinSsoButtonComponent";
 
 type ComponentProps = {
   didSignup: (email: string) => void;
@@ -23,14 +24,16 @@ const SignupMissingUserComponent: FunctionComponent<ComponentProps> = ({
   const {
     azureAdSsoEnabled,
     googleSsoEnabled,
+    linkedinSsoEnabled,
     privacyPolicyUrl,
     termsOfServiceUrl,
   } = useApp();
   const { t } = useTranslation();
 
   // Show SSO Login btn if we have it enabled
-  const azureAdLogin = !authLegacy && (azureAdSsoEnabled);
-  const googleLogin = !authLegacy && (googleSsoEnabled);
+  const azureAdLogin = !authLegacy && azureAdSsoEnabled;
+  const googleLogin = !authLegacy && googleSsoEnabled;
+  const linkedinLogin = !authLegacy && linkedinSsoEnabled;
 
   const signupMiddleware = (type: FederationType) => {
     didClickFederatedSignup(type);
@@ -43,6 +46,13 @@ const SignupMissingUserComponent: FunctionComponent<ComponentProps> = ({
           label="continue"
           onClick={() => signupMiddleware("google")}
         ></GoogleSsoButtonComponent>
+      );
+    } else if (linkedinLogin && federation === "linkedin") {
+      return (
+        <LinkedinSsoButtonComponent
+          label="continue"
+          onClick={() => signupMiddleware("linkedin")}
+        ></LinkedinSsoButtonComponent>
       );
     } else if (azureAdLogin && federation === "ms-azure-ad") {
       return (

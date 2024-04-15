@@ -25,6 +25,7 @@ import { CheckboxComponent } from "../components/shared/CheckboxComponent";
 import { GoogleSsoButtonComponent } from "../components/auth/shared/GoogleSsoButtonComponent";
 import { AzureAdSsoButtonComponent } from "../components/auth/shared/AzureAdSsoButtonComponent";
 import { PasskeysLoginButtonComponent } from "../components/auth/shared/PasskeysLoginButtonComponent";
+import { LinkedinSsoButtonComponent } from "../components/auth/shared/LinkedinSsoButtonComponent";
 
 export function BrandExpoScreen() {
   const [password, setPassword] = useState("");
@@ -347,6 +348,7 @@ export function BrandExpoScreen() {
           <h1 className="mt-5 text-3xl">Social Login</h1>
           <PasskeysLoginButtonComponent mode="login" onClick={() => {}} />
           <GoogleSsoButtonComponent label="login" onClick={() => {}} />
+          <LinkedinSsoButtonComponent label="login" onClick={() => {}} />
           <AzureAdSsoButtonComponent label="login" onClick={() => {}} />
         </div>
         <div className="grid">
