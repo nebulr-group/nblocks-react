@@ -20,7 +20,7 @@ function App() {
           accountApiBaseUri: "http://localhost:3010",
           oAuthBaseURI: "http://localhost:3070",
           apiHost: "http://localhost:3080",
-          appId: "63cab2a305d778002d64212a",
+          appId: "65d773b06b6c37002211e090",
         }}
         i18nOverrides={lang}
       >

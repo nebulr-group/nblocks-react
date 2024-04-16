@@ -11,6 +11,7 @@ import { GoogleSsoButtonComponent } from "../shared/GoogleSsoButtonComponent";
 import { PasskeysLoginButtonComponent } from "../shared/PasskeysLoginButtonComponent";
 import { FederationType } from "../../../utils/AuthService";
 import { useTranslation } from "react-i18next";
+import { LinkedinSsoButtonComponent } from "../shared/LinkedinSsoButtonComponent";
 
 interface LoginAlternativesComponentProps {
   didClickPasskeysAuthenticate: (autofill: boolean) => void;
@@ -22,14 +23,20 @@ const LoginAlternativesComponent: FunctionComponent<
 > = ({ didClickPasskeysAuthenticate, didClickSocialLogin }) => {
   const { t } = useTranslation();
   const { authLegacy } = useConfig();
-  const { azureAdSsoEnabled, googleSsoEnabled, passkeysEnabled } = useApp();
+  const {
+    azureAdSsoEnabled,
+    googleSsoEnabled,
+    linkedinSsoEnabled,
+    passkeysEnabled,
+  } = useApp();
 
   const passkeysLogin =
     !authLegacy && passkeysEnabled && browserSupportsWebAuthn();
 
   // Show SSO Login btn if we have it enabled
-  const azureAdLogin = !authLegacy && (azureAdSsoEnabled);
-  const googleLogin = !authLegacy && (googleSsoEnabled);
+  const azureAdLogin = !authLegacy && azureAdSsoEnabled;
+  const googleLogin = !authLegacy && googleSsoEnabled;
+  const linkedinLogin = !authLegacy && linkedinSsoEnabled;
 
   useEffect(() => {
     if (passkeysLogin) {
@@ -74,7 +81,19 @@ const LoginAlternativesComponent: FunctionComponent<
     }
   };
 
-  const hasAlternatives = passkeysLogin || googleLogin || azureAdLogin;
+  const renderLinkedin = () => {
+    if (linkedinSsoEnabled) {
+      return (
+        <LinkedinSsoButtonComponent
+          label="login"
+          onClick={() => didClickSocialLogin("linkedin")}
+        ></LinkedinSsoButtonComponent>
+      );
+    }
+  };
+
+  const hasAlternatives =
+    passkeysLogin || googleLogin || linkedinLogin || azureAdLogin;
   return (
     <>
       {hasAlternatives && (
@@ -86,6 +105,7 @@ const LoginAlternativesComponent: FunctionComponent<
         {renderPasskeysLogin()}
         {renderGoogle()}
         {renderAzureAd()}
+        {renderLinkedin()}
       </div>
     </>
   );

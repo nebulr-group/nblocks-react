@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import React, { FormEvent, FunctionComponent, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { CreateTenantAnonymousDocument } from "../../gql/graphql";
 import { useApp } from "../../hooks/app-context";
 import { RouteConfig } from "../../routes/AuthRoutes";
@@ -15,6 +15,7 @@ import { AzureAdSsoButtonComponent } from "./shared/AzureAdSsoButtonComponent";
 import { GoogleSsoButtonComponent } from "./shared/GoogleSsoButtonComponent";
 import { useTranslation } from "react-i18next";
 import { DividerComponent } from "../shared/DividerComponent";
+import { LinkedinSsoButtonComponent } from "./shared/LinkedinSsoButtonComponent";
 
 type ComponentProps = {
   didSignup: (email: string) => void;
@@ -33,6 +34,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
     logo,
     azureAdSsoEnabled,
     googleSsoEnabled,
+    linkedinSsoEnabled,
     privacyPolicyUrl,
     termsOfServiceUrl,
   } = useApp();
@@ -44,8 +46,9 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
   const { t } = useTranslation();
 
   // Show SSO Login btn
-  const azureAdLogin = !authLegacy && (azureAdSsoEnabled);
-  const googleLogin = !authLegacy && (googleSsoEnabled);
+  const azureAdLogin = !authLegacy && azureAdSsoEnabled;
+  const googleLogin = !authLegacy && googleSsoEnabled;
+  const linkedinLogin = !authLegacy && linkedinSsoEnabled;
 
   const [params] = useSearchParams();
   const [plan, currency, recurrenceInterval] = [
@@ -112,6 +115,17 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
     }
   };
 
+  const renderLinkedin = () => {
+    if (linkedinLogin) {
+      return (
+        <LinkedinSsoButtonComponent
+          label="signup"
+          onClick={() => signupMiddleware("linkedin")}
+        ></LinkedinSsoButtonComponent>
+      );
+    }
+  };
+
   const renderSignupAlternatives = () => {
     const hasAlternatives = googleLogin || azureAdLogin;
     return (
@@ -124,6 +138,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
         <div className="space-y-2">
           {renderGoogle()}
           {renderAzureAd()}
+          {renderLinkedin()}
         </div>
       </>
     );

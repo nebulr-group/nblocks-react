@@ -8,6 +8,7 @@ query GetAppAnonymous {
     passkeysEnabled
     azureAdSsoEnabled
     googleSsoEnabled
+    linkedinSsoEnabled
     mfaEnabled
   }
 }
