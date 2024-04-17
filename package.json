@@ -11,7 +11,7 @@
     "Readme.md"
   ],
   "scripts": {
-    "build": "rollup -c --bundleConfigAsCjs",
+    "build": "rm -rf ./dist && rollup -c --bundleConfigAsCjs",
     "npm-publish": "npm run build && npm publish --access public",
     "npm-publish-beta": "npm run build && npm publish --access public --tag beta",
     "npm-publish-local": "npm run build && npm publish --registry http://verdaccio:4873 --tag alpha",
@@ -21,7 +21,8 @@
   "license": "ISC",
   "peerDependencies": {
     "@nebulr-group/nblocks-ts-client": "^5.0.0 || ^5.0.0-alpha.3",
-    "react": "^18.2.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@nebulr-group/nblocks-ts-client": "^5.0.0-alpha.3",
