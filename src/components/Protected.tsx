@@ -3,6 +3,7 @@ import { useNblocksClient } from "../hooks/UseNblocksClient";
 import { AuthContext } from "@nebulr-group/nblocks-ts-client";
 import { useLog } from "../hooks/UseLog";
 import { useTokens } from "../hooks/UseTokens";
+import { useRedirect } from "../hooks/UseRedirect";
 
 interface ComponentProps {
     roles: string[];
@@ -19,6 +20,7 @@ const ProtectedComponent: FunctionComponent<ComponentProps> = ({ roles, privileg
     const { log } = useLog();
     const { nblocksClient } = useNblocksClient()
     const { accessToken } = useTokens();
+    const { replace } = useRedirect();
 
     // This will be our variable telling if the user is granted access or if we should redirect to login
     // Initially this variable is true since we don't want to redirect before resolving the 
@@ -31,7 +33,7 @@ const ProtectedComponent: FunctionComponent<ComponentProps> = ({ roles, privileg
     useEffect(() => {
         log(`User has ${granted ? '' : 'NOT'} the right to be here / se this`);
         if (!granted && redirectTo)
-            window.location.replace(redirectTo);
+            replace(redirectTo);
     }, [granted]);
 
     const doAuthorize = async () => {

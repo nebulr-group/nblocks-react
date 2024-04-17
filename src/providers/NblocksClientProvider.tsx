@@ -23,7 +23,8 @@ const NblocksClientContextProvider: FunctionComponent<{
 
   log('New NblocksPublicClient instanciated!');
 
-  log(`3. Rendering NblocksClientContextProvider`);
+  // log(`3. Rendering NblocksClientContextProvider`);
+
   return (
     <Context.Provider value={{ nblocksClient }}>
       {children}

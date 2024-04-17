@@ -36,7 +36,8 @@ const FlagsContextProvider: FunctionComponent<{
     return flagsStorage.flags.some(flag => flag.flag === flagKey && flag.evaluation.enabled);
   }
 
-  log(`5. Rendering FlagsContextProvider`);
+  // log(`5. Rendering FlagsContextProvider`);
+  
   return (
     <Context.Provider value={{ flagEnabled, flagsStorage }}>
       {children}

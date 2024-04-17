@@ -1,5 +1,4 @@
 import React, { FunctionComponent, useContext } from "react";
-import { useLog } from "../hooks/UseLog";
 
 export interface LibConfig {
     // Your unique Nblocks App Id
@@ -8,18 +7,22 @@ export interface LibConfig {
     // The path where users ends up after login (defaults to /)
     handoverPath: string;
 
-    // Output debug messages from plugin
+    // Output debug messages from plugin (defaults to false)
     debug: boolean;
 
-    // Internal config. Used by Nblocks developers
+    // Internal config. Used by Nblocks developers (defaults to PROD)
     stage: 'DEV' | 'STAGE' | 'PROD';
+
+    // Disable plugin redirects. Usefull when debugging (defaults to false)
+    disableRedirects: boolean;
 }
 
 const initialContext: LibConfig = {
     appId: "",
     handoverPath: "/",
     debug: false,
-    stage: 'PROD'
+    stage: 'PROD',
+    disableRedirects: false
 };
 
 const Context = React.createContext<LibConfig>(initialContext);
@@ -35,9 +38,9 @@ const ConfigContextProvider: FunctionComponent<{
     throw new Error("Set your appId in <NblocksProvider config={{appId: 'XXX'... first")
   }
 
-  if (config.debug) {
-    console.log(`2. Rendering ConfigContextProvider`);
-  }
+  // if (config.debug) {
+  //   console.log(`2. Rendering ConfigContextProvider`);
+  // }
 
   return (
     <Context.Provider value={{ ...initialContext, ...config }}>

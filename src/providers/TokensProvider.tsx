@@ -1,7 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useTokensLocalStorage } from "../hooks/UseTokensLocalStorage";
-import { TokenRefresherComponent } from "../components/TokenRefresher";
-import { AccessTokenSpy } from "../components/AccessTokenSpy";
 import { useLog } from "../hooks/UseLog";
 
 const Context = React.createContext<{
@@ -53,11 +51,10 @@ const TokensContextProvider: FunctionComponent<{
     tokenLocalStorage.destroyStorage();
   }
 
-  log(`4. Rendering TokensContextProvider`);
+  // log(`4. Rendering TokensContextProvider`);
+
   return (
     <Context.Provider value={{ accessToken, idToken, refreshToken, setAccessToken, setRefreshToken, setIdToken, destroyTokens }}>
-      <TokenRefresherComponent />
-      <AccessTokenSpy/>
       {children}
     </Context.Provider>
   );

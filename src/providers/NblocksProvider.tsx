@@ -3,6 +3,8 @@ import { ConfigContextProvider, LibConfig } from "./ConfigProvider";
 import { FlagsContextProvider } from "./FlagsProvider";
 import { TokensContextProvider } from "./TokensProvider";
 import { NblocksClientContextProvider } from "./NblocksClientProvider";
+import { TokenRefresherComponent } from "../components/TokenRefresher";
+import { AccessTokenSpy } from "../components/AccessTokenSpy";
 
 /**
  * Wrap your code into this Provider to get access to the Nblocks world
@@ -16,13 +18,15 @@ const NblocksProvider: FunctionComponent<{
   
     if (config.debug) {
       console.log(`Nblocks: Beta - For app ${config.appId}`);
-      console.log(`1. Rendering NblocksProvider`);
+      // console.log(`1. Rendering NblocksProvider`);
     }
 
     return (
       <ConfigContextProvider config={config}>
         <NblocksClientContextProvider>
           <TokensContextProvider>
+            <TokenRefresherComponent />
+            <AccessTokenSpy/>
             <FlagsContextProvider>
               {children}
             </FlagsContextProvider>

@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNblocksClient } from "../hooks/UseNblocksClient";
 import { useTokens } from "../hooks/UseTokens";
+import { useRedirect } from "../hooks/UseRedirect";
 
 const SubscriptionComponent = () => {
 
     const { nblocksClient } = useNblocksClient()
     const { accessToken } = useTokens();
+    const { replace } = useRedirect();
 
     useEffect(() => {
         doRedirect();
@@ -15,7 +17,7 @@ const SubscriptionComponent = () => {
         try {
             if (accessToken) {
                 const codeResponse = await nblocksClient.auth.getHandoverCode(accessToken);
-                window.location.replace(nblocksClient.portal.getSelectPlanUrl(codeResponse.code));
+                replace(nblocksClient.portal.getSelectPlanUrl(codeResponse.code));
             }
         } catch (error) {
             console.error(error);
