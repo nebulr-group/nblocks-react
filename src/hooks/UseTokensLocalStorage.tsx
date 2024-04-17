@@ -1,6 +1,5 @@
-import React from "react";
 
-const useTokensStorage = () => {
+const useTokensLocalStorage = () => {
 
   const accessTokenName = "NB_ACCESS_TOKEN";
   const idTokenName = "NB_ID_TOKEN";
@@ -47,4 +46,4 @@ const useTokensStorage = () => {
   };
 };
 
-export { useTokensStorage };
+export { useTokensLocalStorage };

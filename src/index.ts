@@ -10,5 +10,5 @@ export { SubscriptionComponent } from "./components/Subscription";
 export { NblocksProvider } from "./providers/NblocksProvider";
 
 export { useNblocksClient } from "./hooks/UseNblocksClient";
-export { useTokensStorage } from "./hooks/UseTokensStorage";
+export { useTokens } from "./hooks/UseTokens";
 export { useMe } from "./hooks/UseMe"; 

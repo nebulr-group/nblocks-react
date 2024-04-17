@@ -1,33 +1,14 @@
-import { NblocksPublicClient } from '@nebulr-group/nblocks-ts-client';
-import { useEffect, useState } from 'react';
-import { useConfig } from '../providers/ConfigProvider';
-import { useLog } from './UseLog';
+import { useContext } from 'react';
+import { Context } from '../providers/NblocksClientProvider';
 
 /** Must be within NblocksProvider ctx */
 const useNblocksClient = () => {
-  const [nblocksClient, setNblocksClient] = useState<
-    NblocksPublicClient | undefined
-  >();
 
-  const { appId, debug, stage} = useConfig();
-  const {log} = useLog();
-
-  useEffect(() => {
-    if (appId) {
-      log('New NblocksPublicClient instanciated!');
-      setNblocksClient(
-        new NblocksPublicClient({
-          appId,
-          stage,
-          debug
-        }),
-      );
-    }
-  }, [appId]);
-
-  return {
-    nblocksClient,
-  };
+  const context = useContext(Context);
+  if (!context) {
+    throw new Error('useNblocksClient must be used within a NblocksClientContextProvider');
+  }
+  return context;
 };
 
 export { useNblocksClient };

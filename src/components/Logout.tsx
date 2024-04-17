@@ -1,18 +1,15 @@
 import React, { useEffect } from "react";
 import { useNblocksClient } from "../hooks/UseNblocksClient";
-import { useTokensStorage } from "../hooks/UseTokensStorage";
+import { useTokens } from "../hooks/UseTokens";
 
 const LogoutComponent = () => {
 
-    const { destroyStorage } = useTokensStorage();
+    const { destroyTokens } = useTokens();
     const { nblocksClient } = useNblocksClient();
 
     useEffect(() => {
-       if (nblocksClient) {
-        destroyStorage();
+        destroyTokens();
         window.location.replace(nblocksClient.auth.getLogoutUrl());
-       }
-
     }, [nblocksClient]);
 
     return (null);

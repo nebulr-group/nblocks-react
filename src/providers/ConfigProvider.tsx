@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useContext } from "react";
+import { useLog } from "../hooks/UseLog";
 
 export interface LibConfig {
     // Your unique Nblocks App Id
@@ -32,6 +33,10 @@ const ConfigContextProvider: FunctionComponent<{
   if (!config?.appId) {
     alert("Set your appId in <NblocksProvider config={{appId: 'XXX'... first")
     throw new Error("Set your appId in <NblocksProvider config={{appId: 'XXX'... first")
+  }
+
+  if (config.debug) {
+    console.log(`2. Rendering ConfigContextProvider`);
   }
 
   return (
