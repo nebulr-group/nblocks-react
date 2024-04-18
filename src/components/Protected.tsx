@@ -6,8 +6,8 @@ import { useTokens } from "../hooks/UseTokens";
 import { useRedirect } from "../hooks/UseRedirect";
 
 interface ComponentProps {
-    roles: string[];
-    privileges: string[];
+    roles?: string[];
+    privileges?: string[];
 
     // In case of unauthorized, where should the user be redirected to?
     redirectTo?: string;
@@ -15,8 +15,8 @@ interface ComponentProps {
 }
 
 // Protect either its children or a whole route
-const ProtectedComponent: FunctionComponent<ComponentProps> = ({ roles, privileges, redirectTo, children }) => {
-
+const ProtectedComponent: FunctionComponent<ComponentProps> = ({ roles, privileges = ["AUTHENTICATED"], redirectTo, children }) => {
+    
     const { log } = useLog();
     const { nblocksClient } = useNblocksClient()
     const { accessToken } = useTokens();

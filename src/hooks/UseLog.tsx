@@ -5,14 +5,28 @@ const useLog = () => {
 
   const { debug } = useConfig();
 
-  const log = (msg: string) => {
+  const log = (msg: string, emphesize?: boolean) => {
     if (debug) {
-      console.log(`Nblocks: ${msg}`);
+      if (emphesize) {
+        console.log(`#######################`);
+        console.log(`Nblocks: ${msg}`);
+        console.log(`#######################`);
+      } else {
+        console.log(`Nblocks: ${msg}`);
+      }
+    }
+  }
+
+  const logError = (...data: any[]) => {
+    if (debug) {
+      console.error(`Nblocks: Error!`);
+      console.error(data);
     }
   }
 
   return {
     log,
+    logError
   };
 };
 

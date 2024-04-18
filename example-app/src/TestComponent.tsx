@@ -1,5 +1,6 @@
-import { TestDataComponent } from './TestDataComponent';
+import { TestTokensComponent } from './TestTokensComponent';
 import { TestFeatureFlagsComponent } from './TestFeatureFlagsComponent';
+import { TestProtectedComponent } from './TestProtectedComponent';
 
 const TestComponent = () => {
 
@@ -11,8 +12,9 @@ const TestComponent = () => {
         <div>
             <a href='/logout'>Logout</a>
         </div>
-        <TestDataComponent />
+        <TestTokensComponent />
         <TestFeatureFlagsComponent />
+        <TestProtectedComponent />
     </div>)
 }
 

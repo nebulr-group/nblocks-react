@@ -2,7 +2,7 @@
 import { useMe, useTokens, useNblocksClient } from '@nebulr-group/nblocks-react-slim';
 import { config } from './App';
 
-const TestDataComponent = () => {
+const TestTokensComponent = () => {
 
     const { profile } = useMe();
     const { idToken, accessToken, refreshToken } = useTokens();
@@ -16,7 +16,7 @@ const TestDataComponent = () => {
     return (<>
         <h2>Config</h2>
         <pre>{JSON.stringify(config, null, "\t")}</pre>
-        <h2>Data</h2>
+        <h2>Tokens</h2>
         <table border={1}>
             <thead>
                 <tr>
@@ -50,4 +50,4 @@ const TestDataComponent = () => {
     </>)
 }
 
-export { TestDataComponent }
+export { TestTokensComponent }
