@@ -3,6 +3,7 @@ import { useNblocksClient } from "../hooks/UseNblocksClient";
 import { useLog } from "../hooks/UseLog";
 import { BulkEvaluationResponse } from "@nebulr-group/nblocks-ts-client";
 import { useTokens } from "../hooks/UseTokens";
+import { useRedirect } from "../hooks/UseRedirect";
 
 const Context = React.createContext<{ 
   flagEnabled: (flagKey: string) => boolean, 
@@ -17,9 +18,14 @@ const FlagsContextProvider: FunctionComponent<{
   const { accessToken } = useTokens();
   const { log } = useLog();
   const [flagsStorage, setFlagsStorage] = useState<BulkEvaluationResponse | undefined>();
+  const { noTokenRefreshOnCurrentPath } = useRedirect();
 
   useEffect(() => {
-    doBulkEvaluation();
+    if (noTokenRefreshOnCurrentPath()) {
+      doBulkEvaluation();
+    } else {
+      log("Will not pull flags on current path")
+    }
   }, [accessToken]);
 
   const doBulkEvaluation = async () => {

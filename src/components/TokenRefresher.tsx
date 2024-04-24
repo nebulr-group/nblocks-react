@@ -29,8 +29,9 @@ const TokenRefresherComponent = () => {
                 if (tokens.id_token)
                     setIdToken(tokens.id_token);
 
-                log(`Tokens refreshed, scheduling new refresh in ${tokens.expires_in} s`);
-                setTimeout(refreshTokens, tokens.expires_in * 1000);
+                const expiresIn = Math.floor(tokens.expires_in * 0.9);
+                log(`Tokens refreshed, scheduling new refresh in ${expiresIn} s because token expires in ${tokens.expires_in} s`);
+                setTimeout(refreshTokens, expiresIn * 1000);
             } else {
                 if (noTokenRefreshOnCurrentPath())
                     log(`Tokens should not be refreshed on current path (/login /logout /auth/callback)! Trying another refresh in ${retrySec}s`);
