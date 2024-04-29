@@ -17,9 +17,9 @@ export class BackendlessService {
     this.apiHost = config.apiHost;
   }
 
-  async handoverToApp(): Promise<void> {
+  async handoverToAppUrl(): Promise<string> {
     await this._setSecureCookie();
-    window.location.href = `${this.apiHost}${this.ENDPOINTS.handoverToApp}`;
+    return `${this.apiHost}${this.ENDPOINTS.handoverToApp}`;
   }
 
   private async _setSecureCookie(): Promise<void> {

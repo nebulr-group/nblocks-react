@@ -6,6 +6,7 @@ import { LibConfig } from "../models/lib-config";
 import { FederationType, MfaState } from "./AuthService";
 import { AuthTenantUserResponseDto } from "../models/auth-tenant-user-response.dto";
 import { PublicKeyCredentialCreationOptionsJSON, RegistrationResponseJSON, PublicKeyCredentialRequestOptionsJSON, AuthenticationResponseJSON } from '@simplewebauthn/typescript-types'
+import { doLog } from "../hooks/use-log";
 
 //FIXME centralize models
 export type UpdateUserProfileArgs = {
@@ -139,7 +140,7 @@ export class OAuthService {
 
   log(msg: string): void {
     if (this.debug) {
-      console.log(`OAuthService: ${msg}`);
+      doLog(`OAuthService: ${msg}`);
     }
   }
 
@@ -190,25 +191,25 @@ export class OAuthService {
         if (this._refreshTokenExpires) {
           // We have a valid refresh token, so let's try to refresh the access and ID token.
           if (this.debug) {
-            console.log(`OAuthService: Recovering from error by Refreshing tokens since refreshToken exists`);
+            doLog(`OAuthService: Recovering from error by Refreshing tokens since refreshToken exists`);
           }
           await this.refreshTokens();
         } else {
-          console.log(`OAuthService: No refreshToken exists. Waiting for observers to understand the user is unauthenticated`);
+          doLog(`OAuthService: No refreshToken exists. Waiting for observers to understand the user is unauthenticated`);
           return;
         }
       } finally {
         if ((!this._accessTokenExpires || !this._idTokenClaims) && this._refreshTokenExpires) {
           // We have a valid refresh token, so let's try to refresh the access and ID token.
           if (this.debug) {
-            console.log(`OAuthService: Some tokens could not be restored. Refreshing tokens since refreshToken exists`);
+            doLog(`OAuthService: Some tokens could not be restored. Refreshing tokens since refreshToken exists`);
           }
           await this.refreshTokens();
         }
       }
 
       if (this.debug) {
-        console.log(`OAuthService: Did try to restore tokens from Local storage and successfully restored [${this._refreshTokenExpires ? 'refreshToken' : ''} ${this._accessTokenExpires ? 'accessToken' : ''} ${this._idTokenClaims ? 'idToken' : ''}]`);
+        doLog(`OAuthService: Did try to restore tokens from Local storage and successfully restored [${this._refreshTokenExpires ? 'refreshToken' : ''} ${this._accessTokenExpires ? 'accessToken' : ''} ${this._idTokenClaims ? 'idToken' : ''}]`);
       }
 
       // Start scheduler
@@ -502,7 +503,7 @@ export class OAuthService {
       }, threshold);
     } else {
       if (this.debug) {
-        console.log(`OAuthService: Will not schedule refresher since there's no accessToken`);
+        doLog(`OAuthService: Will not schedule refresher since there's no accessToken`);
       }
     }
   }

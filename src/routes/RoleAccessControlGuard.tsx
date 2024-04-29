@@ -2,6 +2,7 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/auth-context";
 import { useConfig } from "../hooks/config-context";
+import { useLog } from "../hooks/use-log";
 
 /**
  * This is a route guard that checks if current user has a certain role.
@@ -14,15 +15,14 @@ function NBRoleAccessControlGuard({
   children: React.ReactElement;
   roles: string[];
 }) {
-  const { debug, handoverRoute } = useConfig();
+  const { handoverRoute } = useConfig();
   const { currentUser } = useAuth();
+  const { log } = useLog();
 
   if (!currentUser.user || !currentUser.hasRole(roles)) {
-    if (debug) {
-      console.log(
-        `NBRoleAccessControlGuard: Route is restricted. Redirecting to ${handoverRoute}`
-      );
-    }
+    log(
+      `NBRoleAccessControlGuard: Route is restricted. Redirecting to ${handoverRoute}`
+    );
     return <Navigate to={handoverRoute} replace />;
   }
 

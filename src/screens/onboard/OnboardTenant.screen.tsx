@@ -27,12 +27,6 @@ const OnboardTenantScreen: FunctionComponent<{}> = () => {
     navigate(RouteConfig.onboard.onboardingStart, { state: { targetUrl } });
   };
 
-  const log = (msg: string) => {
-    if (debug) {
-      console.log(`OnboardTenantScreen: ${msg}`);
-    }
-  };
-
   return (
     <AuthLayoutWrapperComponent
       heading={"Setup your workspace"}
