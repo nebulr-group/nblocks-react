@@ -40,7 +40,14 @@ const NblocksAuthContextProvider: FunctionComponent<NblocksContextProps> = ({
 
   // Supports logging out without using didAuthenticate from secureContext which notifies all listners
   const logout = async (skipAuthenticationBroadcast?: boolean) => {
-    await authApolloClient.client.resetStore();
+    // Start by wiping local storage
+    AuthService.clearAuthStorage();
+    OAuthService.clearAuthStorage();
+
+    // https://stackoverflow.com/questions/48887480/reset-store-after-logout-with-apollo-client
+    await authApolloClient.client.cache.reset();
+    await authApolloClient.client.clearStore();
+
     if (authenticated) {
       if (!skipAuthenticationBroadcast) {
         didAuthenticate(false);
@@ -49,10 +56,6 @@ const NblocksAuthContextProvider: FunctionComponent<NblocksContextProps> = ({
     } else {
       log(`User is already logged out`);
     }
-
-    // Finish off with wiping local storage
-    AuthService.clearAuthStorage();
-    OAuthService.clearAuthStorage();
   };
 
   /**
