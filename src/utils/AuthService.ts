@@ -15,7 +15,7 @@ export type UpdateUserProfileArgs = {
 };
 
 export type MfaState = "DISABLED" | "REQUIRED" | "SETUP";
-export type FederationType = "ms-azure-ad" | "google" | "saml" | "oidc";
+export type FederationType = "ms-azure-ad" | "google" | "linkedin" | "saml" | "oidc";
 
 export class AuthService {
   private readonly ENDPOINTS = {

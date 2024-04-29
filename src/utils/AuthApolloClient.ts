@@ -14,6 +14,10 @@ import { OAuthService } from "./OAuthService";
 
 interface ErrorExtensions {
   code?: string;
+  response?: {
+    message: string;
+    statusCode: string;
+  }
   exception?: ClientError;
 }
 
@@ -21,8 +25,8 @@ export class AuthApolloClient {
   readonly client: ApolloClient<NormalizedCacheObject>;
   private readonly debug: boolean;
   private readonly appId?: string; // App id should only be present when running backendless
-  private unauthenticatedCallback = () => {};
-  private forbiddenCallback = () => {};
+  private unauthenticatedCallback = () => { };
+  private forbiddenCallback = () => { };
 
   constructor(graphqlUrl: string, debug: boolean, appId?: string) {
     this.debug = debug;
@@ -110,9 +114,13 @@ export class AuthApolloClient {
               `[GraphQL error]: Message: ${error.message}, Location: ${error.locations}, Path: ${error.path}`
             );
 
-            const extension = error?.extensions as ErrorExtensions;
-            if (extension) {
-              switch (extension.exception?.httpStatus) {
+            const extensions = error?.extensions as ErrorExtensions;
+            if (extensions) {
+              const httpStatus = extensions.exception?.httpStatus || extensions.response?.statusCode;
+
+              // Could also be extensions.code: "UNAUTHENTICATED"
+
+              switch (httpStatus) {
                 case 401:
                   this.unauthenticatedCallback();
                   break;
@@ -122,7 +130,7 @@ export class AuthApolloClient {
                   break;
 
                 default:
-                  console.error("Unhandled GraphQL exception", error);
+                  console.error("Unhandled GraphQL exception in AuthApolloClient. You should handle this with a callback", error);
                   break;
               }
             }
