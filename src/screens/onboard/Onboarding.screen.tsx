@@ -17,21 +17,13 @@ import { RouteConfig } from "../../routes/AuthRoutes";
  * This was stored in choose-user before and it was hard to follow
  */
 const OnboardingScreen: FunctionComponent<{}> = () => {
-  const { data, loading, error } = useQuery(GetTenantDocument);
+  const { data } = useQuery(GetTenantDocument);
   const { currentUser } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
-  const app = useApp();
   const { debug, handoverRoute } = useConfig();
 
   // Handover will be done to handoverRoute or targetUrl if specified
   const targetUrl = location.state?.targetUrl?.pathname || handoverRoute;
-
-  const log = (msg: string) => {
-    if (debug) {
-      console.log(`OnboardingScreen: ${msg}`);
-    }
-  };
 
   const onLoad = async (user: AuthTenantUserResponseDto) => {
     // if (!user.onboarded) {

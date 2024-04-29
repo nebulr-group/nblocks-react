@@ -29,6 +29,7 @@ const initialContext: LibConfig = {
   oauthRedirectUri,
   accountApiBaseUri: accountApi,
   copyrightFooter: `©${new Date().getUTCFullYear()} Nblocks. All Rights Reserved.`,
+  disableRedirects: false,
 };
 
 const Context = React.createContext<LibConfig>(initialContext);

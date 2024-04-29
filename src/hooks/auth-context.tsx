@@ -9,6 +9,7 @@ import { CurrentUser } from "../models/current-user.model";
 import { useSecureContext } from "./secure-http-context";
 import { useConfig } from "./config-context";
 import { OAuthService } from "../utils/OAuthService";
+import { useLog } from "./use-log";
 
 const initialAuthContext = {
   currentUser: new CurrentUser(),
@@ -37,10 +38,18 @@ const NblocksAuthContextProvider: FunctionComponent<NblocksContextProps> = ({
     initialized,
   } = useSecureContext();
   const [currentUser, setCurrentUser] = useState(new CurrentUser());
+  const { log } = useLog();
 
   // Supports logging out without using didAuthenticate from secureContext which notifies all listners
   const logout = async (skipAuthenticationBroadcast?: boolean) => {
-    await authApolloClient.client.resetStore();
+    // Start by wiping local storage
+    AuthService.clearAuthStorage();
+    OAuthService.clearAuthStorage();
+
+    // https://stackoverflow.com/questions/48887480/reset-store-after-logout-with-apollo-client
+    await authApolloClient.client.cache.reset();
+    await authApolloClient.client.clearStore();
+
     if (authenticated) {
       if (!skipAuthenticationBroadcast) {
         didAuthenticate(false);
@@ -49,10 +58,6 @@ const NblocksAuthContextProvider: FunctionComponent<NblocksContextProps> = ({
     } else {
       log(`User is already logged out`);
     }
-
-    // Finish off with wiping local storage
-    AuthService.clearAuthStorage();
-    OAuthService.clearAuthStorage();
   };
 
   /**
@@ -81,12 +86,6 @@ const NblocksAuthContextProvider: FunctionComponent<NblocksContextProps> = ({
       "Encountered Forbidden error! We should really do something useful here like displaying an forbidden message or something"
     )
   );
-
-  const log = (msg: string) => {
-    if (debug) {
-      console.log(`NblocksAuthContextProvider: ${msg}`);
-    }
-  };
 
   const refreshCurrentUser = async () => {
     log("Will refresh currentUser");

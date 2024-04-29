@@ -57,4 +57,6 @@ export interface LibConfig {
 
   // A copyright footer that is shown on auth views
   copyrightFooter: string;
+
+  disableRedirects?: boolean;
 }

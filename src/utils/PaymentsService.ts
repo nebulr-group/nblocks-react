@@ -19,19 +19,19 @@ export class PaymentsService {
     this.apiHost = config.apiHost;
   }
 
-  async redirectToAnonymousCheckoutView(): Promise<void> {
+  async redirectToAnonymousCheckoutViewUrl(): Promise<string> {
     await this._setSecureCookie();
-    window.location.href = `${this.apiHost}${this.ENDPOINTS.anonymousCheckoutView}`;
+    return `${this.apiHost}${this.ENDPOINTS.anonymousCheckoutView}`;
   }
 
-  async redirectToCheckoutView(): Promise<void> {
+  async redirectToCheckoutViewUrl(): Promise<string> {
     await this._setSecureCookie();
-    window.location.href = `${this.apiHost}${this.ENDPOINTS.checkoutView}`;
+    return `${this.apiHost}${this.ENDPOINTS.checkoutView}`;
   }
 
-  async redirectToSubscriptionPortal(): Promise<void> {
+  async redirectToSubscriptionPortalUrl(): Promise<string> {
     await this._setSecureCookie();
-    window.location.href = `${this.apiHost}${this.ENDPOINTS.subscriptionPortal}`;
+    return `${this.apiHost}${this.ENDPOINTS.subscriptionPortal}`;
   }
 
   private async _setSecureCookie(): Promise<void> {

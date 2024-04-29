@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useAuth } from "../../../hooks/auth-context";
 import { LoginComponent } from "../../../components/auth/login/LoginComponent";
 import { useConfig } from "../../../hooks/config-context";
@@ -9,6 +9,8 @@ import { FederationType, MfaState } from "../../../utils/AuthService";
 import { useSecureContext } from "../../../hooks/secure-http-context";
 import { useTranslation } from "react-i18next";
 import { FederationConnection } from "../../../utils/OAuthService";
+import { useRedirect } from "../../../hooks/use-redirect";
+import { useLog } from "../../../hooks/use-log";
 
 export function LoginScreen() {
   const { t } = useTranslation();
@@ -16,10 +18,11 @@ export function LoginScreen() {
   document.title = t("Login");
 
   const { authService } = useSecureContext();
-  const { debug, handoverRoute, authLegacy } = useConfig();
+  const { handoverRoute, authLegacy } = useConfig();
   const location = useLocation();
-  const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
+  const { navigate, replace } = useRedirect();
+  const { log } = useLog();
 
   // Target url when authentication finished
   const targetUrl = location.state?.from?.pathname || handoverRoute;
@@ -53,7 +56,7 @@ export function LoginScreen() {
       case "DISABLED":
       default:
         if (!authLegacy && tenantUserId) {
-          window.location.replace(authService.getHandoverUrl(tenantUserId)!);
+          replace(authService.getHandoverUrl(tenantUserId)!);
         } else {
           log("Navigating to Choose user screen");
           navigate(RouteConfig.login.chooseUserScreen);
@@ -65,7 +68,7 @@ export function LoginScreen() {
 
   const onDidClickFederatedLogin = (type: FederationType) => {
     const url = authService.getFederatedLoginUrl(type);
-    window.location.href = url!;
+    navigate(url!);
   };
 
   const onDidClickFederationConnection = (connection: FederationConnection) => {
@@ -73,13 +76,7 @@ export function LoginScreen() {
       connection.type,
       connection.id
     );
-    window.location.href = url!;
-  };
-
-  const log = (msg: string) => {
-    if (debug) {
-      console.log(msg);
-    }
+    navigate(url!);
   };
 
   return (

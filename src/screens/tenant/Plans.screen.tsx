@@ -7,12 +7,15 @@ import { useSecureContext } from "../../hooks/secure-http-context";
 import { PaymentsService } from "../../utils/PaymentsService";
 import { TenantPaymentStatusGraphql } from "../../gql/graphql";
 import { BackendlessService } from "../../utils/BackendlessService";
+import { useRedirect } from "../../hooks/use-redirect";
+import { useLog } from "../../hooks/use-log";
 
 const PlansScreen: FunctionComponent<{}> = () => {
-  const { debug } = useConfig();
   const { t } = useTranslation();
   const { authHttpClient } = useSecureContext();
   const config = useConfig();
+  const { navigate } = useRedirect();
+  const { log } = useLog();
 
   const backendlessService = new BackendlessService(
     authHttpClient.httpClient,
@@ -21,40 +24,39 @@ const PlansScreen: FunctionComponent<{}> = () => {
 
   const paymentService = new PaymentsService(authHttpClient.httpClient, config);
 
-  const planSelectHandler = (paymentStatus: TenantPaymentStatusGraphql) => {
+  const planSelectHandler = async (
+    paymentStatus: TenantPaymentStatusGraphql
+  ) => {
     switch (paymentStatus.shouldSetupPayments) {
       case true:
         log(
           `The plan selected requires payment to be setup. Redirecting to backendless`
         );
-        paymentService.redirectToCheckoutView();
+        const url = await paymentService.redirectToCheckoutViewUrl();
+        navigate(url);
         break;
       case false:
       default:
         log(`The plan selected doesn't require more config. Returning to app`);
-        handoverBackToApp();
+        await handoverBackToApp();
         break;
     }
   };
 
-  const customerPortalHandler = () => {
-    paymentService.redirectToSubscriptionPortal();
+  const customerPortalHandler = async () => {
+    const url = await paymentService.redirectToSubscriptionPortalUrl();
+    navigate(url);
   };
 
   // If there's no plans to show, redirect back to app
-  const onDidRecieveNoPlans = () => {
+  const onDidRecieveNoPlans = async () => {
     log(`No plans configured. Redirecting back`);
-    handoverBackToApp();
+    await handoverBackToApp();
   };
 
-  const handoverBackToApp = () => {
-    backendlessService.handoverToApp();
-  };
-
-  const log = (msg: string) => {
-    if (debug) {
-      console.log(msg);
-    }
+  const handoverBackToApp = async () => {
+    const url = await backendlessService.handoverToAppUrl();
+    navigate(url);
   };
 
   return (

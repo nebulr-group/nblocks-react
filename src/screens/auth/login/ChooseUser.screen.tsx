@@ -7,6 +7,8 @@ import { useSecureContext } from "../../../hooks/secure-http-context";
 import { AuthTenantUserResponseDto } from "../../../models/auth-tenant-user-response.dto";
 import { RouteConfig } from "../../../routes/AuthRoutes";
 import { useTranslation } from "react-i18next";
+import { useRedirect } from "../../../hooks/use-redirect";
+import { useLog } from "../../../hooks/use-log";
 
 export function ChooseUserScreen() {
   const { t } = useTranslation();
@@ -15,8 +17,10 @@ export function ChooseUserScreen() {
   const [userSelected, setUserSelected] = useState(false);
   const [user, setUser] = useState<AuthTenantUserResponseDto>();
   const { authService } = useSecureContext();
-  const { debug, handoverRoute, authLegacy } = useConfig();
+  const { handoverRoute, authLegacy } = useConfig();
+  const { log } = useLog();
   const location = useLocation();
+  const { replace } = useRedirect();
 
   // Handover will be done to handoverRoute or targetUrl if specified
   const targetUrl = location.state?.targetUrl?.pathname || handoverRoute;
@@ -26,17 +30,11 @@ export function ChooseUserScreen() {
   const onDidSelectUser = async (user: AuthTenantUserResponseDto) => {
     if (!authLegacy) {
       // Here we initiate the handover back to app
-      window.location.replace(authService.getHandoverUrl(user.id)!);
+      replace(authService.getHandoverUrl(user.id)!);
     } else {
       setUser(user);
       setUserSelected(true);
       log("Choose user completed. Next step: onboarding");
-    }
-  };
-
-  const log = (msg: string) => {
-    if (debug) {
-      console.log(`ChooseUserScreen: ${msg}`);
     }
   };
 

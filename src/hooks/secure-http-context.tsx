@@ -9,6 +9,7 @@ import { AuthHttpClient } from "../utils/AuthHttpClient";
 import { AuthApolloClient } from "../utils/AuthApolloClient";
 import { ApolloProvider } from "@apollo/client";
 import { useConfig } from "./config-context";
+import { useLog } from "./use-log";
 
 const initialSecurityContext = {
   authService: {} as AuthService,
@@ -27,6 +28,7 @@ const NblocksSecureContextProvider: FunctionComponent<{
 }> = ({ children }) => {
   const config = useConfig();
   const { apiHost, graphqlPath, debug, appId } = config;
+  const { log } = useLog();
 
   const [authenticated, setAuthenticated] = useState<boolean>(false);
   const [initialized, setInitialized] = useState<boolean>(false);
@@ -61,12 +63,6 @@ const NblocksSecureContextProvider: FunctionComponent<{
       }
     });
   }, []);
-
-  const log = (msg: string) => {
-    if (debug) {
-      console.log(`NblocksSecureContextProvider: ${msg}`);
-    }
-  };
 
   const renderChildren = () => {
     if (initialized) {

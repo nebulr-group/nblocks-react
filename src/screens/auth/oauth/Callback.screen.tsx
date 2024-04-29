@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../../hooks/auth-context";
 import { useConfig } from "../../../hooks/config-context";
 import { useSecureContext } from "../../../hooks/secure-http-context";

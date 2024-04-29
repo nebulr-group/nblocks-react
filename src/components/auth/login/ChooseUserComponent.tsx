@@ -10,10 +10,10 @@ import { TextComponent } from "../../shared/TextComponent";
 import { LinkComponent } from "../../shared/LinkComponent";
 import { RouteConfig } from "../../../routes/AuthRoutes";
 import { AlertComponent } from "../../shared/AlertComponent";
-import { useConfig } from "../../../hooks/config-context";
 import { SkeletonLoader } from "../../shared/SkeletonLoader";
 import { useTranslation } from "react-i18next";
 import { TFunction } from "i18next";
+import { useLog } from "../../../hooks/use-log";
 
 type ComponentProps = {
   didSelectUser: (user: AuthTenantUserResponseDto) => void;
@@ -47,8 +47,8 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
   const { authService, didAuthenticate } = useSecureContext();
   const [users, setUsers] = useState<AuthTenantUserResponseDto[]>();
   const [selectedUser, setSelectedUser] = useState<AuthTenantUserResponseDto>();
-  const { debug } = useConfig();
   const { t } = useTranslation();
+  const { log } = useLog();
 
   const submit = async (user?: AuthTenantUserResponseDto) => {
     setIsLoading(true);
@@ -67,12 +67,6 @@ const ChooseUserComponent: FunctionComponent<ComponentProps> = ({
 
   const onDidSelectOption = (option: Option) => {
     setSelectedUser(users!.find((user) => user.id === option.value));
-  };
-
-  const log = (msg: string) => {
-    if (debug) {
-      console.log(`ChooseUserComponent: ${msg}`);
-    }
   };
 
   useEffect(() => {

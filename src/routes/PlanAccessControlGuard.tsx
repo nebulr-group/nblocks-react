@@ -3,6 +3,7 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 import { GetTenantDocument } from "../gql/graphql";
 import { useConfig } from "../hooks/config-context";
+import { useLog } from "../hooks/use-log";
 
 /**
  * This is a route guard that checks if current user belongs to a tenant with a given subscription plan.
@@ -15,15 +16,15 @@ function NBPlanAccessControlGuard({
   children: React.ReactElement;
   plans: string[];
 }) {
-  const { debug, handoverRoute } = useConfig();
+  const { handoverRoute } = useConfig();
+  const { log } = useLog();
 
   const { data, loading, error } = useQuery(GetTenantDocument);
   if (!plans.some((plan) => plan === data?.getTenant.plan)) {
-    if (debug) {
-      console.log(
-        `NBPlanAccessControlGuard: Route is restricted. Redirecting to ${handoverRoute}`
-      );
-    }
+    log(
+      `NBPlanAccessControlGuard: Route is restricted. Redirecting to ${handoverRoute}`
+    );
+
     return <Navigate to={handoverRoute} replace />;
   }
 

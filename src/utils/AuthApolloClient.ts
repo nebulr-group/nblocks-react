@@ -11,6 +11,7 @@ import { onError } from "@apollo/client/link/error";
 import { AuthService } from "./AuthService";
 import { ClientError } from "./errors/ClientError";
 import { OAuthService } from "./OAuthService";
+import { doLog } from "../hooks/use-log";
 
 interface ErrorExtensions {
   code?: string;
@@ -89,7 +90,7 @@ export class AuthApolloClient {
 
     const requestMiddleware = new ApolloLink((operation, forward) => {
       if (debug)
-        console.log(
+        doLog(
           "[GraphQL request]:",
           operation.operationName,
           operation.variables
@@ -100,7 +101,7 @@ export class AuthApolloClient {
     const responseLink = new ApolloLink((operation, forward) => {
       return forward(operation).map((response) => {
         if (debug) {
-          console.log("[GraphQL response]:", response);
+          doLog("[GraphQL response]:", response);
         }
         return response;
       });

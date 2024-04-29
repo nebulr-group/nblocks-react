@@ -11,7 +11,7 @@ const OnboardUserScreen: FunctionComponent<{}> = () => {
   document.title = "Onboard user";
 
   const { t } = useTranslation();
-  const { debug, handoverRoute } = useConfig();
+  const { handoverRoute } = useConfig();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -20,12 +20,6 @@ const OnboardUserScreen: FunctionComponent<{}> = () => {
 
   const onDidCompleteOnboarding = () => {
     navigate(RouteConfig.onboard.onboardingStart, { state: { targetUrl } });
-  };
-
-  const log = (msg: string) => {
-    if (debug) {
-      console.log(`OnboardUserScreen: ${msg}`);
-    }
   };
 
   return (

@@ -7,10 +7,12 @@ import { useSecureContext } from "../../hooks/secure-http-context";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import { SignupMissingUserComponent } from "../../components/auth/SignupMissingUserComponent";
+import { useRedirect } from "../../hooks/use-redirect";
 
 const SignupScreen: FunctionComponent<{}> = () => {
   const { authService } = useSecureContext();
   const [didSignup, setDidSignup] = useState(false);
+  const { navigate } = useRedirect();
   const [email, setEmail] = useState("");
   const { t } = useTranslation();
   const [params] = useSearchParams();
@@ -26,7 +28,7 @@ const SignupScreen: FunctionComponent<{}> = () => {
 
   const onDidClickFederatedSignup = (type: FederationType) => {
     const url = authService.getFederatedSignupUrl(type);
-    window.location.href = url!;
+    navigate(url!);
   };
 
   const renderChild = () => {
