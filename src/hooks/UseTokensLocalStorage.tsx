@@ -17,16 +17,25 @@ const useTokensLocalStorage = () => {
     return window.localStorage.getItem(refreshTokenName) || undefined;
   }
 
-  const setAccessToken = (token: string) => {
-    window.localStorage.setItem(accessTokenName, token);
+  const setAccessToken = (token?: string) => {
+    if (token)
+      window.localStorage.setItem(accessTokenName, token);
+    else
+      window.localStorage.removeItem(accessTokenName);
   }
 
-  const setIdToken = (token: string) => {
-    window.localStorage.setItem(idTokenName, token);
+  const setIdToken = (token?: string) => {
+    if (token)
+      window.localStorage.setItem(idTokenName, token);
+    else
+      window.localStorage.removeItem(idTokenName);
   }
 
-  const setRefreshToken = (token: string) => {
-    window.localStorage.setItem(refreshTokenName, token);
+  const setRefreshToken = (token?: string) => {
+    if (token)
+      window.localStorage.setItem(refreshTokenName, token);
+    else
+      window.localStorage.removeItem(refreshTokenName);
   }
 
   const destroyStorage = () => {

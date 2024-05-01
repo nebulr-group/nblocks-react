@@ -5,23 +5,23 @@ import { useNblocksClient } from "../hooks/UseNblocksClient";
 import { useRedirect } from "../hooks/UseRedirect";
 
 // This component pulls a new access token on page load if valid refresh token exists
-// This component should standby if route is /login or /logout or /callback (noTokenRefreshOnCurrentPath)
+// This component should standby if route is /login or /logout or /callback (restrictedTokenPath)
 const TokenRefresherComponent = () => {
 
     const retrySec = 60;
     const { nblocksClient } = useNblocksClient()
     const { log } = useLog();
     const { accessToken, refreshToken, setAccessToken, setIdToken, setRefreshToken } = useTokens();
-    const { noTokenRefreshOnCurrentPath } = useRedirect();
+    const { restrictedTokenPath } = useRedirect();
 
     useEffect(() => {
-        init();
+        clearExpiredTokens();
         refreshTokens();
     }, [nblocksClient]);
 
     const refreshTokens = async () => {
         try {
-            if (refreshToken && !noTokenRefreshOnCurrentPath()) {
+            if (refreshToken && !restrictedTokenPath()) {
                 const { tokens } = await nblocksClient.auth.refreshTokensAndVerify(refreshToken);
                 setAccessToken(tokens.access_token);
                 setRefreshToken(tokens.refresh_token);
@@ -33,7 +33,7 @@ const TokenRefresherComponent = () => {
                 log(`Tokens refreshed, scheduling new refresh in ${expiresIn} s because token expires in ${tokens.expires_in} s`);
                 setTimeout(refreshTokens, expiresIn * 1000);
             } else {
-                if (noTokenRefreshOnCurrentPath())
+                if (restrictedTokenPath())
                     log(`Tokens should not be refreshed on current path (/login /logout /auth/callback)! Trying another refresh in ${retrySec}s`);
 
                 if (!refreshToken)
@@ -49,15 +49,15 @@ const TokenRefresherComponent = () => {
         }
     };
 
-    const init = () => {
+    const clearExpiredTokens = () => {
         if (refreshToken && new Date().getTime() > nblocksClient.auth.contextHelper.getTokenExpiration(refreshToken) * 1000) {
             log('Expired refresh token. Removing!');
-            window.localStorage.removeItem('refresh_token');
+            setRefreshToken(undefined);
         }
 
         if (accessToken && new Date().getTime() > nblocksClient.auth.contextHelper.getTokenExpiration(accessToken) * 1000) {
             log('Expired access token. Removing!');
-            window.localStorage.removeItem('access_token');
+            setAccessToken(undefined);
         }
     }
 

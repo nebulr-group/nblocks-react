@@ -15,10 +15,12 @@ const useMe = () => {
   }, [idToken]);
 
   const resolveProfile = async () => {
-    if (idToken) {
-      const p = await nblocksClient.auth.contextHelper.getProfileVerified(idToken);
-      setProfile(p)
-    }
+    try {
+      if (idToken) {
+        const p = await nblocksClient.auth.contextHelper.getProfileVerified(idToken);
+        setProfile(p)
+      }
+    } catch (error) {}
   }
 
   return {

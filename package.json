@@ -1,6 +1,6 @@
 {
   "name": "@nebulr-group/nblocks-react-slim",
-  "version": "1.0.0-alpha.24",
+  "version": "1.0.0-alpha.25",
   "description": "A slim react library from Nblocks",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",

@@ -2,7 +2,7 @@ export { TestComponent } from "./components/Test";
 export { LoginComponent } from "./components/Login";
 export { CallbackComponent } from "./components/Callback";
 export { LogoutComponent } from "./components/Logout";
-export { ProtectedComponent } from "./components/Protected";
+export { ProtectedRouteComponent } from "./components/ProtectedRoute";
 export { FeatureFlagComponent } from "./components/FeatureFlag";
 export { TeamComponent } from "./components/Team";
 export { SubscriptionComponent } from "./components/Subscription";

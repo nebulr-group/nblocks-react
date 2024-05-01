@@ -18,13 +18,13 @@ const FlagsContextProvider: FunctionComponent<{
   const { accessToken } = useTokens();
   const { log } = useLog();
   const [flagsStorage, setFlagsStorage] = useState<BulkEvaluationResponse | undefined>();
-  const { noTokenRefreshOnCurrentPath } = useRedirect();
+  const { restrictedTokenPath } = useRedirect();
 
   useEffect(() => {
-    if (noTokenRefreshOnCurrentPath()) {
+    if (!restrictedTokenPath()) {
       doBulkEvaluation();
     } else {
-      log("Will not pull flags on current path")
+      log(`Will not pull flags on current path`)
     }
   }, [accessToken]);
 

@@ -9,6 +9,7 @@ const useRedirect = () => {
   const { debug } = useConfig();
 
   const debugDelayRedirectS = 3;
+  const restrictedPaths = ['/login', '/logout', '/auth/callback'];
 
   const navigate = (url: string) => {
     if (disableRedirects) {
@@ -41,8 +42,12 @@ const useRedirect = () => {
     }
   }
 
-  const noTokenRefreshOnCurrentPath = () => {
-    return ['/login', '/logout', '/auth/callback'].some(path => path == window.location.pathname)
+  const restrictedTokenPath = () => {
+    const restricted = restrictedPaths.some(path => path == window.location.pathname);
+    if (restricted) {
+      log(`Current pathname: ${window.location.pathname} is restriced for token refresh operations`);
+    }
+    return restricted;
   }
 
   const _navigate = (url: string) => {
@@ -56,7 +61,7 @@ const useRedirect = () => {
   return {
     navigate,
     replace,
-    noTokenRefreshOnCurrentPath
+    restrictedTokenPath
   }
 };
 

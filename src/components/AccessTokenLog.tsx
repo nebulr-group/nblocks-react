@@ -3,7 +3,7 @@ import { useLog } from "../hooks/UseLog";
 import { useTokens } from "../hooks/UseTokens";
 import { useNblocksClient } from "../hooks/UseNblocksClient";
 
-const AccessTokenSpy = () => {
+const AccessTokenLog = () => {
 
     const { accessToken } = useTokens();
     const { log } = useLog();
@@ -14,11 +14,10 @@ const AccessTokenSpy = () => {
     }
 
     useEffect(() => {
-        log(`Hello from AccessTokenSpy listening on accessToken which now expires ${getExpDate(accessToken)}`);
-        // log(`Value: ${accessToken}`);
+        log(`Hello from AccessTokenLog listening on accessToken which now expires ${getExpDate(accessToken)}`);
     }, [accessToken]);
 
     return (null);
 }
 
-export { AccessTokenSpy }
+export { AccessTokenLog }

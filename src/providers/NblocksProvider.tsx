@@ -4,7 +4,7 @@ import { FlagsContextProvider } from "./FlagsProvider";
 import { TokensContextProvider } from "./TokensProvider";
 import { NblocksClientContextProvider } from "./NblocksClientProvider";
 import { TokenRefresherComponent } from "../components/TokenRefresher";
-import { AccessTokenSpy } from "../components/AccessTokenSpy";
+import { AccessTokenLog } from "../components/AccessTokenLog";
 
 /**
  * Wrap your code into this Provider to get access to the Nblocks world
@@ -26,7 +26,7 @@ const NblocksProvider: FunctionComponent<{
         <NblocksClientContextProvider>
           <TokensContextProvider>
             <TokenRefresherComponent />
-            <AccessTokenSpy/>
+            { config.debug && (<AccessTokenLog/>) }
             <FlagsContextProvider>
               {children}
             </FlagsContextProvider>

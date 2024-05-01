@@ -1,6 +1,5 @@
 import { TestTokensComponent } from './TestTokensComponent';
 import { TestFeatureFlagsComponent } from './TestFeatureFlagsComponent';
-import { TestProtectedComponent } from './TestProtectedComponent';
 
 const TestComponent = () => {
 
@@ -12,9 +11,20 @@ const TestComponent = () => {
         <div>
             <a href='/logout'>Logout</a>
         </div>
+        <div>
+            <a href='/protected'>Protected</a>
+        </div>
+        <div>
+            <a href='/protected-redirect'>Protected with login redirect</a>
+        </div>
+        <div>
+            <a href='/team'>Team</a>
+        </div>
+        <div>
+            <a href='/subscription'>Subscription</a>
+        </div>
         <TestTokensComponent />
         <TestFeatureFlagsComponent />
-        <TestProtectedComponent />
     </div>)
 }
 

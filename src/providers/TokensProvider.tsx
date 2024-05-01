@@ -6,9 +6,9 @@ const Context = React.createContext<{
   accessToken: string | undefined;
   refreshToken: string | undefined;
   idToken: string | undefined;
-  setAccessToken: (token: string) => void;
-  setRefreshToken: (token: string) => void;
-  setIdToken: (token: string) => void;
+  setAccessToken: (token?: string) => void;
+  setRefreshToken: (token?: string) => void;
+  setIdToken: (token?: string) => void;
   destroyTokens: () => void;
 } | undefined>(undefined);
 
@@ -29,17 +29,17 @@ const TokensContextProvider: FunctionComponent<{
   //   _setIdToken(tokenLocalStorage.getIdToken());
   // }, []);
 
-  const setAccessToken = (token: string) => {
+  const setAccessToken = (token?: string) => {
     tokenLocalStorage.setAccessToken(token);
     _setAccessToken(token);
   }
 
-  const setRefreshToken = (token: string) => {
+  const setRefreshToken = (token?: string) => {
     tokenLocalStorage.setRefreshToken(token);
     _setRefreshToken(token);
   }
 
-  const setIdToken = (token: string) => {
+  const setIdToken = (token?: string) => {
     tokenLocalStorage.setIdToken(token);
     _setIdToken(token);
   }
