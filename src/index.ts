@@ -9,6 +9,7 @@ export { SubscriptionComponent } from "./components/Subscription";
 
 export { NblocksProvider } from "./providers/NblocksProvider";
 
+export { useFlags } from "./hooks/UseFlags"; 
 export { useNblocksClient } from "./hooks/UseNblocksClient";
 export { useTokens } from "./hooks/UseTokens";
 export { useMe } from "./hooks/UseMe"; 

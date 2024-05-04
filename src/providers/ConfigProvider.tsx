@@ -1,3 +1,4 @@
+import { FlagContext } from "@nebulr-group/nblocks-ts-client";
 import React, { FunctionComponent, useContext } from "react";
 
 export interface LibConfig {
@@ -6,6 +7,9 @@ export interface LibConfig {
 
     // The path where users ends up after login (defaults to /)
     handoverPath: string;
+
+    // Use this intial context for Feature flags (optional)
+    initialFlagsContext?: FlagContext;
 
     // Output debug messages from plugin (defaults to false)
     debug: boolean;

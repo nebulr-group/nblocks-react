@@ -1,10 +1,10 @@
 import { useContext } from 'react';
-import { Context } from '../providers/FlagsProvider';
+import { FlagsContext } from '../providers/FlagsProvider';
 
 /** Must be within NblocksProvider ctx */
 const useFlags = () => {
 
-  const context = useContext(Context);
+  const context = useContext(FlagsContext);
   if (!context) {
     throw new Error('useFlags must be used within a FlagsProvider');
   }

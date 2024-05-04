@@ -1,13 +1,15 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useNblocksClient } from "../hooks/UseNblocksClient";
 import { useLog } from "../hooks/UseLog";
-import { BulkEvaluationResponse } from "@nebulr-group/nblocks-ts-client";
+import { BulkEvaluationResponse, FlagContext } from "@nebulr-group/nblocks-ts-client";
 import { useTokens } from "../hooks/UseTokens";
 import { useRedirect } from "../hooks/UseRedirect";
+import { useConfig } from "./ConfigProvider";
 
-const Context = React.createContext<{ 
-  flagEnabled: (flagKey: string) => boolean, 
-  flagsStorage: BulkEvaluationResponse | undefined
+const FlagsContext = React.createContext<{ 
+  flagEnabled: (flagKey: string) => boolean,
+  setContext: (ctx?: FlagContext) => void,
+  flagsStorage: BulkEvaluationResponse | undefined,
 } | undefined>(undefined);
 
 const FlagsContextProvider: FunctionComponent<{
@@ -15,10 +17,14 @@ const FlagsContextProvider: FunctionComponent<{
 }> = ({ children }) => {
 
   const { nblocksClient } = useNblocksClient();
-  const { accessToken } = useTokens();
-  const { log } = useLog();
-  const [flagsStorage, setFlagsStorage] = useState<BulkEvaluationResponse | undefined>();
   const { restrictedTokenPath } = useRedirect();
+  const { initialFlagsContext } = useConfig();
+  const { log } = useLog();
+
+  const [flagsStorage, setFlagsStorage] = useState<BulkEvaluationResponse | undefined>();
+
+  const { accessToken } = useTokens();
+  const [context, setContext] = useState<FlagContext | undefined>(initialFlagsContext);
 
   useEffect(() => {
     if (!restrictedTokenPath()) {
@@ -26,12 +32,16 @@ const FlagsContextProvider: FunctionComponent<{
     } else {
       log(`Will not pull flags on current path`)
     }
-  }, [accessToken]);
+  }, [accessToken, context]);
 
   const doBulkEvaluation = async () => {
-    const response = await nblocksClient.flag.bulkEvaluate({ accessToken });
-    log("Got new flags!");
-    setFlagsStorage(response);
+    try {
+      const response = await nblocksClient.flag.bulkEvaluate({ accessToken, context });
+      log("Got new flags!");
+      setFlagsStorage(response);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   // Checks if a specific flag is enabled via storage
@@ -45,10 +55,10 @@ const FlagsContextProvider: FunctionComponent<{
   // log(`5. Rendering FlagsContextProvider`);
   
   return (
-    <Context.Provider value={{ flagEnabled, flagsStorage }}>
+    <FlagsContext.Provider value={{ flagEnabled, flagsStorage, setContext }}>
       {children}
-    </Context.Provider>
+    </FlagsContext.Provider>
   );
 };
 
-export { FlagsContextProvider, Context };
+export { FlagsContextProvider, FlagsContext };

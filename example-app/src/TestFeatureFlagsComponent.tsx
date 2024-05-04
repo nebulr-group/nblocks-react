@@ -1,7 +1,12 @@
 // @ts-ignore
-import { FeatureFlagComponent } from '@nebulr-group/nblocks-react-slim';
+import { FeatureFlagComponent, useFlags } from '@nebulr-group/nblocks-react-slim';
 
 const TestFeatureFlagsComponent = () => {
+
+    const { setContext } = useFlags()
+    const triggerContext = () => {
+        setContext({device: {key: "iphone"}})
+    }
 
     return (<>
         <h2>Feature flags</h2>
@@ -17,6 +22,14 @@ const TestFeatureFlagsComponent = () => {
                     <td>release-announcement</td>
                     <td>
                         <FeatureFlagComponent flagKey={"release-announcement"}>
+                            <span>Enabled</span>
+                        </FeatureFlagComponent>
+                    </td>
+                </tr>
+                <tr>
+                    <td>iphone-feature</td>
+                    <td>
+                        <FeatureFlagComponent flagKey={"iphone-feature"}>
                             <span>Enabled</span>
                         </FeatureFlagComponent>
                     </td>
@@ -47,6 +60,7 @@ const TestFeatureFlagsComponent = () => {
                 </tr>
             </tbody>
         </table>
+        <button onClick={triggerContext}>Trigger context</button>
     </>)
 }
 

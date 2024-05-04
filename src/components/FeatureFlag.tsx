@@ -1,20 +1,19 @@
 import React, { FunctionComponent, ReactElement, useEffect, useState } from "react";
-import { FlagContext } from "@nebulr-group/nblocks-ts-client";
 import { useFlags } from "../hooks/UseFlags";
 
 interface ComponentProps {
     flagKey: string;
-    context?: FlagContext;
     children: ReactElement;
 }
 
 // Protect either its children or a whole route
-const FeatureFlagComponent: FunctionComponent<ComponentProps> = ({ flagKey, context, children }) => {
+const FeatureFlagComponent: FunctionComponent<ComponentProps> = ({ flagKey, children }) => {
 
     const { flagsStorage, flagEnabled } = useFlags();
 
     const [enabled, setEnabled] = useState(false);
 
+    // Run evaluation only when we have flagStorage resolved
     useEffect(() => {
         setEnabled(flagEnabled(flagKey))
     }, [flagsStorage]);
