@@ -13,6 +13,7 @@ import {
 } from "../../hooks/config-context";
 import { LibConfig } from "../../models/lib-config";
 import { SpaRouter } from "../../routes/SpaRouter";
+import { doLog } from "../../hooks/use-log";
 
 /**
  * Wrap your code into this Provider to get access to the Nblocks world
@@ -30,7 +31,7 @@ const NblocksProvider: FunctionComponent<{
   //   console.log(child.type.toString());
   // });
 
-  console.log("Nblocks: Beta");
+  console.log(`Nblocks: Beta debug:${config?.debug}`);
 
   return (
     <NblocksConfigContextProvider config={config}>
@@ -63,7 +64,7 @@ const ChildrenWrapper: FunctionComponent<{
 
   if (spa) {
     if (debug) {
-      console.log("DevRouterWrapper: Resorting to built-in Routing");
+      doLog("DevRouterWrapper: Resorting to built-in Routing");
     }
     return <SpaRouter>{children}</SpaRouter>;
   } else {

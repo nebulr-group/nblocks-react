@@ -3,6 +3,7 @@ import { ForbiddenError } from "./errors/ForbiddenError";
 import { UnauthenticatedError } from "./errors/UnauthenticatedError";
 import { AuthService } from "./AuthService";
 import { OAuthService } from "./OAuthService";
+import { doLog } from "../hooks/use-log";
 
 export class AuthHttpClient {
   readonly httpClient: AxiosInstance;
@@ -11,8 +12,8 @@ export class AuthHttpClient {
   private readonly debug: boolean;
   private readonly appId?: string; // App id should only be present when running backendless
 
-  private unauthenticatedCallback = () => {};
-  private forbiddenCallback = () => {};
+  private unauthenticatedCallback = () => { };
+  private forbiddenCallback = () => { };
 
   constructor(baseUrl: string, debug: boolean, appId?: string) {
     this.BASE_URL = baseUrl;
@@ -69,15 +70,14 @@ export class AuthHttpClient {
       }
 
       if (debug) {
-        console.log(
-          `[HTTP request]: ${request.method?.toUpperCase()} ${
-            request.baseURL
+        doLog(
+          `[HTTP request]: ${request.method?.toUpperCase()} ${request.baseURL
           }/${request.url}`,
           "Headers",
           JSON.stringify(request.headers)
         );
         if (request.data) {
-          console.log("[HTTP Body]:", request.data);
+          doLog("[HTTP Body]:", request.data);
         }
       }
       return request;
@@ -86,12 +86,13 @@ export class AuthHttpClient {
     httpClient.interceptors.response.use(
       (response) => {
         if (debug) {
-          console.log("[HTTP Response]:", response.status, response.data);
+          doLog("[HTTP Response]:", response.status, response.data);
         }
         return response;
       },
       (error: AxiosError) => {
         if (debug) {
+          doLog("Error response:");
           console.error(
             "Error response:",
             `${error.name} - Http status: ${error.response?.status}`,
