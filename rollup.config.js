@@ -9,8 +9,11 @@ export default [
     output: [
       {
         file: packageJson.main,
-        format: 'umd',
-        name: packageJson.module
+        format: 'cjs',
+      },
+      {
+        file: packageJson.module,
+        format: 'es'
       },
     ],
     plugins: [
