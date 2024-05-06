@@ -20,12 +20,12 @@
   "author": "",
   "license": "ISC",
   "peerDependencies": {
-    "@nebulr-group/nblocks-ts-client": "^5.0.0 || ^5.0.0-beta.1",
+    "@nebulr-group/nblocks-ts-client": "^5.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@nebulr-group/nblocks-ts-client": "^5.0.0-alpha.3",
+    "@nebulr-group/nblocks-ts-client": "^5.0.0",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/react": "^18.2.75",
