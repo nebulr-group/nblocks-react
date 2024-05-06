@@ -70,7 +70,7 @@ jobs:
       # The BuildKit Cache
       - name: Step 2 - Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      # If push and to main, then build the image and run it with npm run publish
+      # If push and to main, then build the image and run it with npm run npm-publish
       - name: Step 3 - Build Image and Export to Docker Engine
         uses: docker/build-push-action@v2
         with:
@@ -89,7 +89,7 @@ jobs:
       - name: Step 5 - Publish package to the npm
         if: ${{ !contains(steps.package-version.outputs.current-version, 'beta')}}
         run: |
-          docker run -e NPM_TOKEN=${{ secrets.NPM_TOKEN }} --rm ${{ github.run_id }} /bin/bash -c "./npm-config-setter.sh; npm run publish"
+          docker run -e NPM_TOKEN=${{ secrets.NPM_TOKEN }} --rm ${{ github.run_id }} /bin/bash -c "./npm-config-setter.sh; npm run npm-publish"
 
   deploy-beta:
     needs: [build, test]
@@ -102,7 +102,7 @@ jobs:
       # The BuildKit Cache
       - name: Step 2 - Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      # If push and to stage, then build the image and run it with npm run publish-beta
+      # If push and to stage, then build the image and run it with npm run npm-publish-beta
       - name: Step 3 - Build Image and Export to Docker Engine
         uses: docker/build-push-action@v2
         with:
@@ -121,4 +121,4 @@ jobs:
       - name: Step 5 - Publish package to the npm
         if: ${{ contains(steps.package-version.outputs.current-version, 'beta')}}
         run: |
-          docker run -e NPM_TOKEN=${{ secrets.NPM_TOKEN }} --rm ${{ github.run_id }} /bin/bash -c "./npm-config-setter.sh; npm run publish-beta"
+          docker run -e NPM_TOKEN=${{ secrets.NPM_TOKEN }} --rm ${{ github.run_id }} /bin/bash -c "./npm-config-setter.sh; npm run npm-publish-beta"
