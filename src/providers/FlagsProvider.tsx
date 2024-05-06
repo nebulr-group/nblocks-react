@@ -7,8 +7,11 @@ import { useRedirect } from "../hooks/UseRedirect";
 import { useConfig } from "./ConfigProvider";
 
 const FlagsContext = React.createContext<{ 
+  /** Check if a given flag is enabled or not */
   flagEnabled: (flagKey: string) => boolean,
+  /** Update user context. This operation issues a new bulk evaluation request */
   setContext: (ctx?: FlagContext) => void,
+  /** Access to raw storage of all flags */
   flagsStorage: BulkEvaluationResponse | undefined,
 } | undefined>(undefined);
 

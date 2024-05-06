@@ -8,6 +8,7 @@ export { TeamComponent } from "./components/Team";
 export { SubscriptionComponent } from "./components/Subscription";
 
 export { NblocksProvider } from "./providers/NblocksProvider";
+export type { LibConfig } from "./providers/ConfigProvider";
 
 export { useFlags } from "./hooks/UseFlags"; 
 export { useNblocksClient } from "./hooks/UseNblocksClient";

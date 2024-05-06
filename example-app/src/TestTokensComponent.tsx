@@ -1,5 +1,4 @@
-// @ts-ignore
-import { useMe, useTokens, useNblocksClient } from '@nebulr-group/nblocks-react-slim';
+import { useMe, useTokens, useNblocksClient } from '@nebulr-group/nblocks-react';
 import { config } from './App';
 
 const TestTokensComponent = () => {
@@ -9,7 +8,7 @@ const TestTokensComponent = () => {
     const { nblocksClient } = useNblocksClient();
     
 
-    const getExpDate = (token: string) => {
+    const getExpDate = (token?: string) => {
         return token ? new Date(nblocksClient.auth.contextHelper.getTokenExpiration(token) * 1000).toISOString() : "N/A";
     }
 

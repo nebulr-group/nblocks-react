@@ -1,5 +1,4 @@
-// @ts-ignore
-import { FeatureFlagComponent, useFlags } from '@nebulr-group/nblocks-react-slim';
+import { FeatureFlagComponent, useFlags } from '@nebulr-group/nblocks-react';
 
 const TestFeatureFlagsComponent = () => {
 

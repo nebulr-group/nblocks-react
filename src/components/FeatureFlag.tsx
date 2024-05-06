@@ -2,8 +2,10 @@ import React, { FunctionComponent, ReactElement, useEffect, useState } from "rea
 import { useFlags } from "../hooks/UseFlags";
 
 interface ComponentProps {
+    /** The unique flag key */
     flagKey: string;
-    children: ReactElement;
+
+    children?: ReactElement;
 }
 
 // Protect either its children or a whole route
