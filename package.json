@@ -1,6 +1,6 @@
 {
   "name": "@nebulr-group/nblocks-react",
-  "version": "3.0.0-beta.2",
+  "version": "3.0.0",
   "description": "A slim react library from Nblocks",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
