@@ -9,13 +9,10 @@ import { InputComponent } from "../shared/InputComponent";
 import { LinkComponent } from "../shared/LinkComponent";
 import { NblocksButton } from "../shared/NblocksButton";
 import { TextComponent } from "../shared/TextComponent";
-import { useConfig } from "../../hooks/config-context";
 import { FederationType } from "../../utils/AuthService";
-import { AzureAdSsoButtonComponent } from "./shared/AzureAdSsoButtonComponent";
-import { GoogleSsoButtonComponent } from "./shared/GoogleSsoButtonComponent";
 import { useTranslation } from "react-i18next";
 import { DividerComponent } from "../shared/DividerComponent";
-import { LinkedinSsoButtonComponent } from "./shared/LinkedinSsoButtonComponent";
+import { SsoButtonsComponent } from "./login/SsoButtonsComponent";
 
 type ComponentProps = {
   didSignup: (email: string) => void;
@@ -29,26 +26,14 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
   const [createTenantAnonymous, { loading }] = useMutation(
     CreateTenantAnonymousDocument
   );
-  const { authLegacy } = useConfig();
-  const {
-    logo,
-    azureAdSsoEnabled,
-    googleSsoEnabled,
-    linkedinSsoEnabled,
-    privacyPolicyUrl,
-    termsOfServiceUrl,
-  } = useApp();
+  const { logo, privacyPolicyUrl, termsOfServiceUrl } = useApp();
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [hasSsoAlternatives, setHasSsoAlternatives] = useState(false);
   const { t } = useTranslation();
-
-  // Show SSO Login btn
-  const azureAdLogin = !authLegacy && azureAdSsoEnabled;
-  const googleLogin = !authLegacy && googleSsoEnabled;
-  const linkedinLogin = !authLegacy && linkedinSsoEnabled;
 
   const [params] = useSearchParams();
   const [plan, currency, recurrenceInterval] = [
@@ -93,52 +78,20 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
     didClickFederatedSignup(type);
   };
 
-  const renderAzureAd = () => {
-    if (azureAdLogin) {
-      return (
-        <AzureAdSsoButtonComponent
-          label="signup"
-          onClick={() => signupMiddleware("ms-azure-ad")}
-        ></AzureAdSsoButtonComponent>
-      );
-    }
-  };
-
-  const renderGoogle = () => {
-    if (googleLogin) {
-      return (
-        <GoogleSsoButtonComponent
-          label="signup"
-          onClick={() => signupMiddleware("google")}
-        ></GoogleSsoButtonComponent>
-      );
-    }
-  };
-
-  const renderLinkedin = () => {
-    if (linkedinLogin) {
-      return (
-        <LinkedinSsoButtonComponent
-          label="signup"
-          onClick={() => signupMiddleware("linkedin")}
-        ></LinkedinSsoButtonComponent>
-      );
-    }
-  };
-
   const renderSignupAlternatives = () => {
-    const hasAlternatives = googleLogin || azureAdLogin;
     return (
       <>
-        {hasAlternatives && (
+        {hasSsoAlternatives && (
           <div className="py-2">
             <DividerComponent text={t("Or")} />
           </div>
         )}
         <div className="space-y-2">
-          {renderGoogle()}
-          {renderAzureAd()}
-          {renderLinkedin()}
+          <SsoButtonsComponent
+            label="signup"
+            didClickSsoBtn={signupMiddleware}
+            hasAlternatives={setHasSsoAlternatives}
+          />
         </div>
       </>
     );

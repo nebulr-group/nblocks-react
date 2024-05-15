@@ -6,15 +6,11 @@ import React, { FunctionComponent, useEffect } from "react";
 import { useApp } from "../../../hooks/app-context";
 import { useConfig } from "../../../hooks/config-context";
 import { DividerComponent } from "../../shared/DividerComponent";
-import { AzureAdSsoButtonComponent } from "../shared/AzureAdSsoButtonComponent";
-import { GoogleSsoButtonComponent } from "../shared/GoogleSsoButtonComponent";
 import { PasskeysLoginButtonComponent } from "../shared/PasskeysLoginButtonComponent";
 import { FederationType } from "../../../utils/AuthService";
 import { useTranslation } from "react-i18next";
-import { LinkedinSsoButtonComponent } from "../shared/LinkedinSsoButtonComponent";
-import { GithubSsoButtonComponent } from "../shared/GithubSsoButtonComponent";
-import { AppleSsoButtonComponent } from "../shared/AppleSsoButtonComponent";
-import { FacebookSsoButtonComponent } from "../shared/FacebookSsoButtonComponent";
+import { SsoButtonsComponent } from "./SsoButtonsComponent";
+import { useState } from "react";
 
 interface LoginAlternativesComponentProps {
   didClickPasskeysAuthenticate: (autofill: boolean) => void;
@@ -26,32 +22,11 @@ const LoginAlternativesComponent: FunctionComponent<
 > = ({ didClickPasskeysAuthenticate, didClickSocialLogin }) => {
   const { t } = useTranslation();
   const { authLegacy } = useConfig();
-  const {
-    azureAdSsoEnabled,
-    googleSsoEnabled,
-    linkedinSsoEnabled,
-    passkeysEnabled,
-    // facebookSsoEnabled,
-    // githubSsoEnabled,
-    // appleSsoEnabled,
-  } = useApp();
-
-  const { facebookSsoEnabled, githubSsoEnabled, appleSsoEnabled } = {
-    facebookSsoEnabled: true,
-    githubSsoEnabled: true,
-    appleSsoEnabled: true,
-  };
+  const { passkeysEnabled } = useApp();
+  const [hasSsoAlternatives, setHasSsoAlternatives] = useState(false);
 
   const passkeysLogin =
     !authLegacy && passkeysEnabled && browserSupportsWebAuthn();
-
-  // Show SSO Login btn if we have it enabled
-  const azureAdLogin = !authLegacy && azureAdSsoEnabled;
-  const googleLogin = !authLegacy && googleSsoEnabled;
-  const facebookLogin = !authLegacy && facebookSsoEnabled;
-  const appleLogin = !authLegacy && appleSsoEnabled;
-  const githubLogin = !authLegacy && githubSsoEnabled;
-  const linkedinLogin = !authLegacy && linkedinSsoEnabled;
 
   useEffect(() => {
     if (passkeysLogin) {
@@ -74,74 +49,7 @@ const LoginAlternativesComponent: FunctionComponent<
     }
   };
 
-  const renderAzureAd = () => {
-    if (azureAdLogin) {
-      return (
-        <AzureAdSsoButtonComponent
-          label="login"
-          onClick={() => didClickSocialLogin("ms-azure-ad")}
-        ></AzureAdSsoButtonComponent>
-      );
-    }
-  };
-
-  const renderGoogle = () => {
-    if (googleLogin) {
-      return (
-        <GoogleSsoButtonComponent
-          label="login"
-          onClick={() => didClickSocialLogin("google")}
-        ></GoogleSsoButtonComponent>
-      );
-    }
-  };
-
-  const renderFacebook = () => {
-    if (facebookLogin) {
-      return (
-        <FacebookSsoButtonComponent
-          label="login"
-          onClick={() => didClickSocialLogin("facebook")}
-        ></FacebookSsoButtonComponent>
-      );
-    }
-  };
-
-  const renderApple = () => {
-    if (appleLogin) {
-      return (
-        <AppleSsoButtonComponent
-          label="login"
-          onClick={() => didClickSocialLogin("apple")}
-        ></AppleSsoButtonComponent>
-      );
-    }
-  };
-
-  const renderGithub = () => {
-    if (githubLogin) {
-      return (
-        <GithubSsoButtonComponent
-          label="login"
-          onClick={() => didClickSocialLogin("github")}
-        ></GithubSsoButtonComponent>
-      );
-    }
-  };
-
-  const renderLinkedin = () => {
-    if (linkedinLogin) {
-      return (
-        <LinkedinSsoButtonComponent
-          label="login"
-          onClick={() => didClickSocialLogin("linkedin")}
-        ></LinkedinSsoButtonComponent>
-      );
-    }
-  };
-
-  const hasAlternatives =
-    passkeysLogin || googleLogin || linkedinLogin || azureAdLogin;
+  const hasAlternatives = passkeysLogin || hasSsoAlternatives;
   return (
     <>
       {hasAlternatives && (
@@ -151,12 +59,11 @@ const LoginAlternativesComponent: FunctionComponent<
       )}
       <div className="space-y-2">
         {renderPasskeysLogin()}
-        {renderGoogle()}
-        {renderAzureAd()}
-        {renderApple()}
-        {renderFacebook()}
-        {renderGithub()}
-        {renderLinkedin()}
+        <SsoButtonsComponent
+          label="login"
+          didClickSsoBtn={didClickSocialLogin}
+          hasAlternatives={setHasSsoAlternatives}
+        />
       </div>
     </>
   );
