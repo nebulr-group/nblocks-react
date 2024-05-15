@@ -24,6 +24,7 @@ import { FederationConnectionsComponent } from "./FederationConnectionsComponent
 
 type ComponentProps = {
   initalError?: boolean;
+  errorDetails?: null | undefined | "mle";
   didLogin: (mfa: MfaState, tenantUserId?: string) => void;
   didClickFederatedLogin: (type: FederationType) => void;
   didClickFederationConnection: (connection: FederationConnection) => void;
@@ -37,6 +38,7 @@ type CredentialsInputMode =
 
 const LoginComponent: FunctionComponent<ComponentProps> = ({
   initalError,
+  errorDetails,
   didLogin,
   didClickFederatedLogin,
   didClickFederationConnection,
@@ -63,9 +65,14 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
     "There was an error when logging in. Are you sure you already have signed up for an account?"
   );
 
+  const magicLinkExpiredErrorMsg = t(
+    "The magic link has expired, or you're not using the same browser that you sent the link from."
+  );
+
   useEffect(() => {
     if (initalError) {
-      setErrorMsg(initialErrorMsg);
+      if (errorDetails === "mle") setErrorMsg(magicLinkExpiredErrorMsg);
+      else setErrorMsg(initialErrorMsg);
     }
   }, [initalError]);
 

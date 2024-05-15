@@ -85,6 +85,7 @@ export class OAuthService {
     tenantUsers: "/auth/tenantUsers",
     handover: "/auth/chooseTenantUser",
     logout: "/auth/logout",
+    magicLink: "/auth/magic-link",
     commitMfaCode: "/auth/commitMfaCode",
     startMfaUserSetup: "/auth/startMfaUserSetup",
     finishMfaUserSetup: "/auth/finishMfaUserSetup",
@@ -343,6 +344,15 @@ export class OAuthService {
     }
 
     return { mfaState, tenantUserId };
+  }
+
+  async sendMagicLink(username: string): Promise<{ expiresIn: number }> {
+    const response = await this.httpClient.post<{ expiresIn: number }>(
+      this.AUTH_API_ENDPOINTS.magicLink,
+      { username },
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+    return response.data;
   }
 
   async commitMfaCode(mfaCode: string): Promise<void> {

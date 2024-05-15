@@ -12,6 +12,7 @@ import { NavigationConfig } from "../models/navigation-config";
 import { SignupScreen } from "../screens/auth/Signup.screen";
 import { useConfig } from "../hooks/config-context";
 import { CallbackScreen } from "../screens/auth/oauth/Callback.screen";
+import { MagicLinkScreen } from "../screens/auth/magic-link/MagicLink.screen";
 
 //TODO this should be moved to a hook or somewhere more generic
 const RouteConfig: NavigationConfig = {
@@ -54,6 +55,7 @@ const AuthRoutes = () => {
     <Routes>
       <Route path="login" element={<LoginScreen />}></Route>
       <Route path="logout" element={<LogoutScreen />}></Route>
+      <Route path="magic-link" element={<MagicLinkScreen />}></Route>
       <Route path="reset-password" element={<ResetPasswordScreen />}></Route>
       <Route path="set-password/:token" element={<SetPasswordScreen />}></Route>
       <Route path="choose-user" element={<ChooseUserScreen />}></Route>

@@ -61,7 +61,7 @@ jobs:
 
   deploy:
     needs: [build, test]
-    if: ${{ github.ref_name == 'main' && github.event_name == 'push' }}
+    if: ${{ (github.ref_name == 'main'  || github.ref_name == '1.x.-2.x-main') && github.event_name == 'push' }}
     runs-on: ubuntu-latest
     steps:
       # Checkout Github Repository
@@ -93,7 +93,7 @@ jobs:
 
   deploy-beta:
     needs: [build, test]
-    if: ${{ github.ref_name == 'stage' && github.event_name == 'push' }}
+    if: ${{ (github.ref_name == 'stage' || github.ref_name == '1.x.-2.x-stage') && github.event_name == 'push' }}
     runs-on: ubuntu-latest
     steps:
       # Checkout Github Repository

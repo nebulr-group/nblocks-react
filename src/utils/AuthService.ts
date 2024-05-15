@@ -153,7 +153,7 @@ export class AuthService {
       return response;
     }
 
-    throw new Error("Passkeys are only available via Auth API")
+    throw new Error("Passkeys are only available via Auth API");
   }
 
   async passkeysRegister(args: RegistrationResponseJSON, forgotPasswordToken: string): Promise<{
@@ -209,6 +209,15 @@ export class AuthService {
 
   async sendResetPasswordLink(username: string): Promise<void> {
     await this.httpClient.post<void>(this.ENDPOINTS.password, { username });
+  }
+
+  async sendMagicLink(username: string): Promise<{ expiresIn: number }> {
+    if (!!this._oauthService) {
+      const response = await this._oauthService.sendMagicLink(username);
+      return response;
+    }
+
+    throw new Error("Magic link are only available via Auth API");
   }
 
   async updatePassword(token: string, password: string): Promise<void> {
