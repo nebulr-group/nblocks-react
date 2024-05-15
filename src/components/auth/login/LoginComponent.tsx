@@ -20,7 +20,6 @@ import { startAuthentication } from "@simplewebauthn/browser";
 import { FederationConnection } from "../../../utils/OAuthService";
 import { LoginAlternativesComponent } from "./LoginAlternativesComponent";
 import { FederationConnectionsComponent } from "./FederationConnectionsComponent";
-import { useApp } from "../../../hooks/app-context";
 
 type ComponentProps = {
   initalError?: boolean;
@@ -178,6 +177,13 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
     didClickFederatedLogin(type);
   };
 
+  const didClickMagicLink = () => {
+    setIsLoading(true);
+    navigate(RouteConfig.login.magicLinkScreen, {
+      state: { username },
+    });
+  };
+
   const renderCredentialsInput = () => {
     switch (credentialsInputMode) {
       case "USERNAME":
@@ -280,6 +286,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
         )}
         {credentialsInputMode === "USERNAME" && (
           <LoginAlternativesComponent
+            didClickMagicLinkAuthenticate={didClickMagicLink}
             didClickPasskeysAuthenticate={onDidPasskeysAuthenticate}
             didClickSocialLogin={loginMiddleware}
           />

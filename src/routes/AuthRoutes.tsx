@@ -10,7 +10,6 @@ import { RecoverMfaScreen } from "../screens/auth/mfa/RecoverMfa.screen";
 import { SetupMfaScreen } from "../screens/auth/mfa/SetupMfa.screen";
 import { NavigationConfig } from "../models/navigation-config";
 import { SignupScreen } from "../screens/auth/Signup.screen";
-import { useConfig } from "../hooks/config-context";
 import { CallbackScreen } from "../screens/auth/oauth/Callback.screen";
 import { MagicLinkScreen } from "../screens/auth/magic-link/MagicLink.screen";
 
@@ -19,6 +18,7 @@ const RouteConfig: NavigationConfig = {
   login: {
     loginScreen: "/auth/login",
     logoutScreen: "/auth/logout",
+    magicLinkScreen: "/auth/magic-link",
     chooseUserScreen: "/auth/choose-user",
     callbackScreen: "/auth/oauth-callback",
   },

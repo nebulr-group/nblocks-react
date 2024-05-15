@@ -11,18 +11,25 @@ import { FederationType } from "../../../utils/AuthService";
 import { useTranslation } from "react-i18next";
 import { SsoButtonsComponent } from "./SsoButtonsComponent";
 import { useState } from "react";
+import { MagicLinkLoginButtonComponent } from "../shared/MagicLoginButtonComponent";
 
 interface LoginAlternativesComponentProps {
   didClickPasskeysAuthenticate: (autofill: boolean) => void;
+  didClickMagicLinkAuthenticate: () => void;
   didClickSocialLogin: (type: FederationType) => void;
 }
 
 const LoginAlternativesComponent: FunctionComponent<
   LoginAlternativesComponentProps
-> = ({ didClickPasskeysAuthenticate, didClickSocialLogin }) => {
+> = ({
+  didClickPasskeysAuthenticate,
+  didClickMagicLinkAuthenticate,
+  didClickSocialLogin,
+}) => {
   const { t } = useTranslation();
   const { authLegacy } = useConfig();
   const { passkeysEnabled } = useApp();
+  const magicLinkEnabled = true;
   const [hasSsoAlternatives, setHasSsoAlternatives] = useState(false);
 
   const passkeysLogin =
@@ -49,7 +56,19 @@ const LoginAlternativesComponent: FunctionComponent<
     }
   };
 
-  const hasAlternatives = passkeysLogin || hasSsoAlternatives;
+  const renderMagicKeyLogin = () => {
+    if (passkeysLogin) {
+      return (
+        <MagicLinkLoginButtonComponent
+          mode="login"
+          onClick={() => didClickMagicLinkAuthenticate()}
+        ></MagicLinkLoginButtonComponent>
+      );
+    }
+  };
+
+  const hasAlternatives =
+    passkeysLogin || magicLinkEnabled || hasSsoAlternatives;
   return (
     <>
       {hasAlternatives && (
@@ -59,6 +78,7 @@ const LoginAlternativesComponent: FunctionComponent<
       )}
       <div className="space-y-2">
         {renderPasskeysLogin()}
+        {renderMagicKeyLogin()}
         <SsoButtonsComponent
           label="login"
           didClickSsoBtn={didClickSocialLogin}
