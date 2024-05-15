@@ -50,7 +50,8 @@ const RouteConfig: NavigationConfig = {
  * @returns
  */
 const AuthRoutes = () => {
-  const { tenantSignup } = useConfig();
+  const { tenantSignup } = { tenantSignup: true }; //useApp();
+
   return (
     <Routes>
       <Route path="login" element={<LoginScreen />}></Route>

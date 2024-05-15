@@ -10,7 +10,6 @@ import { RouteConfig } from "../../../routes/AuthRoutes";
 import { NblocksButton } from "../../shared/NblocksButton";
 import { InputComponent } from "../../shared/InputComponent";
 import { TextComponent } from "../../shared/TextComponent";
-import { useConfig } from "../../../hooks/config-context";
 import { FederationType, MfaState } from "../../../utils/AuthService";
 import { AlertComponent } from "../../shared/AlertComponent";
 import { UnauthenticatedError } from "../../../utils/errors/UnauthenticatedError";
@@ -21,6 +20,7 @@ import { startAuthentication } from "@simplewebauthn/browser";
 import { FederationConnection } from "../../../utils/OAuthService";
 import { LoginAlternativesComponent } from "./LoginAlternativesComponent";
 import { FederationConnectionsComponent } from "./FederationConnectionsComponent";
+import { useApp } from "../../../hooks/app-context";
 
 type ComponentProps = {
   initalError?: boolean;
@@ -53,7 +53,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isloading, setIsLoading] = useState(false);
-  const { tenantSignup } = useConfig();
+  const { tenantSignup } = { tenantSignup: true }; //useApp();
   const { t } = useTranslation();
   const navigate = useNavigate();
 

@@ -12,6 +12,9 @@ import { PasskeysLoginButtonComponent } from "../shared/PasskeysLoginButtonCompo
 import { FederationType } from "../../../utils/AuthService";
 import { useTranslation } from "react-i18next";
 import { LinkedinSsoButtonComponent } from "../shared/LinkedinSsoButtonComponent";
+import { GithubSsoButtonComponent } from "../shared/GithubSsoButtonComponent";
+import { AppleSsoButtonComponent } from "../shared/AppleSsoButtonComponent";
+import { FacebookSsoButtonComponent } from "../shared/FacebookSsoButtonComponent";
 
 interface LoginAlternativesComponentProps {
   didClickPasskeysAuthenticate: (autofill: boolean) => void;
@@ -28,7 +31,16 @@ const LoginAlternativesComponent: FunctionComponent<
     googleSsoEnabled,
     linkedinSsoEnabled,
     passkeysEnabled,
+    // facebookSsoEnabled,
+    // githubSsoEnabled,
+    // appleSsoEnabled,
   } = useApp();
+
+  const { facebookSsoEnabled, githubSsoEnabled, appleSsoEnabled } = {
+    facebookSsoEnabled: true,
+    githubSsoEnabled: true,
+    appleSsoEnabled: true,
+  };
 
   const passkeysLogin =
     !authLegacy && passkeysEnabled && browserSupportsWebAuthn();
@@ -36,6 +48,9 @@ const LoginAlternativesComponent: FunctionComponent<
   // Show SSO Login btn if we have it enabled
   const azureAdLogin = !authLegacy && azureAdSsoEnabled;
   const googleLogin = !authLegacy && googleSsoEnabled;
+  const facebookLogin = !authLegacy && facebookSsoEnabled;
+  const appleLogin = !authLegacy && appleSsoEnabled;
+  const githubLogin = !authLegacy && githubSsoEnabled;
   const linkedinLogin = !authLegacy && linkedinSsoEnabled;
 
   useEffect(() => {
@@ -81,8 +96,41 @@ const LoginAlternativesComponent: FunctionComponent<
     }
   };
 
+  const renderFacebook = () => {
+    if (facebookLogin) {
+      return (
+        <FacebookSsoButtonComponent
+          label="login"
+          onClick={() => didClickSocialLogin("facebook")}
+        ></FacebookSsoButtonComponent>
+      );
+    }
+  };
+
+  const renderApple = () => {
+    if (appleLogin) {
+      return (
+        <AppleSsoButtonComponent
+          label="login"
+          onClick={() => didClickSocialLogin("apple")}
+        ></AppleSsoButtonComponent>
+      );
+    }
+  };
+
+  const renderGithub = () => {
+    if (githubLogin) {
+      return (
+        <GithubSsoButtonComponent
+          label="login"
+          onClick={() => didClickSocialLogin("github")}
+        ></GithubSsoButtonComponent>
+      );
+    }
+  };
+
   const renderLinkedin = () => {
-    if (linkedinSsoEnabled) {
+    if (linkedinLogin) {
       return (
         <LinkedinSsoButtonComponent
           label="login"
@@ -105,6 +153,9 @@ const LoginAlternativesComponent: FunctionComponent<
         {renderPasskeysLogin()}
         {renderGoogle()}
         {renderAzureAd()}
+        {renderApple()}
+        {renderFacebook()}
+        {renderGithub()}
         {renderLinkedin()}
       </div>
     </>
