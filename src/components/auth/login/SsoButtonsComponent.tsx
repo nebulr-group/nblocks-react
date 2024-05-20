@@ -25,16 +25,10 @@ const SsoButtonsComponent: FunctionComponent<
     azureAdSsoEnabled,
     googleSsoEnabled,
     linkedinSsoEnabled,
-    // facebookSsoEnabled,
-    // githubSsoEnabled,
-    // appleSsoEnabled,
+    facebookSsoEnabled,
+    githubSsoEnabled,
+    appleSsoEnabled,
   } = useApp();
-
-  const { facebookSsoEnabled, githubSsoEnabled, appleSsoEnabled } = {
-    facebookSsoEnabled: true,
-    githubSsoEnabled: true,
-    appleSsoEnabled: true,
-  };
 
   // Show SSO Login btn if we have it enabled
   const azureAdLogin =

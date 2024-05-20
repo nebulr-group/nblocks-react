@@ -1,6 +1,6 @@
 export interface LibConfig {
   /** Sets several other configs into a sensible default for development.
-   * `spa=true`, `tenantSignup=true`, `appSignup=true`, `passwordValidation=false`
+   * `spa=true`, `appSignup=true`, `passwordValidation=false`
    */
   devMode: boolean;
 

@@ -3,16 +3,21 @@
 # ------------------------------------------------------
 
 type App {
+  appleSsoEnabled: Boolean
   azureAdSsoEnabled: Boolean
+  facebookSsoEnabled: Boolean
+  githubSsoEnabled: Boolean
   googleSsoEnabled: Boolean
   id: String
   linkedinSsoEnabled: Boolean
   logo: String
+  magicLinkEnabled: Boolean
   mfaEnabled: Boolean
   name: String
   onboardingFlow: String
   passkeysEnabled: Boolean
   privacyPolicyUrl: String
+  tenantSelfSignup: Boolean
   termsOfServiceUrl: String
   uiUrl: String
   websiteUrl: String
@@ -24,6 +29,13 @@ input CreateTenantInput {
   owner: TenantOwnerInput!
   plan: String
   priceOffer: PriceOfferInput
+}
+
+input MeInput {
+  consentsToPrivacyPolicy: Boolean
+  firstName: String
+  lastName: String
+  onboarded: Boolean
 }
 
 type Mutation {
@@ -46,7 +58,7 @@ type Mutation {
   """
   Update current user
   """
-  updateMe(user: UserInput!): User!
+  updateMe(user: MeInput!): User!
   updateTenant(tenant: TenantInput!): Tenant!
 
   """

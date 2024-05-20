@@ -28,8 +28,7 @@ const LoginAlternativesComponent: FunctionComponent<
 }) => {
   const { t } = useTranslation();
   const { authLegacy } = useConfig();
-  const { passkeysEnabled } = useApp();
-  const magicLinkEnabled = true;
+  const { passkeysEnabled, magicLinkEnabled } = useApp();
   const [hasSsoAlternatives, setHasSsoAlternatives] = useState(false);
 
   const passkeysLogin =

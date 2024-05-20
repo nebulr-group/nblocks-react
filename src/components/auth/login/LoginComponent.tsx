@@ -20,6 +20,7 @@ import { startAuthentication } from "@simplewebauthn/browser";
 import { FederationConnection } from "../../../utils/OAuthService";
 import { LoginAlternativesComponent } from "./LoginAlternativesComponent";
 import { FederationConnectionsComponent } from "./FederationConnectionsComponent";
+import { useApp } from "../../../hooks/app-context";
 
 type ComponentProps = {
   initalError?: boolean;
@@ -52,7 +53,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isloading, setIsLoading] = useState(false);
-  const { tenantSignup } = { tenantSignup: true }; //useApp();
+  const { tenantSelfSignup } = useApp();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -313,7 +314,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
           </NblocksButton>
         </div>
       )}
-      {tenantSignup && (
+      {tenantSelfSignup && (
         <div className="mt-8">
           <TextComponent size="sm">
             {t("Don't have an account?")}&nbsp;
