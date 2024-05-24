@@ -1,3 +1,12 @@
+/**
+ * Hot Fix
+ * process is not defined
+ * ReferenceError: process is not defined
+ */
+window.process = {
+    ...window.process,
+};
+
 export { TestComponent } from "./components/Test";
 export { LoginComponent } from "./components/Login";
 export { CallbackComponent } from "./components/Callback";
@@ -10,7 +19,7 @@ export { SubscriptionComponent } from "./components/Subscription";
 export { NblocksProvider } from "./providers/NblocksProvider";
 export type { LibConfig } from "./providers/ConfigProvider";
 
-export { useFlags } from "./hooks/UseFlags"; 
+export { useFlags } from "./hooks/UseFlags";
 export { useNblocksClient } from "./hooks/UseNblocksClient";
 export { useTokens } from "./hooks/UseTokens";
 export { useMe } from "./hooks/UseMe"; 
