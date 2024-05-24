@@ -1,15 +1,15 @@
 import React, { FunctionComponent } from "react";
 import { NblocksButton } from "../../shared/NblocksButton";
 import { useTranslation } from "react-i18next";
-import { PasskeyLogo } from "./logos/passkey.logo";
+import { MagicLinkLogo } from "./logos/magicLink.logo";
 
 type ComponentProps = {
-  mode: "login" | "create";
+  mode: "login";
   onClick: () => void;
   loading?: boolean;
 };
 
-const PasskeysLoginButtonComponent: FunctionComponent<ComponentProps> = ({
+const MagicLinkLoginButtonComponent: FunctionComponent<ComponentProps> = ({
   onClick,
   mode,
   loading,
@@ -18,11 +18,9 @@ const PasskeysLoginButtonComponent: FunctionComponent<ComponentProps> = ({
 
   const renderText = () => {
     switch (mode) {
-      case "create":
-        return t("Create Passkeys");
       case "login":
       default:
-        return t("Sign in with Passkeys");
+        return t("Sign in with Magic Link");
     }
   };
 
@@ -36,7 +34,7 @@ const PasskeysLoginButtonComponent: FunctionComponent<ComponentProps> = ({
         isLoading={loading}
       >
         <div className={"mr-3 rounded-lg w-10 h-10 overflow-hidden"}>
-          <PasskeyLogo />
+          <MagicLinkLogo />
         </div>
         {renderText()}
       </NblocksButton>
@@ -44,4 +42,4 @@ const PasskeysLoginButtonComponent: FunctionComponent<ComponentProps> = ({
   );
 };
 
-export { PasskeysLoginButtonComponent };
+export { MagicLinkLoginButtonComponent };

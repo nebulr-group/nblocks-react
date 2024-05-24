@@ -6,37 +6,33 @@ import React, { FunctionComponent, useEffect } from "react";
 import { useApp } from "../../../hooks/app-context";
 import { useConfig } from "../../../hooks/config-context";
 import { DividerComponent } from "../../shared/DividerComponent";
-import { AzureAdSsoButtonComponent } from "../shared/AzureAdSsoButtonComponent";
-import { GoogleSsoButtonComponent } from "../shared/GoogleSsoButtonComponent";
 import { PasskeysLoginButtonComponent } from "../shared/PasskeysLoginButtonComponent";
 import { FederationType } from "../../../utils/AuthService";
 import { useTranslation } from "react-i18next";
-import { LinkedinSsoButtonComponent } from "../shared/LinkedinSsoButtonComponent";
+import { SsoButtonsComponent } from "./SsoButtonsComponent";
+import { useState } from "react";
+import { MagicLinkLoginButtonComponent } from "../shared/MagicLoginButtonComponent";
 
 interface LoginAlternativesComponentProps {
   didClickPasskeysAuthenticate: (autofill: boolean) => void;
+  didClickMagicLinkAuthenticate: () => void;
   didClickSocialLogin: (type: FederationType) => void;
 }
 
 const LoginAlternativesComponent: FunctionComponent<
   LoginAlternativesComponentProps
-> = ({ didClickPasskeysAuthenticate, didClickSocialLogin }) => {
+> = ({
+  didClickPasskeysAuthenticate,
+  didClickMagicLinkAuthenticate,
+  didClickSocialLogin,
+}) => {
   const { t } = useTranslation();
   const { authLegacy } = useConfig();
-  const {
-    azureAdSsoEnabled,
-    googleSsoEnabled,
-    linkedinSsoEnabled,
-    passkeysEnabled,
-  } = useApp();
+  const { passkeysEnabled, magicLinkEnabled } = useApp();
+  const [hasSsoAlternatives, setHasSsoAlternatives] = useState(false);
 
   const passkeysLogin =
     !authLegacy && passkeysEnabled && browserSupportsWebAuthn();
-
-  // Show SSO Login btn if we have it enabled
-  const azureAdLogin = !authLegacy && azureAdSsoEnabled;
-  const googleLogin = !authLegacy && googleSsoEnabled;
-  const linkedinLogin = !authLegacy && linkedinSsoEnabled;
 
   useEffect(() => {
     if (passkeysLogin) {
@@ -59,41 +55,19 @@ const LoginAlternativesComponent: FunctionComponent<
     }
   };
 
-  const renderAzureAd = () => {
-    if (azureAdLogin) {
+  const renderMagicKeyLogin = () => {
+    if (passkeysLogin) {
       return (
-        <AzureAdSsoButtonComponent
-          label="login"
-          onClick={() => didClickSocialLogin("ms-azure-ad")}
-        ></AzureAdSsoButtonComponent>
-      );
-    }
-  };
-
-  const renderGoogle = () => {
-    if (googleLogin) {
-      return (
-        <GoogleSsoButtonComponent
-          label="login"
-          onClick={() => didClickSocialLogin("google")}
-        ></GoogleSsoButtonComponent>
-      );
-    }
-  };
-
-  const renderLinkedin = () => {
-    if (linkedinSsoEnabled) {
-      return (
-        <LinkedinSsoButtonComponent
-          label="login"
-          onClick={() => didClickSocialLogin("linkedin")}
-        ></LinkedinSsoButtonComponent>
+        <MagicLinkLoginButtonComponent
+          mode="login"
+          onClick={() => didClickMagicLinkAuthenticate()}
+        ></MagicLinkLoginButtonComponent>
       );
     }
   };
 
   const hasAlternatives =
-    passkeysLogin || googleLogin || linkedinLogin || azureAdLogin;
+    passkeysLogin || magicLinkEnabled || hasSsoAlternatives;
   return (
     <>
       {hasAlternatives && (
@@ -103,9 +77,12 @@ const LoginAlternativesComponent: FunctionComponent<
       )}
       <div className="space-y-2">
         {renderPasskeysLogin()}
-        {renderGoogle()}
-        {renderAzureAd()}
-        {renderLinkedin()}
+        {renderMagicKeyLogin()}
+        <SsoButtonsComponent
+          label="login"
+          didClickSsoBtn={didClickSocialLogin}
+          hasAlternatives={setHasSsoAlternatives}
+        />
       </div>
     </>
   );

@@ -1,13 +1,13 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { AuthLayoutWrapperComponent } from "../../../components/auth/AuthLayoutWrapperComponent";
-import { ResetPasswordComponent } from "../../../components/auth/password/ResetPasswordComponent";
-import { ResetPasswordSuccessComponent } from "../../../components/auth/password/ResetPasswordSuccessComponent";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
+import { MagicLinkSuccessComponent } from "../../../components/auth/magic-link/MagicLinkSuccessComponent";
+import { MagicLinkComponent } from "../../../components/auth/magic-link/MagicLinkComponent";
 
 interface Props {}
 
-const ResetPasswordScreen: FunctionComponent<Props> = ({}) => {
+const MagicLinkScreen: FunctionComponent<Props> = ({}) => {
   const location = useLocation();
   const { username } = location.state || {};
   const [linkSent, setLinkSent] = useState(false);
@@ -20,21 +20,19 @@ const ResetPasswordScreen: FunctionComponent<Props> = ({}) => {
     }
   }, [username]);
 
-  const onDidSendResetPasswordLink = (email: string) => {
+  const onDidSendMagicLink = (email: string) => {
     setEmail(email);
     setLinkSent(true);
   };
 
   const renderChild = () => {
     if (linkSent) {
-      return <ResetPasswordSuccessComponent />;
+      return <MagicLinkSuccessComponent />;
     } else {
       return (
-        <ResetPasswordComponent
+        <MagicLinkComponent
           init={username}
-          didSendResetPasswordLink={(email) =>
-            onDidSendResetPasswordLink(email)
-          }
+          didSendMagicLink={(email) => onDidSendMagicLink(email)}
         />
       );
     }
@@ -42,11 +40,11 @@ const ResetPasswordScreen: FunctionComponent<Props> = ({}) => {
 
   return (
     <AuthLayoutWrapperComponent
-      heading={linkSent ? t("Check your email") : t("Forgot password?")}
+      heading={linkSent ? t("Check your email") : t("Login with Magic Link")}
       subHeading={
         linkSent
-          ? `We sent a password reset link to ${email}.`
-          : t("No worries, we'll send you reset instructions.")
+          ? `We sent a magic link to ${email}. The link is valid for 15 minutes.`
+          : t("No password needed, just enter your email address.")
       }
     >
       {renderChild()}
@@ -54,4 +52,4 @@ const ResetPasswordScreen: FunctionComponent<Props> = ({}) => {
   );
 };
 
-export { ResetPasswordScreen };
+export { MagicLinkScreen };

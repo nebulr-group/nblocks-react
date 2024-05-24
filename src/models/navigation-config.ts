@@ -2,6 +2,7 @@ export interface NavigationConfig {
   login: {
     loginScreen: string;
     logoutScreen: string;
+    magicLinkScreen: string;
     chooseUserScreen: string;
     callbackScreen: string;
   };

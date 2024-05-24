@@ -1,6 +1,6 @@
 export interface LibConfig {
   /** Sets several other configs into a sensible default for development.
-   * `spa=true`, `tenantSignup=true`, `appSignup=true`, `passwordValidation=false`
+   * `spa=true`, `appSignup=true`, `passwordValidation=false`
    */
   devMode: boolean;
 
@@ -24,9 +24,6 @@ export interface LibConfig {
 
   // Redirect URI for OAuth 2.0 flow. Point this to your callback screen. You should not change this manually unless your running tests.
   oauthRedirectUri: string;
-
-  // Allow for simple tenant signup. Part of the developer onboarding and app configuration. Should be disabled before deploying
-  tenantSignup: boolean;
 
   // The plugin will redirect to this route after a succesful login or completed onboarding. Defaults to `/`
   handoverRoute: string;

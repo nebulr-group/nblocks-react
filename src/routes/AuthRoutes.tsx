@@ -10,14 +10,16 @@ import { RecoverMfaScreen } from "../screens/auth/mfa/RecoverMfa.screen";
 import { SetupMfaScreen } from "../screens/auth/mfa/SetupMfa.screen";
 import { NavigationConfig } from "../models/navigation-config";
 import { SignupScreen } from "../screens/auth/Signup.screen";
-import { useConfig } from "../hooks/config-context";
 import { CallbackScreen } from "../screens/auth/oauth/Callback.screen";
+import { MagicLinkScreen } from "../screens/auth/magic-link/MagicLink.screen";
+import { useApp } from "../hooks/app-context";
 
 //TODO this should be moved to a hook or somewhere more generic
 const RouteConfig: NavigationConfig = {
   login: {
     loginScreen: "/auth/login",
     logoutScreen: "/auth/logout",
+    magicLinkScreen: "/auth/magic-link",
     chooseUserScreen: "/auth/choose-user",
     callbackScreen: "/auth/oauth-callback",
   },
@@ -49,16 +51,20 @@ const RouteConfig: NavigationConfig = {
  * @returns
  */
 const AuthRoutes = () => {
-  const { tenantSignup } = useConfig();
+  const { tenantSelfSignup } = useApp();
+
   return (
     <Routes>
       <Route path="login" element={<LoginScreen />}></Route>
       <Route path="logout" element={<LogoutScreen />}></Route>
+      <Route path="magic-link" element={<MagicLinkScreen />}></Route>
       <Route path="reset-password" element={<ResetPasswordScreen />}></Route>
       <Route path="set-password/:token" element={<SetPasswordScreen />}></Route>
       <Route path="choose-user" element={<ChooseUserScreen />}></Route>
       <Route path="oauth-callback" element={<CallbackScreen />}></Route>
-      {tenantSignup && <Route path="signup" element={<SignupScreen />}></Route>}
+      {tenantSelfSignup && (
+        <Route path="signup" element={<SignupScreen />}></Route>
+      )}
       <Route path="mfa">
         <Route path="required" element={<RequireMfaScreen />}></Route>
         <Route path="recover" element={<RecoverMfaScreen />}></Route>

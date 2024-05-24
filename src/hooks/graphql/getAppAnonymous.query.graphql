@@ -9,6 +9,11 @@ query GetAppAnonymous {
     azureAdSsoEnabled
     googleSsoEnabled
     linkedinSsoEnabled
+    facebookSsoEnabled
+    githubSsoEnabled
+    appleSsoEnabled
     mfaEnabled
+    magicLinkEnabled
+    tenantSelfSignup
   }
 }
