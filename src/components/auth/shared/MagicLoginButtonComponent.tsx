@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { NblocksButton } from "../../shared/NblocksButton";
 import { useTranslation } from "react-i18next";
-import { PasskeyLogo } from "./logos/passkey.logo";
+import { MagicLinkLogo } from "./logos/magicLink.logo";
 
 type ComponentProps = {
   mode: "login";
@@ -34,7 +34,7 @@ const MagicLinkLoginButtonComponent: FunctionComponent<ComponentProps> = ({
         isLoading={loading}
       >
         <div className={"mr-3 rounded-lg w-10 h-10 overflow-hidden"}>
-          <PasskeyLogo />
+          <MagicLinkLogo />
         </div>
         {renderText()}
       </NblocksButton>
