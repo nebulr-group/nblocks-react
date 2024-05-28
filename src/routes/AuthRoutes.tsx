@@ -12,7 +12,7 @@ import { NavigationConfig } from "../models/navigation-config";
 import { SignupScreen } from "../screens/auth/Signup.screen";
 import { CallbackScreen } from "../screens/auth/oauth/Callback.screen";
 import { MagicLinkScreen } from "../screens/auth/magic-link/MagicLink.screen";
-import { useApp } from "../hooks/app-context";
+// import { useApp } from "../hooks/app-context";
 
 //TODO this should be moved to a hook or somewhere more generic
 const RouteConfig: NavigationConfig = {
@@ -51,7 +51,8 @@ const RouteConfig: NavigationConfig = {
  * @returns
  */
 const AuthRoutes = () => {
-  const { tenantSelfSignup } = useApp();
+  // We need to await this data because otherwise we're eagerly not accepting signup route and navigate away
+  // const { tenantSelfSignup } = useApp();
 
   return (
     <Routes>
@@ -62,9 +63,7 @@ const AuthRoutes = () => {
       <Route path="set-password/:token" element={<SetPasswordScreen />}></Route>
       <Route path="choose-user" element={<ChooseUserScreen />}></Route>
       <Route path="oauth-callback" element={<CallbackScreen />}></Route>
-      {tenantSelfSignup && (
-        <Route path="signup" element={<SignupScreen />}></Route>
-      )}
+      <Route path="signup" element={<SignupScreen />}></Route>
       <Route path="mfa">
         <Route path="required" element={<RequireMfaScreen />}></Route>
         <Route path="recover" element={<RecoverMfaScreen />}></Route>
