@@ -55,7 +55,7 @@ const SetupMfaScreen: FunctionComponent<{}> = () => {
     switch (setupStep) {
       case 0:
         return t(
-          "You're required to set up two factor authentication. Enter your phone number below."
+          "You're required to set up two factor authentication.<br/>Enter your phone number below."
         );
 
       case 1:
@@ -65,7 +65,7 @@ const SetupMfaScreen: FunctionComponent<{}> = () => {
 
       case 2:
         return t(
-          "You're now set up. This is your recovery code. Save and keep it safe in case you would need to reset your two factor authentication."
+          "You're now set up. This is your recovery code.<br/>Save and keep it safe in case you would need to reset your two factor authentication."
         );
 
       default:

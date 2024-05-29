@@ -41,7 +41,7 @@ const AuthLayoutWrapperComponent: FunctionComponent<ComponentProps> = ({
           size={"lg"}
           className="font-normal mt-3"
         >
-          {subHeading}
+          <span dangerouslySetInnerHTML={{ __html: subHeading }}></span>
         </SubHeadingComponent>
       </div>
       <div className="mt-6 flex items-center flex-col">{children}</div>

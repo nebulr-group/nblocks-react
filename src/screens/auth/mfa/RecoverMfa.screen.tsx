@@ -17,7 +17,7 @@ const RecoverMfaScreen: FunctionComponent<{}> = () => {
     <AuthLayoutWrapperComponent
       heading={t("Reset Two Factor Authentication")}
       subHeading={t(
-        "Use your recovery code to reset your two factor authentication. Contact support if you have lost your code."
+        "Use your recovery code to reset your two factor authentication.<br/>Contact support if you have lost your code."
       )}
     >
       <RecoverMfaComponent didRecoverMfaCode={() => onDidRecoverMfaCode()} />
