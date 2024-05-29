@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { FederationConnection } from "../../../utils/OAuthService";
 import { useRedirect } from "../../../hooks/use-redirect";
 import { useLog } from "../../../hooks/use-log";
+import { ErrorDetails } from "../../../types/error-details";
 
 export function LoginScreen() {
   const { t } = useTranslation();
@@ -29,9 +30,9 @@ export function LoginScreen() {
 
   const urlSearch = new URLSearchParams(location.search);
   const initalError = !!urlSearch.get("error");
-  const errorDetails: null | undefined | "mle" = urlSearch.get(
-    "errorDetails"
-  ) as null | undefined | "mle";
+  const errorDetails = urlSearch.get("errorDetails") as
+    | ErrorDetails
+    | undefined;
 
   useEffect(() => {
     if (currentUser.authenticated) {

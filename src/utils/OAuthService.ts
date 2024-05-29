@@ -156,8 +156,8 @@ export class OAuthService {
     }
   }
 
-  getFederatedSignupUrl(type: FederationType): string {
-    return `${this.oAuthBaseURI}${this.AUTH_API_ENDPOINTS.federatedLogin}/${type}/signup`;
+  getFederatedSignupUrl(type: FederationType, ignoreExistingUser: boolean): string {
+    return `${this.oAuthBaseURI}${this.AUTH_API_ENDPOINTS.federatedLogin}/${type}/signup${ignoreExistingUser ? '?ignoreExistingUser=true' : ''}`;
   }
 
   private async restoreTokensFromLocalStorage(): Promise<void> {

@@ -21,10 +21,11 @@ import { FederationConnection } from "../../../utils/OAuthService";
 import { LoginAlternativesComponent } from "./LoginAlternativesComponent";
 import { FederationConnectionsComponent } from "./FederationConnectionsComponent";
 import { useApp } from "../../../hooks/app-context";
+import { ErrorDetails } from "../../../types/error-details";
 
 type ComponentProps = {
   initalError?: boolean;
-  errorDetails?: null | undefined | "mle";
+  errorDetails?: ErrorDetails;
   didLogin: (mfa: MfaState, tenantUserId?: string) => void;
   didClickFederatedLogin: (type: FederationType) => void;
   didClickFederationConnection: (connection: FederationConnection) => void;

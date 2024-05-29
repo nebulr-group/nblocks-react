@@ -13,7 +13,7 @@ type ComponentProps = {
   federation: FederationType;
 };
 
-const SignupMissingUserComponent: FunctionComponent<ComponentProps> = ({
+const ContinueSignupFederationComponent: FunctionComponent<ComponentProps> = ({
   didClickFederatedSignup,
   federation,
 }) => {
@@ -73,4 +73,4 @@ const SignupMissingUserComponent: FunctionComponent<ComponentProps> = ({
   );
 };
 
-export { SignupMissingUserComponent };
+export { ContinueSignupFederationComponent };

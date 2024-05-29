@@ -87,9 +87,9 @@ export class AuthService {
     }
   }
 
-  getFederatedSignupUrl(type: FederationType): string | undefined {
+  getFederatedSignupUrl(type: FederationType, ignoreExistingUser: boolean): string | undefined {
     if (!!this._oauthService) {
-      return this._oauthService.getFederatedSignupUrl(type);
+      return this._oauthService.getFederatedSignupUrl(type, ignoreExistingUser);
     }
   }
 

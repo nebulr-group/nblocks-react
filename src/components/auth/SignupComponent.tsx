@@ -1,5 +1,10 @@
 import { useMutation } from "@apollo/client";
-import React, { FormEvent, FunctionComponent, useState } from "react";
+import React, {
+  FormEvent,
+  FunctionComponent,
+  useEffect,
+  useState,
+} from "react";
 import { useSearchParams } from "react-router-dom";
 import { CreateTenantAnonymousDocument } from "../../gql/graphql";
 import { useApp } from "../../hooks/app-context";
@@ -13,15 +18,20 @@ import { FederationType } from "../../utils/AuthService";
 import { useTranslation } from "react-i18next";
 import { DividerComponent } from "../shared/DividerComponent";
 import { SsoButtonsComponent } from "./login/SsoButtonsComponent";
+import { ErrorDetails } from "../../types/error-details";
 
 type ComponentProps = {
   didSignup: (email: string) => void;
   didClickFederatedSignup: (type: FederationType) => void;
+  initalError?: boolean;
+  errorDetails?: ErrorDetails;
 };
 
 const SignupComponent: FunctionComponent<ComponentProps> = ({
   didSignup,
   didClickFederatedSignup,
+  initalError,
+  errorDetails,
 }) => {
   const [createTenantAnonymous, { loading }] = useMutation(
     CreateTenantAnonymousDocument
@@ -33,6 +43,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasSsoAlternatives, setHasSsoAlternatives] = useState(false);
+  const [existingUser, setExistingUser] = useState(false);
   const { t } = useTranslation();
 
   const [params] = useSearchParams();
@@ -41,6 +52,20 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
     params.get("currency"),
     params.get("recurrenceInterval"),
   ];
+
+  const generalErrorMsg = t(
+    "There was an error when creating the account. Try again, otherwise contact support."
+  );
+
+  useEffect(() => {
+    if (initalError) {
+      if (errorDetails === "seu") {
+        setExistingUser(true);
+      } else {
+        setErrorMsg(generalErrorMsg);
+      }
+    }
+  }, [initalError]);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -64,11 +89,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
       didSignup(email);
       setIsLoading(false);
     } catch (error) {
-      setErrorMsg(
-        t(
-          "There was an error when creating the account. Try again, otherwise contact support."
-        )
-      );
+      setErrorMsg(generalErrorMsg);
       setIsLoading(false);
     }
   };
@@ -79,6 +100,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
   };
 
   const renderSignupAlternatives = () => {
+    if (existingUser) return null;
     return (
       <>
         {hasSsoAlternatives && (
@@ -97,21 +119,10 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
     );
   };
 
-  return (
-    <>
-      {errorMsg && (
-        <div className="max-w-sm w-full mb-6">
-          <AlertComponent
-            type="danger"
-            title={t("An error occured")}
-            messages={[errorMsg]}
-          />
-        </div>
-      )}
-      <form
-        onSubmit={(event) => submit(event)}
-        className="space-y-6 max-w-sm w-full"
-      >
+  const renderInputComponents = () => {
+    if (existingUser) return null;
+    return (
+      <>
         <InputComponent
           type="email"
           label={t("Email address*")}
@@ -136,6 +147,26 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
           onChange={(event) => setLastName(event.target.value)}
           value={lastName}
         />
+      </>
+    );
+  };
+
+  return (
+    <>
+      {errorMsg && (
+        <div className="max-w-sm w-full mb-6">
+          <AlertComponent
+            type="danger"
+            title={t("An error occured")}
+            messages={[errorMsg]}
+          />
+        </div>
+      )}
+      <form
+        onSubmit={(event) => submit(event)}
+        className="space-y-6 max-w-sm w-full"
+      >
+        {renderInputComponents()}
         <div className="mt-8">
           <TextComponent size="sm">
             {t("By proceeding you agree to the Nblocks")}
@@ -172,7 +203,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
             type="primary"
             fullWidth={true}
           >
-            {t("Sign up")}
+            {existingUser ? t("Yes, sign me up!") : t("Sign up")}
           </NblocksButton>
         </div>
         {renderSignupAlternatives()}
