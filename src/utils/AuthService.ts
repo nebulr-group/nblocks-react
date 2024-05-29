@@ -2,7 +2,7 @@ import { AxiosInstance } from "axios";
 import { AuthTenantUserResponseDto } from "../models/auth-tenant-user-response.dto";
 import { LibConfig } from "../models/lib-config";
 import { RouteConfig } from "../routes/AuthRoutes";
-import { CredentialsConfig, OAuthService } from "./OAuthService";
+import { CredentialsConfig, LoginSessionCreatedResponse, OAuthService, SignupArgs } from "./OAuthService";
 import { NblocksStorage } from "./Storage";
 import { AuthenticationResponseJSON, PublicKeyCredentialCreationOptionsJSON, PublicKeyCredentialRequestOptionsJSON, RegistrationResponseJSON } from "@simplewebauthn/typescript-types";
 
@@ -133,17 +133,17 @@ export class AuthService {
         username,
         password
       );
-      return response;
+      return { mfaState: response.mfaState as MfaState, tenantUserId: response.tenantUserId };
     } else {
       const response = await this.httpClient.post<{
         token: string;
-        mfaState: MfaState;
+        mfaState: string;
       }>(this.ENDPOINTS.authenticate, { username, password });
 
       if (!response.data.token) throw new Error("Wrong credentials");
 
       AuthService.setAuthToken(response.data.token);
-      return { mfaState: response.data.mfaState };
+      return { mfaState: response.data.mfaState as MfaState };
     }
   }
 
@@ -218,6 +218,15 @@ export class AuthService {
     }
 
     throw new Error("Magic link are only available via Auth API");
+  }
+
+  async signup(args: SignupArgs): Promise<{ success: boolean, newUser: boolean, session?: LoginSessionCreatedResponse }> {
+    if (!!this._oauthService) {
+      const response = await this._oauthService.signup(args);
+      return response;
+    }
+
+    throw new Error("Signup are only available via Auth API");
   }
 
   async updatePassword(token: string, password: string): Promise<void> {

@@ -1,14 +1,13 @@
 import React, { FunctionComponent } from "react";
-import { useApp } from "../../hooks/app-context";
-import { RouteConfig } from "../../routes/AuthRoutes";
-import { LinkComponent } from "../shared/LinkComponent";
-import { TextComponent } from "../shared/TextComponent";
-import { FederationType } from "../../utils/AuthService";
+import { useApp } from "../../../hooks/app-context";
+import { RouteConfig } from "../../../routes/AuthRoutes";
+import { LinkComponent } from "../../shared/LinkComponent";
+import { TextComponent } from "../../shared/TextComponent";
+import { FederationType } from "../../../utils/AuthService";
 import { useTranslation } from "react-i18next";
-import { SsoButtonsComponent } from "./login/SsoButtonsComponent";
+import { SsoButtonsComponent } from "../login/SsoButtonsComponent";
 
 type ComponentProps = {
-  didSignup: (email: string) => void;
   didClickFederatedSignup: (type: FederationType) => void;
   federation: FederationType;
 };

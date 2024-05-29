@@ -1,20 +1,27 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { AuthLayoutWrapperComponent } from "../../components/auth/AuthLayoutWrapperComponent";
-import { SignupComponent } from "../../components/auth/SignupComponent";
-import { SignupSuccessComponent } from "../../components/auth/SignupSuccessComponent";
-import { FederationType } from "../../utils/AuthService";
+import { SignupComponent } from "../../components/auth/signup/SignupComponent";
+import { SignupSuccessComponent } from "../../components/auth/signup/SignupSuccessComponent";
+import { FederationType, MfaState } from "../../utils/AuthService";
 import { useSecureContext } from "../../hooks/secure-http-context";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
-import { ContinueSignupFederationComponent } from "../../components/auth/ContinueSignupFederationComponent";
+import { ContinueSignupFederationComponent } from "../../components/auth/signup/ContinueSignupFederationComponent";
 import { useRedirect } from "../../hooks/use-redirect";
 import { ErrorDetails } from "../../types/error-details";
+import { LoginSessionCreatedResponse } from "../../utils/OAuthService";
+import { RouteConfig } from "../../routes/AuthRoutes";
+import { useConfig } from "../../hooks/config-context";
+import { useLog } from "../../hooks/use-log";
 
 const SignupScreen: FunctionComponent<{}> = () => {
+  const { authLegacy } = useConfig();
   const { authService } = useSecureContext();
   const [didSignup, setDidSignup] = useState(false);
-  const { navigate } = useRedirect();
+  const [existingUserError, setExistingUserError] = useState(false);
+  const { navigate, replace } = useRedirect();
   const [email, setEmail] = useState("");
+  const { log } = useLog();
   const { t } = useTranslation();
   const [params] = useSearchParams();
   const [paramError, paramErrorDetails, federation] = [
@@ -25,16 +32,61 @@ const SignupScreen: FunctionComponent<{}> = () => {
 
   const federationMissingUserError =
     paramError && paramErrorDetails == "fmu" && federation;
-  const existingUserError = paramError && paramErrorDetails == "seu";
 
-  const onDidSignup = (email: string) => {
-    setDidSignup(true);
-    setEmail(email);
+  const federationExistingUserError =
+    paramError && paramErrorDetails == "seu" && federation;
+
+  useEffect(() => {
+    setExistingUserError(!!paramError && paramErrorDetails == "seu");
+  }, [paramError]);
+
+  const onDidSignup = (
+    email: string,
+    session?: LoginSessionCreatedResponse
+  ) => {
+    if (session) {
+      // User is already logged in to
+      onDidLogin(session.mfaState as MfaState, session.tenantUserId);
+    } else {
+      // Classic flow, check email.
+      setDidSignup(true);
+      setEmail(email);
+    }
+  };
+
+  // Callback when the signup resulted in a login
+  const onDidLogin = async (mfa: MfaState, tenantUserId?: string) => {
+    switch (mfa) {
+      case "REQUIRED":
+        log("Navigating to Require MFA screen");
+        navigate(RouteConfig.mfa.requireMfaScreen);
+        break;
+
+      case "SETUP":
+        log("Navigating to Setup MFA screen");
+        navigate(RouteConfig.mfa.setupMfaScreen);
+        break;
+
+      case "DISABLED":
+      default:
+        if (!authLegacy && tenantUserId) {
+          replace(authService.getHandoverUrl(tenantUserId)!);
+        } else {
+          log("Navigating to Choose user screen");
+          navigate(RouteConfig.login.chooseUserScreen);
+        }
+
+        break;
+    }
   };
 
   const onDidClickFederatedSignup = (type: FederationType) => {
     const url = authService.getFederatedSignupUrl(type, !!existingUserError);
     navigate(url!);
+  };
+
+  const onDidReceiveExistingUser = () => {
+    setExistingUserError(true);
   };
 
   const renderChild = () => {
@@ -45,39 +97,27 @@ const SignupScreen: FunctionComponent<{}> = () => {
     if (federationMissingUserError) {
       return (
         <ContinueSignupFederationComponent
-          didSignup={(email) => onDidSignup(email)}
           didClickFederatedSignup={(type) => onDidClickFederatedSignup(type)}
           federation={federation}
         />
       );
     }
 
-    if (existingUserError) {
-      if (federation)
-        return (
-          <ContinueSignupFederationComponent
-            didSignup={(email) => onDidSignup(email)}
-            didClickFederatedSignup={(type) => onDidClickFederatedSignup(type)}
-            federation={federation}
-          />
-        );
-      else
-        return (
-          <SignupComponent
-            didSignup={(email) => onDidSignup(email)}
-            didClickFederatedSignup={(type) => onDidClickFederatedSignup(type)}
-            initalError={!!paramError}
-            errorDetails={paramErrorDetails}
-          />
-        );
-    }
+    if (federationExistingUserError)
+      return (
+        <ContinueSignupFederationComponent
+          didClickFederatedSignup={(type) => onDidClickFederatedSignup(type)}
+          federation={federation}
+        />
+      );
 
     return (
       <SignupComponent
-        didSignup={(email) => onDidSignup(email)}
+        didSignup={onDidSignup}
         didClickFederatedSignup={(type) => onDidClickFederatedSignup(type)}
         initalError={!!paramError}
         errorDetails={paramErrorDetails}
+        didReceiveExistingUser={onDidReceiveExistingUser}
       />
     );
   };
@@ -117,7 +157,7 @@ const SignupScreen: FunctionComponent<{}> = () => {
         return {
           heading: t("You look familiar!"),
           subHeading: t(
-            "You already have an account. Are you sure you want to create another one? You'll keep your existing credentials"
+            "You already have an account. Are you sure you want to create another workspace?<br/>You'll keep your existing credentials"
           ),
         };
       }

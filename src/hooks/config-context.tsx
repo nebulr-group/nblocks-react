@@ -12,7 +12,6 @@ const accountApi = "https://account-api-stage.nebulr-core.com";
 const oauthRedirectUri = "http://localhost:8080/auth/oauth-callback";
 
 const initialContext: LibConfig = {
-  devMode: false,
   backendLess: false,
   authLegacy: true,
   handoverRoute: "/",
@@ -50,12 +49,6 @@ const NblocksConfigContextProvider: FunctionComponent<{
     if (!config.appId) {
       throw new Error("You must provide App id when running with backendless");
     }
-  }
-
-  // Set some sensible defaults for devMode
-  if (config?.devMode) {
-    initialContext.spa = true;
-    initialContext.passwordValidation = false;
   }
 
   return (

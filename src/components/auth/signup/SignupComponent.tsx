@@ -5,23 +5,25 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { useSearchParams } from "react-router-dom";
-import { CreateTenantAnonymousDocument } from "../../gql/graphql";
-import { useApp } from "../../hooks/app-context";
-import { RouteConfig } from "../../routes/AuthRoutes";
-import { AlertComponent } from "../shared/AlertComponent";
-import { InputComponent } from "../shared/InputComponent";
-import { LinkComponent } from "../shared/LinkComponent";
-import { NblocksButton } from "../shared/NblocksButton";
-import { TextComponent } from "../shared/TextComponent";
-import { FederationType } from "../../utils/AuthService";
+import { useApp } from "../../../hooks/app-context";
+import { RouteConfig } from "../../../routes/AuthRoutes";
+import { AlertComponent } from "../../shared/AlertComponent";
+import { InputComponent } from "../../shared/InputComponent";
+import { LinkComponent } from "../../shared/LinkComponent";
+import { NblocksButton } from "../../shared/NblocksButton";
+import { TextComponent } from "../../shared/TextComponent";
+import { FederationType } from "../../../utils/AuthService";
 import { useTranslation } from "react-i18next";
-import { DividerComponent } from "../shared/DividerComponent";
-import { SsoButtonsComponent } from "./login/SsoButtonsComponent";
-import { ErrorDetails } from "../../types/error-details";
+import { DividerComponent } from "../../shared/DividerComponent";
+import { SsoButtonsComponent } from "../login/SsoButtonsComponent";
+import { ErrorDetails } from "../../../types/error-details";
+import { PasswordInputComponent } from "../password/PasswordInputComponent";
+import { useSecureContext } from "../../../hooks/secure-http-context";
+import { LoginSessionCreatedResponse } from "../../../utils/OAuthService";
 
 type ComponentProps = {
-  didSignup: (email: string) => void;
+  didSignup: (email: string, session?: LoginSessionCreatedResponse) => void;
+  didReceiveExistingUser: () => void;
   didClickFederatedSignup: (type: FederationType) => void;
   initalError?: boolean;
   errorDetails?: ErrorDetails;
@@ -32,12 +34,11 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
   didClickFederatedSignup,
   initalError,
   errorDetails,
+  didReceiveExistingUser,
 }) => {
-  const [createTenantAnonymous, { loading }] = useMutation(
-    CreateTenantAnonymousDocument
-  );
-  const { logo, privacyPolicyUrl, termsOfServiceUrl } = useApp();
+  const { privacyPolicyUrl, termsOfServiceUrl } = useApp();
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -46,12 +47,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
   const [existingUser, setExistingUser] = useState(false);
   const { t } = useTranslation();
 
-  const [params] = useSearchParams();
-  const [plan, currency, recurrenceInterval] = [
-    params.get("plan"),
-    params.get("currency"),
-    params.get("recurrenceInterval"),
-  ];
+  const { authService } = useSecureContext();
 
   const generalErrorMsg = t(
     "There was an error when creating the account. Try again, otherwise contact support."
@@ -72,21 +68,21 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
     setIsLoading(true);
 
     try {
-      await createTenantAnonymous({
-        variables: {
-          tenant: {
-            owner: { email, firstName, lastName },
-            plan: plan ? plan : undefined,
-            priceOffer:
-              currency && recurrenceInterval
-                ? { currency, recurrenceInterval }
-                : undefined,
-            logo,
-            name: "",
-          },
-        },
+      const { success, newUser, session } = await authService.signup({
+        owner: { email, password, firstName, lastName },
+        ignoreExistingUser: existingUser, // We can submit again with this flag
       });
-      didSignup(email);
+      if (success) {
+        didSignup(email, session);
+      } else {
+        // The signup was not successfull / completed
+        if (!newUser) {
+          setExistingUser(true);
+          didReceiveExistingUser();
+        } else {
+          throw new Error("Could not signup");
+        }
+      }
       setIsLoading(false);
     } catch (error) {
       setErrorMsg(generalErrorMsg);
@@ -119,6 +115,10 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
     );
   };
 
+  const onDidProvideValidPassword = (pwd: string) => {
+    setPassword(pwd);
+  };
+
   const renderInputComponents = () => {
     if (existingUser) return null;
     return (
@@ -131,9 +131,12 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
           onChange={(event) => setEmail(event.target.value)}
           value={email}
         />
+        <PasswordInputComponent
+          didProvideValidPassword={onDidProvideValidPassword}
+        />
         <InputComponent
           type="text"
-          label={t("First name")}
+          label={t("First name (optional)")}
           placeholder={t("Enter your first name")}
           name="firstName"
           onChange={(event) => setFirstName(event.target.value)}
@@ -141,7 +144,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
         />
         <InputComponent
           type="text"
-          label={t("Last name")}
+          label={t("Last name (optional)")}
           placeholder={t("Enter your last name")}
           name="lastName"
           onChange={(event) => setLastName(event.target.value)}
@@ -150,6 +153,8 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
       </>
     );
   };
+
+  const formValid = email && password;
 
   return (
     <>
@@ -197,7 +202,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
         <div>
           <NblocksButton
             submit={true}
-            disabled={!email}
+            disabled={!formValid}
             size="md"
             isLoading={isLoading}
             type="primary"

@@ -65,6 +65,23 @@ export type AccessTokenClaims = {
   sub: string;
 };
 
+export interface SignupArgs {
+  owner: {
+    email: string,
+    password: string;
+    firstName?: string;
+    lastName?: string;
+  },
+  ignoreExistingUser?: boolean;
+}
+
+export interface LoginSessionCreatedResponse {
+  session: string;
+  expires: number;
+  mfaState: string;
+  tenantUserId?: string; // Signaling user has just one tenantUser and this is selected
+}
+
 // TODO this class should probably just take care of OAuth specific stuff.
 // The calls that are made to auth-api regarding authenticate/mfa should be made through AuthService for a cleaner code base
 export class OAuthService {
@@ -86,6 +103,7 @@ export class OAuthService {
     handover: "/auth/chooseTenantUser",
     logout: "/auth/logout",
     magicLink: "/auth/magic-link",
+    signup: "/auth/signup",
     commitMfaCode: "/auth/commitMfaCode",
     startMfaUserSetup: "/auth/startMfaUserSetup",
     finishMfaUserSetup: "/auth/finishMfaUserSetup",
@@ -277,14 +295,9 @@ export class OAuthService {
   async authenticate(
     username: string,
     password: string
-  ): Promise<{ mfaState: MfaState; tenantUserId?: string }> {
+  ): Promise<LoginSessionCreatedResponse> {
     // Obtain id_token for end-user and access_code for obtaining access_token
-    const response = await this.httpClient.post<{
-      session: string;
-      expiresIn: number;
-      mfaState: MfaState;
-      tenantUserId?: string;
-    }>(
+    const response = await this.httpClient.post<LoginSessionCreatedResponse>(
       this.AUTH_API_ENDPOINTS.authenticate,
       {
         username,
@@ -293,13 +306,13 @@ export class OAuthService {
       { baseURL: this.oAuthBaseURI, withCredentials: true }
     );
 
-    const { session, mfaState, tenantUserId } = response.data;
+    const { session } = response.data;
 
     if (!session) {
       throw new Error("Wrong credentials");
     }
 
-    return { mfaState, tenantUserId };
+    return response.data;
   }
 
   async getPasskeysRegistrationOptions(forgotPasswordToken: string): Promise<PublicKeyCredentialCreationOptionsJSON> {
@@ -350,6 +363,15 @@ export class OAuthService {
     const response = await this.httpClient.post<{ expiresIn: number }>(
       this.AUTH_API_ENDPOINTS.magicLink,
       { username },
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+    return response.data;
+  }
+
+  async signup(args: SignupArgs): Promise<{ success: boolean, newUser: boolean, session?: LoginSessionCreatedResponse }> {
+    const response = await this.httpClient.post<{ success: boolean, newUser: boolean, session?: LoginSessionCreatedResponse }>(
+      this.AUTH_API_ENDPOINTS.signup,
+      args,
       { baseURL: this.oAuthBaseURI, withCredentials: true }
     );
     return response.data;

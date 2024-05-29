@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react";
-import { RouteConfig } from "../../routes/AuthRoutes";
-import { LinkComponent } from "../shared/LinkComponent";
+import { RouteConfig } from "../../../routes/AuthRoutes";
+import { LinkComponent } from "../../shared/LinkComponent";
 import { useTranslation } from "react-i18next";
 
 type ComponentProps = {};

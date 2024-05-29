@@ -14,7 +14,8 @@ function App() {
       <NblocksProvider
         config={{
           debug: true,
-          devMode: true,
+          spa: true,
+          passwordValidation: false,
           backendLess: true,
           authLegacy: false,
           accountApiBaseUri: "http://localhost:3010",
