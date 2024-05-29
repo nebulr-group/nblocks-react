@@ -10,18 +10,15 @@ import { ContinueSignupFederationComponent } from "../../components/auth/signup/
 import { useRedirect } from "../../hooks/use-redirect";
 import { ErrorDetails } from "../../types/error-details";
 import { LoginSessionCreatedResponse } from "../../utils/OAuthService";
-import { RouteConfig } from "../../routes/AuthRoutes";
-import { useConfig } from "../../hooks/config-context";
-import { useLog } from "../../hooks/use-log";
+import { useLogin } from "../../hooks/use-login";
 
 const SignupScreen: FunctionComponent<{}> = () => {
-  const { authLegacy } = useConfig();
   const { authService } = useSecureContext();
   const [didSignup, setDidSignup] = useState(false);
   const [existingUserError, setExistingUserError] = useState(false);
-  const { navigate, replace } = useRedirect();
+  const { navigate } = useRedirect();
   const [email, setEmail] = useState("");
-  const { log } = useLog();
+  const { handleDidLogin } = useLogin();
   const { t } = useTranslation();
   const [params] = useSearchParams();
   const [paramError, paramErrorDetails, federation] = [
@@ -46,37 +43,11 @@ const SignupScreen: FunctionComponent<{}> = () => {
   ) => {
     if (session) {
       // User is already logged in to
-      onDidLogin(session.mfaState as MfaState, session.tenantUserId);
+      handleDidLogin(session.mfaState as MfaState, session.tenantUserId);
     } else {
       // Classic flow, check email.
       setDidSignup(true);
       setEmail(email);
-    }
-  };
-
-  // Callback when the signup resulted in a login
-  const onDidLogin = async (mfa: MfaState, tenantUserId?: string) => {
-    switch (mfa) {
-      case "REQUIRED":
-        log("Navigating to Require MFA screen");
-        navigate(RouteConfig.mfa.requireMfaScreen);
-        break;
-
-      case "SETUP":
-        log("Navigating to Setup MFA screen");
-        navigate(RouteConfig.mfa.setupMfaScreen);
-        break;
-
-      case "DISABLED":
-      default:
-        if (!authLegacy && tenantUserId) {
-          replace(authService.getHandoverUrl(tenantUserId)!);
-        } else {
-          log("Navigating to Choose user screen");
-          navigate(RouteConfig.login.chooseUserScreen);
-        }
-
-        break;
     }
   };
 

@@ -3,15 +3,14 @@ import { useLocation } from "react-router-dom";
 import { useAuth } from "../../../hooks/auth-context";
 import { LoginComponent } from "../../../components/auth/login/LoginComponent";
 import { useConfig } from "../../../hooks/config-context";
-import { RouteConfig } from "../../../routes/AuthRoutes";
 import { AuthLayoutWrapperComponent } from "../../../components/auth/AuthLayoutWrapperComponent";
-import { FederationType, MfaState } from "../../../utils/AuthService";
+import { FederationType } from "../../../utils/AuthService";
 import { useSecureContext } from "../../../hooks/secure-http-context";
 import { useTranslation } from "react-i18next";
 import { FederationConnection } from "../../../utils/OAuthService";
 import { useRedirect } from "../../../hooks/use-redirect";
-import { useLog } from "../../../hooks/use-log";
 import { ErrorDetails } from "../../../types/error-details";
+import { useLogin } from "../../../hooks/use-login";
 
 export function LoginScreen() {
   const { t } = useTranslation();
@@ -19,11 +18,11 @@ export function LoginScreen() {
   document.title = t("Login");
 
   const { authService } = useSecureContext();
-  const { handoverRoute, authLegacy } = useConfig();
+  const { handoverRoute } = useConfig();
   const location = useLocation();
   const { currentUser, logout } = useAuth();
-  const { navigate, replace } = useRedirect();
-  const { log } = useLog();
+  const { navigate } = useRedirect();
+  const { handleDidLogin } = useLogin();
 
   // Target url when authentication finished
   const targetUrl = location.state?.from?.pathname || handoverRoute;
@@ -42,32 +41,6 @@ export function LoginScreen() {
 
   const doLogout = async () => {
     await logout();
-  };
-
-  // Callback when the LoginComponent completed login
-  const onDidLogin = async (mfa: MfaState, tenantUserId?: string) => {
-    switch (mfa) {
-      case "REQUIRED":
-        log("Navigating to Require MFA screen");
-        navigate(RouteConfig.mfa.requireMfaScreen);
-        break;
-
-      case "SETUP":
-        log("Navigating to Setup MFA screen");
-        navigate(RouteConfig.mfa.setupMfaScreen);
-        break;
-
-      case "DISABLED":
-      default:
-        if (!authLegacy && tenantUserId) {
-          replace(authService.getHandoverUrl(tenantUserId)!);
-        } else {
-          log("Navigating to Choose user screen");
-          navigate(RouteConfig.login.chooseUserScreen);
-        }
-
-        break;
-    }
   };
 
   const onDidClickFederatedLogin = (type: FederationType) => {
@@ -91,7 +64,7 @@ export function LoginScreen() {
       <LoginComponent
         initalError={initalError}
         errorDetails={errorDetails}
-        didLogin={onDidLogin}
+        didLogin={handleDidLogin}
         didClickFederatedLogin={onDidClickFederatedLogin}
         didClickFederationConnection={onDidClickFederationConnection}
       />

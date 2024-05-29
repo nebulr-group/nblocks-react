@@ -97,7 +97,8 @@ export class OAuthService {
 
   private readonly AUTH_API_ENDPOINTS = {
     federatedLogin: "/federated",
-    authenticate: "/auth/authenticate",
+    password: "/auth/password",
+    authenticate: "/auth/password/authenticate",
     credentialsConfig: "/auth/credentialsConfig",
     tenantUsers: "/auth/tenantUsers",
     handover: "/auth/chooseTenantUser",
@@ -371,6 +372,15 @@ export class OAuthService {
   async signup(args: SignupArgs): Promise<{ success: boolean, newUser: boolean, session?: LoginSessionCreatedResponse }> {
     const response = await this.httpClient.post<{ success: boolean, newUser: boolean, session?: LoginSessionCreatedResponse }>(
       this.AUTH_API_ENDPOINTS.signup,
+      args,
+      { baseURL: this.oAuthBaseURI, withCredentials: true }
+    );
+    return response.data;
+  }
+
+  async updatePassword(args: { token: string, password: string }): Promise<LoginSessionCreatedResponse> {
+    const response = await this.httpClient.put<LoginSessionCreatedResponse>(
+      this.AUTH_API_ENDPOINTS.password,
       args,
       { baseURL: this.oAuthBaseURI, withCredentials: true }
     );

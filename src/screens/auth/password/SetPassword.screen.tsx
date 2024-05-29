@@ -5,12 +5,16 @@ import { SetPasswordComponent } from "../../../components/auth/password/SetPassw
 import { SetPasswordSuccessComponent } from "../../../components/auth/password/SetPasswordSuccessComponent";
 import { useAuth } from "../../../hooks/auth-context";
 import { useTranslation } from "react-i18next";
+import { LoginSessionCreatedResponse } from "../../../utils/OAuthService";
+import { MfaState } from "../../../utils/AuthService";
+import { useLogin } from "../../../hooks/use-login";
 
 const SetPasswordScreen: FunctionComponent = () => {
   const params = useParams();
   const resetToken = params.token!;
   const { logout, currentUser } = useAuth();
   const { t } = useTranslation();
+  const { handleDidLogin } = useLogin();
 
   const [passwordReset, setPasswordReset] = useState(false);
 
@@ -21,8 +25,12 @@ const SetPasswordScreen: FunctionComponent = () => {
     }
   }, [currentUser]);
 
-  const onDidSetPassword = () => {
-    setPasswordReset(true);
+  const onDidSetPassword = (session?: LoginSessionCreatedResponse) => {
+    if (session) {
+      handleDidLogin(session.mfaState as MfaState, session.tenantUserId);
+    } else {
+      setPasswordReset(true);
+    }
   };
 
   const renderChild = () => {
@@ -31,7 +39,7 @@ const SetPasswordScreen: FunctionComponent = () => {
     } else {
       return (
         <SetPasswordComponent
-          didSetPassword={() => onDidSetPassword()}
+          didSetPassword={onDidSetPassword}
           resetToken={resetToken}
         />
       );

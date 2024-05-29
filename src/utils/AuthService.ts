@@ -229,8 +229,14 @@ export class AuthService {
     throw new Error("Signup are only available via Auth API");
   }
 
-  async updatePassword(token: string, password: string): Promise<void> {
-    await this.httpClient.put(this.ENDPOINTS.password, { token, password });
+  async updatePassword(token: string, password: string): Promise<{ authenticated: boolean, session?: LoginSessionCreatedResponse }> {
+    if (!!this._oauthService) {
+      const session = await this._oauthService.updatePassword({ token, password });
+      return { authenticated: true, session };
+    } else {
+      await this.httpClient.put(this.ENDPOINTS.password, { token, password });
+      return { authenticated: false }
+    }
   }
 
   async commitMfaCode(mfaCode: string): Promise<void> {

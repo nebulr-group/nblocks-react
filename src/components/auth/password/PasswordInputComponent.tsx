@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect } from "react";
 import { InputComponent } from "../../shared/InputComponent";
-import { usePasswordValidation } from "../../../hooks/usePasswordValidation";
+import { usePasswordValidation } from "../../../hooks/use-password-validation";
 import { ValidationMessageComponent } from "../../shared/ValidationMessageComponent";
 import { useConfig } from "../../../hooks/config-context";
 import { useTranslation } from "react-i18next";

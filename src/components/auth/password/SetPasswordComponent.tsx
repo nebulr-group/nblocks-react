@@ -12,9 +12,10 @@ import { SetPasskeysComponent } from "./SetPasskeysComponent";
 import { DividerComponent } from "../../shared/DividerComponent";
 import { useApp } from "../../../hooks/app-context";
 import { PasswordInputComponent } from "./PasswordInputComponent";
+import { LoginSessionCreatedResponse } from "../../../utils/OAuthService";
 
 type ComponentProps = {
-  didSetPassword: () => void;
+  didSetPassword: (session?: LoginSessionCreatedResponse) => void;
   resetToken: string;
 };
 
@@ -43,8 +44,11 @@ const SetPasswordComponent: FunctionComponent<ComponentProps> = ({
     event.preventDefault();
     setIsLoading(true);
     try {
-      await authService.updatePassword(resetToken, newPassword);
-      didSetPassword();
+      const response = await authService.updatePassword(
+        resetToken,
+        newPassword
+      );
+      didSetPassword(response.session);
       setIsLoading(false);
     } catch (error) {
       if (error instanceof UnauthenticatedError) {
