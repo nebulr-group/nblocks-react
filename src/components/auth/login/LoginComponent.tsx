@@ -21,6 +21,7 @@ import { LoginAlternativesComponent } from "./LoginAlternativesComponent";
 import { FederationConnectionsComponent } from "./FederationConnectionsComponent";
 import { useApp } from "../../../hooks/app-context";
 import { useNavigate } from "react-router-dom";
+import { Transition } from "@headlessui/react";
 
 type ComponentProps = {
   initalError?: boolean;
@@ -112,6 +113,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
+    setErrorMsg("");
     try {
       switch (credentialsInputMode) {
         case "USERNAME":
@@ -255,15 +257,23 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
 
   return (
     <>
-      {errorMsg && (
-        <div className="max-w-sm w-full mb-6">
+      <div className="max-w-sm w-full mb-6">
+        <Transition
+          show={!!errorMsg}
+          enter="transition duration-100 ease-out"
+          enterFrom="transform scale-95 opacity-0"
+          enterTo="transform scale-100 opacity-100"
+          leave="transition duration-75 ease-out"
+          leaveFrom="transform scale-100 opacity-100"
+          leaveTo="transform scale-95 opacity-0"
+        >
           <AlertComponent
             type="danger"
             title={t("Could not login")}
             messages={[errorMsg]}
           />
-        </div>
-      )}
+        </Transition>
+      </div>
       <form
         onSubmit={(event) => submit(event)}
         className="space-y-6 max-w-sm w-full"

@@ -1,10 +1,8 @@
-import React, { FunctionComponent, Fragment } from "react";
+import React, { FunctionComponent } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ImageComponent } from "./ImageComponent";
 import { HeadingComponent } from "./HeadingComponent";
 import { TextComponent } from "./TextComponent";
-import { NblocksButton } from "./NblocksButton";
-import { XMarkIcon } from "@heroicons/react/24/solid";
 
 /**
  * Defines the type of configuration object
@@ -119,25 +117,26 @@ const ModalComponent: FunctionComponent<ConfigObject> = ({
   };
 
   return (
-    <Transition
-      show={isOpen}
-      enter="transition duration-100 ease-out"
-      enterFrom="transform scale-95 opacity-0"
-      enterTo="transform scale-100 opacity-100"
-      leave="transition duration-75 ease-out"
-      leaveFrom="transform scale-100 opacity-100"
-      leaveTo="transform scale-95 opacity-0"
-      as={Fragment}
+    <Dialog
+      onClose={() => setIsOpen(false)}
+      open={isOpen}
+      className="fixed flex justify-center items-center inset-0 overflow-y-auto"
     >
-      <Dialog
-        onClose={() => setIsOpen(false)}
-        className="fixed flex justify-center items-center inset-0 overflow-y-auto"
+      <Dialog.Overlay
+        className={`fixed inset-0 bg-gray-400/30 ${
+          overlayClassName ? overlayClassName : ""
+        }`}
+      />
+      <Transition
+        appear={true}
+        show={isOpen}
+        enter="transition duration-100 ease-out"
+        enterFrom="transform scale-95 opacity-0"
+        enterTo="transform scale-100 opacity-100"
+        leave="transition duration-75 ease-out"
+        leaveFrom="transform scale-100 opacity-100"
+        leaveTo="transform scale-95 opacity-0"
       >
-        <Dialog.Overlay
-          className={`fixed inset-0 bg-gray-400/30 ${
-            overlayClassName ? overlayClassName : ""
-          }`}
-        />
         <Dialog.Panel
           className={`relative w-full p-4 md:p-6 ${getMaxWidthClassName()} bg-white rounded-lg z-50`}
         >
@@ -169,8 +168,8 @@ const ModalComponent: FunctionComponent<ConfigObject> = ({
             {children && <div className="mt-2">{children}</div>}
           </div>
         </Dialog.Panel>
-      </Dialog>
-    </Transition>
+      </Transition>
+    </Dialog>
   );
 };
 
