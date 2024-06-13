@@ -28,6 +28,7 @@ export class AuthApolloClient {
   private readonly appId?: string; // App id should only be present when running backendless
   private unauthenticatedCallback = () => { };
   private forbiddenCallback = () => { };
+  private errorCallback = (error?: any) => { };
 
   constructor(graphqlUrl: string, debug: boolean, appId?: string) {
     this.debug = debug;
@@ -47,6 +48,10 @@ export class AuthApolloClient {
 
   setForbiddenCallback(callback: () => void): void {
     this.forbiddenCallback = callback;
+  }
+
+  setErrorCallback(callback: (error?: any) => void): void {
+    this.setErrorCallback = callback;
   }
 
   private _configureApolloLink(graphqlUrl: string): ApolloLink {
@@ -131,7 +136,8 @@ export class AuthApolloClient {
                   break;
 
                 default:
-                  console.error("Unhandled GraphQL exception in AuthApolloClient. You should handle this with a callback", error);
+                  this.errorCallback();
+                  // console.error("Unhandled GraphQL exception in AuthApolloClient. You should handle this with a callback", error);
                   break;
               }
             }

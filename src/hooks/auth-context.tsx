@@ -76,16 +76,16 @@ const NblocksAuthContextProvider: FunctionComponent<NblocksContextProps> = ({
   // Attach listners to events in http/graphql clients
   authHttpClient.setUnauthenticatedCallback(() => logout());
   authApolloClient.setUnauthenticatedCallback(() => logout());
-  authHttpClient.setForbiddenCallback(() =>
-    console.error(
-      "Encountered Forbidden error! We should really do something useful here like displaying an forbidden message or something"
-    )
-  );
-  authApolloClient.setForbiddenCallback(() =>
-    console.error(
-      "Encountered Forbidden error! We should really do something useful here like displaying an forbidden message or something"
-    )
-  );
+  // authHttpClient.setForbiddenCallback(() =>
+  //   console.error(
+  //     "Encountered Forbidden error! We should really do something useful here like displaying an forbidden message or something"
+  //   )
+  // );
+  // authApolloClient.setForbiddenCallback(() =>
+  //   console.error(
+  //     "Encountered Forbidden error! We should really do something useful here like displaying an forbidden message or something"
+  //   )
+  // );
 
   const refreshCurrentUser = async () => {
     log("Will refresh currentUser");
