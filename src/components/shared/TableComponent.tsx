@@ -103,7 +103,7 @@ export const TableComponent = <T extends object>({
                       }%`,
                     }}
                     className={`
-                  px-0 py-4 border-b border-gray-200 text-gray-500
+                  px-0 pr-2 py-4 border-b border-gray-200 text-gray-500
                   ${hIndex === 0 ? "pl-4" : ""}
                   ${hIndex === headerGroup.headers.length - 1 ? "pr-4" : ""}
                   ${hgIndex === 0 && hIndex === 0 ? "rounded-tl-lg" : ""}
@@ -144,7 +144,7 @@ export const TableComponent = <T extends object>({
                             }%`,
                           }}
                           className={`
-                    py-4 px-0 text-sm text-gray-900
+                    py-4 px-0 pr-2 text-sm text-gray-900
                     ${cIndex === 0 ? "pl-4" : ""}
                     ${cIndex === row.getVisibleCells().length - 1 ? "pr-4" : ""}
                     ${

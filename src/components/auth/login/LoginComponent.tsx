@@ -10,7 +10,6 @@ import { RouteConfig } from "../../../routes/AuthRoutes";
 import { NblocksButton } from "../../shared/NblocksButton";
 import { InputComponent } from "../../shared/InputComponent";
 import { TextComponent } from "../../shared/TextComponent";
-import { useConfig } from "../../../hooks/config-context";
 import { FederationType, MfaState } from "../../../utils/AuthService";
 import { AlertComponent } from "../../shared/AlertComponent";
 import { UnauthenticatedError } from "../../../utils/errors/UnauthenticatedError";
@@ -21,9 +20,11 @@ import { startAuthentication } from "@simplewebauthn/browser";
 import { FederationConnection } from "../../../utils/OAuthService";
 import { LoginAlternativesComponent } from "./LoginAlternativesComponent";
 import { FederationConnectionsComponent } from "./FederationConnectionsComponent";
+import { useApp } from "../../../hooks/app-context";
 
 type ComponentProps = {
   initalError?: boolean;
+  errorDetails?: null | undefined | "mle";
   didLogin: (mfa: MfaState, tenantUserId?: string) => void;
   didClickFederatedLogin: (type: FederationType) => void;
   didClickFederationConnection: (connection: FederationConnection) => void;
@@ -37,6 +38,7 @@ type CredentialsInputMode =
 
 const LoginComponent: FunctionComponent<ComponentProps> = ({
   initalError,
+  errorDetails,
   didLogin,
   didClickFederatedLogin,
   didClickFederationConnection,
@@ -51,7 +53,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isloading, setIsLoading] = useState(false);
-  const { tenantSignup } = useConfig();
+  const { tenantSelfSignup } = useApp();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -63,9 +65,14 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
     "There was an error when logging in. Are you sure you already have signed up for an account?"
   );
 
+  const magicLinkExpiredErrorMsg = t(
+    "The magic link has expired, or you're not using the same browser that you sent the link from."
+  );
+
   useEffect(() => {
     if (initalError) {
-      setErrorMsg(initialErrorMsg);
+      if (errorDetails === "mle") setErrorMsg(magicLinkExpiredErrorMsg);
+      else setErrorMsg(initialErrorMsg);
     }
   }, [initalError]);
 
@@ -171,6 +178,13 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
     didClickFederatedLogin(type);
   };
 
+  const didClickMagicLink = () => {
+    setIsLoading(true);
+    navigate(RouteConfig.login.magicLinkScreen, {
+      state: { username },
+    });
+  };
+
   const renderCredentialsInput = () => {
     switch (credentialsInputMode) {
       case "USERNAME":
@@ -273,6 +287,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
         )}
         {credentialsInputMode === "USERNAME" && (
           <LoginAlternativesComponent
+            didClickMagicLinkAuthenticate={didClickMagicLink}
             didClickPasskeysAuthenticate={onDidPasskeysAuthenticate}
             didClickSocialLogin={loginMiddleware}
           />
@@ -299,7 +314,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
           </NblocksButton>
         </div>
       )}
-      {tenantSignup && (
+      {tenantSelfSignup && (
         <div className="mt-8">
           <TextComponent size="sm">
             {t("Don't have an account?")}&nbsp;

@@ -12,6 +12,7 @@ import { AuthService } from "./AuthService";
 import { ClientError } from "./errors/ClientError";
 import { OAuthService } from "./OAuthService";
 import { doLog } from "../hooks/use-log";
+import { GraphQLError } from "graphql";
 
 interface ErrorExtensions {
   code?: string;
@@ -26,8 +27,16 @@ export class AuthApolloClient {
   readonly client: ApolloClient<NormalizedCacheObject>;
   private readonly debug: boolean;
   private readonly appId?: string; // App id should only be present when running backendless
-  private unauthenticatedCallback = () => { };
-  private forbiddenCallback = () => { };
+
+  private unauthenticatedCallback = () => {
+    console.error("Encountered Forbidden error! We should really do something useful here like logging the user out or something");
+  };
+  private forbiddenCallback = () => {
+    console.error("Encountered Forbidden error! We should really do something useful here like displaying an forbidden message or something");
+  };
+  private errorCallback = (error?: GraphQLError) => {
+    console.error("Encountered general error! We should really do something useful here like displaying a message or something", error);
+  };
 
   constructor(graphqlUrl: string, debug: boolean, appId?: string) {
     this.debug = debug;
@@ -47,6 +56,10 @@ export class AuthApolloClient {
 
   setForbiddenCallback(callback: () => void): void {
     this.forbiddenCallback = callback;
+  }
+
+  setErrorCallback(callback: (error?: GraphQLError) => void): void {
+    this.errorCallback = callback;
   }
 
   private _configureApolloLink(graphqlUrl: string): ApolloLink {
@@ -131,7 +144,8 @@ export class AuthApolloClient {
                   break;
 
                 default:
-                  console.error("Unhandled GraphQL exception in AuthApolloClient. You should handle this with a callback", error);
+                  this.errorCallback(error);
+                  // console.error("Unhandled GraphQL exception in AuthApolloClient. You should handle this with a callback", error);
                   break;
               }
             }

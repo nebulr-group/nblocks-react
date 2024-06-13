@@ -29,6 +29,9 @@ export function LoginScreen() {
 
   const urlSearch = new URLSearchParams(location.search);
   const initalError = !!urlSearch.get("error");
+  const errorDetails: null | undefined | "mle" = urlSearch.get(
+    "errorDetails"
+  ) as null | undefined | "mle";
 
   useEffect(() => {
     if (currentUser.authenticated) {
@@ -86,6 +89,7 @@ export function LoginScreen() {
     >
       <LoginComponent
         initalError={initalError}
+        errorDetails={errorDetails}
         didLogin={onDidLogin}
         didClickFederatedLogin={onDidClickFederatedLogin}
         didClickFederationConnection={onDidClickFederationConnection}

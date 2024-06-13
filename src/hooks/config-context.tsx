@@ -24,7 +24,6 @@ const initialContext: LibConfig = {
   languages: ["en"],
   passwordValidation: true,
   spa: false,
-  tenantSignup: false,
   oAuthBaseURI: oAuthUrl,
   oauthRedirectUri,
   accountApiBaseUri: accountApi,
@@ -56,7 +55,6 @@ const NblocksConfigContextProvider: FunctionComponent<{
   // Set some sensible defaults for devMode
   if (config?.devMode) {
     initialContext.spa = true;
-    initialContext.tenantSignup = true;
     initialContext.passwordValidation = false;
   }
 
