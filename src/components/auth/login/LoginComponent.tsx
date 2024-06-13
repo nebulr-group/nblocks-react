@@ -127,17 +127,15 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
           });
           break;
       }
-      setIsLoading(false);
     } catch (error) {
-      console.error(error);
       if (error instanceof UnauthenticatedError) {
-        setIsLoading(false);
         setErrorMsg(wrongCredentialsErrorMsg);
       } else {
-        setIsLoading(false);
         setErrorMsg(generalErrorMsg);
       }
       setPassword("");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -147,7 +145,6 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
       password
     );
     didLogin(mfaState, tenantUserId);
-    setPassword("");
   };
 
   const checkCredentialsConfig = async () => {
@@ -173,13 +170,11 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
     setIsLoading(false);
   };
 
-  const loginMiddleware = (type: FederationType) => {
-    setIsLoading(true);
+  const ssoLoginMiddleware = (type: FederationType) => {
     didClickFederatedLogin(type);
   };
 
   const didClickMagicLink = () => {
-    setIsLoading(true);
     navigate(RouteConfig.login.magicLinkScreen, {
       state: { username },
     });
@@ -289,7 +284,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
           <LoginAlternativesComponent
             didClickMagicLinkAuthenticate={didClickMagicLink}
             didClickPasskeysAuthenticate={onDidPasskeysAuthenticate}
-            didClickSocialLogin={loginMiddleware}
+            didClickSocialLogin={ssoLoginMiddleware}
           />
         )}
         {credentialsInputMode === "FEDERATION-CONNECTIONS" && (

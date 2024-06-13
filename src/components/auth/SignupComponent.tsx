@@ -73,8 +73,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
     }
   };
 
-  const signupMiddleware = (type: FederationType) => {
-    setIsLoading(true);
+  const ssoSignupMiddleware = (type: FederationType) => {
     didClickFederatedSignup(type);
   };
 
@@ -89,7 +88,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
         <div className="space-y-2">
           <SsoButtonsComponent
             label="signup"
-            didClickSsoBtn={signupMiddleware}
+            didClickSsoBtn={ssoSignupMiddleware}
             hasAlternatives={setHasSsoAlternatives}
           />
         </div>
