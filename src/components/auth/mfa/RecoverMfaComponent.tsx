@@ -27,7 +27,6 @@ const RecoverMfaComponent: FunctionComponent<ComponentProps> = ({
     try {
       await authService.resetUserMfaSetup(recoverCode);
       didRecoverMfaCode();
-      setIsLoading(false);
     } catch (error) {
       if (error instanceof UnauthenticatedError) {
         setErrorMsg(t("Wrong recovery code, please try again."));
@@ -38,8 +37,9 @@ const RecoverMfaComponent: FunctionComponent<ComponentProps> = ({
           )
         );
       }
-      setIsLoading(false);
       setRecoverCode("");
+    } finally {
+      setIsLoading(false);
     }
   };
 

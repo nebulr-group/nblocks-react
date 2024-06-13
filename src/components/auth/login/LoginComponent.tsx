@@ -14,13 +14,13 @@ import { FederationType, MfaState } from "../../../utils/AuthService";
 import { AlertComponent } from "../../shared/AlertComponent";
 import { UnauthenticatedError } from "../../../utils/errors/UnauthenticatedError";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { startAuthentication } from "@simplewebauthn/browser";
 import { FederationConnection } from "../../../utils/OAuthService";
 import { LoginAlternativesComponent } from "./LoginAlternativesComponent";
 import { FederationConnectionsComponent } from "./FederationConnectionsComponent";
 import { useApp } from "../../../hooks/app-context";
+import { useNavigate } from "react-router-dom";
 
 type ComponentProps = {
   initalError?: boolean;
@@ -55,6 +55,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
   const [isloading, setIsLoading] = useState(false);
   const { tenantSelfSignup } = useApp();
   const { t } = useTranslation();
+  // We're using states to pass between views, therefore useNavigate()
   const navigate = useNavigate();
 
   const wrongCredentialsErrorMsg = t("Wrong credentials, please try again.");
