@@ -12,8 +12,15 @@ export class AuthHttpClient {
   private readonly debug: boolean;
   private readonly appId?: string; // App id should only be present when running backendless
 
-  private unauthenticatedCallback = () => { };
-  private forbiddenCallback = () => { };
+  private unauthenticatedCallback = () => {
+    console.error("Encountered Forbidden error! We should really do something useful here like logging the user out or something");
+  };
+  private forbiddenCallback = () => {
+    console.error("Encountered Forbidden error! We should really do something useful here like displaying an forbidden message or something");
+  };
+  private errorCallback = (error?: any) => {
+    console.error("Encountered general error! We should really do something useful here like displaying a message or something", error);
+  };
 
   constructor(baseUrl: string, debug: boolean, appId?: string) {
     this.BASE_URL = baseUrl;
@@ -32,6 +39,10 @@ export class AuthHttpClient {
 
   setForbiddenCallback(callback: () => void): void {
     this.forbiddenCallback = callback;
+  }
+
+  setErrorCallback(callback: (error?: any) => void): void {
+    this.errorCallback = callback;
   }
 
   private _configureHttpClient(httpClient: AxiosInstance): void {
@@ -120,6 +131,7 @@ export class AuthHttpClient {
 
           default:
             customError = new Error(error.response.data as string);
+            this.errorCallback(customError)
             break;
         }
 

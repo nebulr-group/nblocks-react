@@ -1,6 +1,6 @@
 {
   "name": "@nebulr-group/nblocks-react",
-  "version": "2.4.0-error.1",
+  "version": "2.4.0-error.2",
   "main": "lib/index",
   "module": "lib/index",
   "types": "lib/index.d.ts",

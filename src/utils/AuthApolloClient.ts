@@ -26,9 +26,16 @@ export class AuthApolloClient {
   readonly client: ApolloClient<NormalizedCacheObject>;
   private readonly debug: boolean;
   private readonly appId?: string; // App id should only be present when running backendless
-  private unauthenticatedCallback = () => { };
-  private forbiddenCallback = () => { };
-  private errorCallback = (error?: any) => { };
+
+  private unauthenticatedCallback = () => {
+    console.error("Encountered Forbidden error! We should really do something useful here like logging the user out or something");
+  };
+  private forbiddenCallback = () => {
+    console.error("Encountered Forbidden error! We should really do something useful here like displaying an forbidden message or something");
+  };
+  private errorCallback = (error?: any) => {
+    console.error("Encountered general error! We should really do something useful here like displaying a message or something", error);
+  };
 
   constructor(graphqlUrl: string, debug: boolean, appId?: string) {
     this.debug = debug;
@@ -51,7 +58,7 @@ export class AuthApolloClient {
   }
 
   setErrorCallback(callback: (error?: any) => void): void {
-    this.setErrorCallback = callback;
+    this.errorCallback = callback;
   }
 
   private _configureApolloLink(graphqlUrl: string): ApolloLink {
@@ -136,7 +143,7 @@ export class AuthApolloClient {
                   break;
 
                 default:
-                  this.errorCallback();
+                  this.errorCallback(error);
                   // console.error("Unhandled GraphQL exception in AuthApolloClient. You should handle this with a callback", error);
                   break;
               }

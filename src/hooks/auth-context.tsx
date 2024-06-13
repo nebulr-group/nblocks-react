@@ -73,19 +73,9 @@ const NblocksAuthContextProvider: FunctionComponent<NblocksContextProps> = ({
     log(`Did switch user to: ${userId}`);
   };
 
-  // Attach listners to events in http/graphql clients
+  // Attach listners to events in http and graphql clients
   authHttpClient.setUnauthenticatedCallback(() => logout());
   authApolloClient.setUnauthenticatedCallback(() => logout());
-  // authHttpClient.setForbiddenCallback(() =>
-  //   console.error(
-  //     "Encountered Forbidden error! We should really do something useful here like displaying an forbidden message or something"
-  //   )
-  // );
-  // authApolloClient.setForbiddenCallback(() =>
-  //   console.error(
-  //     "Encountered Forbidden error! We should really do something useful here like displaying an forbidden message or something"
-  //   )
-  // );
 
   const refreshCurrentUser = async () => {
     log("Will refresh currentUser");
