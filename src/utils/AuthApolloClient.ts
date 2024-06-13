@@ -12,6 +12,7 @@ import { AuthService } from "./AuthService";
 import { ClientError } from "./errors/ClientError";
 import { OAuthService } from "./OAuthService";
 import { doLog } from "../hooks/use-log";
+import { GraphQLError } from "graphql";
 
 interface ErrorExtensions {
   code?: string;
@@ -33,7 +34,7 @@ export class AuthApolloClient {
   private forbiddenCallback = () => {
     console.error("Encountered Forbidden error! We should really do something useful here like displaying an forbidden message or something");
   };
-  private errorCallback = (error?: any) => {
+  private errorCallback = (error?: GraphQLError) => {
     console.error("Encountered general error! We should really do something useful here like displaying a message or something", error);
   };
 
@@ -57,7 +58,7 @@ export class AuthApolloClient {
     this.forbiddenCallback = callback;
   }
 
-  setErrorCallback(callback: (error?: any) => void): void {
+  setErrorCallback(callback: (error?: GraphQLError) => void): void {
     this.errorCallback = callback;
   }
 

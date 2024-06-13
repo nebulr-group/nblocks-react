@@ -4,6 +4,7 @@ import { UnauthenticatedError } from "./errors/UnauthenticatedError";
 import { AuthService } from "./AuthService";
 import { OAuthService } from "./OAuthService";
 import { doLog } from "../hooks/use-log";
+import { ClientError } from "./errors/ClientError";
 
 export class AuthHttpClient {
   readonly httpClient: AxiosInstance;
@@ -18,7 +19,7 @@ export class AuthHttpClient {
   private forbiddenCallback = () => {
     console.error("Encountered Forbidden error! We should really do something useful here like displaying an forbidden message or something");
   };
-  private errorCallback = (error?: any) => {
+  private errorCallback = (error?: ClientError) => {
     console.error("Encountered general error! We should really do something useful here like displaying a message or something", error);
   };
 
@@ -41,7 +42,7 @@ export class AuthHttpClient {
     this.forbiddenCallback = callback;
   }
 
-  setErrorCallback(callback: (error?: any) => void): void {
+  setErrorCallback(callback: (error?: ClientError) => void): void {
     this.errorCallback = callback;
   }
 
@@ -130,7 +131,7 @@ export class AuthHttpClient {
             break;
 
           default:
-            customError = new Error(error.response.data as string);
+            customError = new ClientError(error.response.data);
             this.errorCallback(customError)
             break;
         }
