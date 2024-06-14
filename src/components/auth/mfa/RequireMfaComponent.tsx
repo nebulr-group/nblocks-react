@@ -36,9 +36,7 @@ const RequireMfaComponent: FunctionComponent<ComponentProps> = ({
         await authService.commitMfaCode(mfaCode);
       }
       didCommitMfaCode(recoverCode);
-      setIsLoading(false);
     } catch (error) {
-      setIsLoading(false);
       if (error instanceof UnauthenticatedError) {
         setErrorMsg(t("Wrong security code, please try again."));
       } else {
@@ -49,6 +47,8 @@ const RequireMfaComponent: FunctionComponent<ComponentProps> = ({
         );
       }
       setMfaCode("");
+    } finally {
+      setIsLoading(false);
     }
   };
 

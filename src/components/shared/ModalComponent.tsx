@@ -1,10 +1,8 @@
-import React, { FunctionComponent, Fragment } from "react";
+import React, { Fragment, FunctionComponent } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ImageComponent } from "./ImageComponent";
 import { HeadingComponent } from "./HeadingComponent";
 import { TextComponent } from "./TextComponent";
-import { NblocksButton } from "./NblocksButton";
-import { XMarkIcon } from "@heroicons/react/24/solid";
 
 /**
  * Defines the type of configuration object

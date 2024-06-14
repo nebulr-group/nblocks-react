@@ -12,6 +12,7 @@ import { NblocksButton } from "../../shared/NblocksButton";
 import { AlertComponent } from "../../shared/AlertComponent";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { useTranslation } from "react-i18next";
+import { Transition } from "@headlessui/react";
 
 type ComponentProps = {
   init?: string;
@@ -37,6 +38,7 @@ const MagicLinkComponent: FunctionComponent<ComponentProps> = ({
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
+    setErrorMsg("");
     try {
       await authService.sendMagicLink(email);
       didSendMagicLink(email);
@@ -55,15 +57,23 @@ const MagicLinkComponent: FunctionComponent<ComponentProps> = ({
 
   return (
     <>
-      {errorMsg && (
-        <div className="max-w-sm w-full mb-6">
+      <div className="max-w-sm w-full mb-6">
+        <Transition
+          show={!!errorMsg}
+          enter="transition duration-100 ease-out"
+          enterFrom="transform scale-95 opacity-0"
+          enterTo="transform scale-100 opacity-100"
+          leave="transition duration-75 ease-out"
+          leaveFrom="transform scale-100 opacity-100"
+          leaveTo="transform scale-95 opacity-0"
+        >
           <AlertComponent
             type="danger"
             title={t("An error occured")}
             messages={[errorMsg]}
           />
-        </div>
-      )}
+        </Transition>
+      </div>
       <form
         onSubmit={(event) => submit(event)}
         className="space-y-6 max-w-sm w-full"

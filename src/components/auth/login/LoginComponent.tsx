@@ -14,13 +14,14 @@ import { FederationType, MfaState } from "../../../utils/AuthService";
 import { AlertComponent } from "../../shared/AlertComponent";
 import { UnauthenticatedError } from "../../../utils/errors/UnauthenticatedError";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { startAuthentication } from "@simplewebauthn/browser";
 import { FederationConnection } from "../../../utils/OAuthService";
 import { LoginAlternativesComponent } from "./LoginAlternativesComponent";
 import { FederationConnectionsComponent } from "./FederationConnectionsComponent";
 import { useApp } from "../../../hooks/app-context";
+import { useNavigate } from "react-router-dom";
+import { Transition } from "@headlessui/react";
 
 type ComponentProps = {
   initalError?: boolean;
@@ -55,6 +56,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
   const [isloading, setIsLoading] = useState(false);
   const { tenantSelfSignup } = useApp();
   const { t } = useTranslation();
+  // We're using states to pass between views, therefore useNavigate()
   const navigate = useNavigate();
 
   const wrongCredentialsErrorMsg = t("Wrong credentials, please try again.");
@@ -111,6 +113,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
+    setErrorMsg("");
     try {
       switch (credentialsInputMode) {
         case "USERNAME":
@@ -127,17 +130,15 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
           });
           break;
       }
-      setIsLoading(false);
     } catch (error) {
-      console.error(error);
       if (error instanceof UnauthenticatedError) {
-        setIsLoading(false);
         setErrorMsg(wrongCredentialsErrorMsg);
       } else {
-        setIsLoading(false);
         setErrorMsg(generalErrorMsg);
       }
       setPassword("");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -147,7 +148,6 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
       password
     );
     didLogin(mfaState, tenantUserId);
-    setPassword("");
   };
 
   const checkCredentialsConfig = async () => {
@@ -173,13 +173,11 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
     setIsLoading(false);
   };
 
-  const loginMiddleware = (type: FederationType) => {
-    setIsLoading(true);
+  const ssoLoginMiddleware = (type: FederationType) => {
     didClickFederatedLogin(type);
   };
 
   const didClickMagicLink = () => {
-    setIsLoading(true);
     navigate(RouteConfig.login.magicLinkScreen, {
       state: { username },
     });
@@ -259,15 +257,23 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
 
   return (
     <>
-      {errorMsg && (
-        <div className="max-w-sm w-full mb-6">
+      <div className="max-w-sm w-full mb-6">
+        <Transition
+          show={!!errorMsg}
+          enter="transition duration-100 ease-out"
+          enterFrom="transform scale-95 opacity-0"
+          enterTo="transform scale-100 opacity-100"
+          leave="transition duration-75 ease-out"
+          leaveFrom="transform scale-100 opacity-100"
+          leaveTo="transform scale-95 opacity-0"
+        >
           <AlertComponent
             type="danger"
             title={t("Could not login")}
             messages={[errorMsg]}
           />
-        </div>
-      )}
+        </Transition>
+      </div>
       <form
         onSubmit={(event) => submit(event)}
         className="space-y-6 max-w-sm w-full"
@@ -289,7 +295,7 @@ const LoginComponent: FunctionComponent<ComponentProps> = ({
           <LoginAlternativesComponent
             didClickMagicLinkAuthenticate={didClickMagicLink}
             didClickPasskeysAuthenticate={onDidPasskeysAuthenticate}
-            didClickSocialLogin={loginMiddleware}
+            didClickSocialLogin={ssoLoginMiddleware}
           />
         )}
         {credentialsInputMode === "FEDERATION-CONNECTIONS" && (
