@@ -4,6 +4,15 @@ Welcome to NBlocks, the platform toolbox from Nebulr made by developers for deve
 
 [nblocks.dev](https://nblocks.dev)
 
+## Support matrix
+
+| React |  Node  | Supported |
+|:-----|:--------:|------:|
+| 18.0.0   | 20.0 | **Yes** |
+| 17.0.0   | 16.0  |   **Yes** |
+| 16.14.0   | 16.0 |    **Yes** |
+
+
 # Installing
 
 ## Stable

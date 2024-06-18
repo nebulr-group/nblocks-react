@@ -3,8 +3,9 @@
  * process is not defined
  * ReferenceError: process is not defined
  */
-window.process = {
-    ...window.process,
+
+(window as any).process = {
+    ...(window as any).process,
 };
 
 export { TestComponent } from "./components/Test";
