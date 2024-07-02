@@ -434,7 +434,8 @@ export class OAuthService {
    * @param useShortHand used by cloud views when redirectUri is default
    * @returns 
    */
-  async getTokensFromCode(code: string, useShortHand?: boolean): Promise<boolean> {
+  async getTokensFromCode(code: string, options?: { useShortHand?: boolean, redirectUri?: string }): Promise<boolean> {
+    const { useShortHand, redirectUri } = options || {};
     const response = useShortHand ? await this.httpClient.post<{
       access_token: string;
       refresh_token: string;
@@ -445,6 +446,7 @@ export class OAuthService {
       `${this.OAUTH_ENDPOINTS.tokenCodeShorthand}/${this.appId}`,
       {
         code,
+        redirectUri: redirectUri ? redirectUri : undefined
       },
       { baseURL: this.oAuthBaseURI }
     ) : await this.httpClient.post<{
@@ -458,7 +460,7 @@ export class OAuthService {
       {
         client_id: this.appId,
         grant_type: "authorization_code",
-        redirect_uri: this.redirectUri,
+        redirect_uri: redirectUri ? redirectUri : this.redirectUri,
         code,
       },
       { baseURL: this.oAuthBaseURI }
