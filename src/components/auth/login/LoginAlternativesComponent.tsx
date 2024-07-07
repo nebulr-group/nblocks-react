@@ -31,11 +31,11 @@ const LoginAlternativesComponent: FunctionComponent<
   const { passkeysEnabled, magicLinkEnabled } = useApp();
   const [hasSsoAlternatives, setHasSsoAlternatives] = useState(false);
 
-  const passkeysLogin =
+  const doPasskeysLogin =
     !authLegacy && passkeysEnabled && browserSupportsWebAuthn();
 
   useEffect(() => {
-    if (passkeysLogin) {
+    if (doPasskeysLogin) {
       browserSupportsWebAuthnAutofill().then((support) => {
         if (support) {
           didClickPasskeysAuthenticate(true);
@@ -45,7 +45,7 @@ const LoginAlternativesComponent: FunctionComponent<
   }, []);
 
   const renderPasskeysLogin = () => {
-    if (passkeysLogin) {
+    if (doPasskeysLogin) {
       return (
         <PasskeysLoginButtonComponent
           mode="login"
@@ -56,7 +56,7 @@ const LoginAlternativesComponent: FunctionComponent<
   };
 
   const renderMagicKeyLogin = () => {
-    if (passkeysLogin) {
+    if (magicLinkEnabled) {
       return (
         <MagicLinkLoginButtonComponent
           mode="login"
@@ -67,7 +67,7 @@ const LoginAlternativesComponent: FunctionComponent<
   };
 
   const hasAlternatives =
-    passkeysLogin || magicLinkEnabled || hasSsoAlternatives;
+    doPasskeysLogin || magicLinkEnabled || hasSsoAlternatives;
   return (
     <>
       {hasAlternatives && (

@@ -1,12 +1,10 @@
 import { useLazyQuery, useQuery } from "@apollo/client";
 import React, { FunctionComponent, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { GetTenantDocument, Tenant, App } from "../../gql/graphql";
-import { useApp } from "../../hooks/app-context";
+import { useLocation } from "react-router-dom";
+import { GetTenantDocument } from "../../gql/graphql";
 import { useAuth } from "../../hooks/auth-context";
 import { useConfig } from "../../hooks/config-context";
 import { AuthTenantUserResponseDto } from "../../models/auth-tenant-user-response.dto";
-import { RouteConfig } from "../../routes/AuthRoutes";
 
 /**
  * The purpose of this screen is to gather the logic needed for taking next step after a successful login

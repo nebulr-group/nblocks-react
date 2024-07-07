@@ -40,6 +40,7 @@ type ConfigObject = {
   caption?: ReactNode;
   infoLabel?: LabelType;
   errorLabel?: LabelType;
+  step?: string | number;
   min?: string | number;
   max?: number | string | undefined;
   maxLength?: number | undefined;
@@ -118,6 +119,7 @@ const InputComponent: FunctionComponent<ConfigObject> = ({
   max,
   maxLength,
   minLength,
+  step,
   size,
   list,
   value,
@@ -205,6 +207,7 @@ const InputComponent: FunctionComponent<ConfigObject> = ({
           required={required}
           minLength={minLength}
           maxLength={maxLength}
+          step={step}
           min={min}
           max={max}
           size={size}

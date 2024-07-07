@@ -13,6 +13,7 @@ import { FederationType } from "../../utils/AuthService";
 import { useTranslation } from "react-i18next";
 import { DividerComponent } from "../shared/DividerComponent";
 import { SsoButtonsComponent } from "./login/SsoButtonsComponent";
+import { Transition } from "@headlessui/react";
 
 type ComponentProps = {
   didSignup: (email: string) => void;
@@ -45,7 +46,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
-
+    setErrorMsg("");
     try {
       await createTenantAnonymous({
         variables: {
@@ -73,8 +74,8 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
     }
   };
 
-  const signupMiddleware = (type: FederationType) => {
-    setIsLoading(true);
+  const ssoSignupMiddleware = (type: FederationType) => {
+    setErrorMsg("");
     didClickFederatedSignup(type);
   };
 
@@ -89,7 +90,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
         <div className="space-y-2">
           <SsoButtonsComponent
             label="signup"
-            didClickSsoBtn={signupMiddleware}
+            didClickSsoBtn={ssoSignupMiddleware}
             hasAlternatives={setHasSsoAlternatives}
           />
         </div>
@@ -99,15 +100,23 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
 
   return (
     <>
-      {errorMsg && (
-        <div className="max-w-sm w-full mb-6">
+      <div className="max-w-sm w-full mb-6">
+        <Transition
+          show={!!errorMsg}
+          enter="transition duration-100 ease-out"
+          enterFrom="transform scale-95 opacity-0"
+          enterTo="transform scale-100 opacity-100"
+          leave="transition duration-75 ease-out"
+          leaveFrom="transform scale-100 opacity-100"
+          leaveTo="transform scale-95 opacity-0"
+        >
           <AlertComponent
             type="danger"
             title={t("An error occured")}
             messages={[errorMsg]}
           />
-        </div>
-      )}
+        </Transition>
+      </div>
       <form
         onSubmit={(event) => submit(event)}
         className="space-y-6 max-w-sm w-full"

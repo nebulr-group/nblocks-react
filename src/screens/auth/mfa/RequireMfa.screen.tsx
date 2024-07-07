@@ -1,12 +1,12 @@
 import React, { FunctionComponent } from "react";
-import { useNavigate } from "react-router-dom";
 import { AuthLayoutWrapperComponent } from "../../../components/auth/AuthLayoutWrapperComponent";
 import { RequireMfaComponent } from "../../../components/auth/mfa/RequireMfaComponent";
 import { RouteConfig } from "../../../routes/AuthRoutes";
 import { useTranslation } from "react-i18next";
+import { useRedirect } from "../../../hooks/use-redirect";
 
 const RequireMfaScreen: FunctionComponent<{}> = () => {
-  const navigate = useNavigate();
+  const { navigate } = useRedirect();
   const { t } = useTranslation();
 
   // Callback when the Component completed the heavylifting
