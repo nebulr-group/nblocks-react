@@ -20,3 +20,4 @@ dist/
 
 # secrets
 .devcontainer/secrets.env
+.npmrc
