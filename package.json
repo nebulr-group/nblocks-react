@@ -1,6 +1,6 @@
 {
   "name": "@nebulr-group/nblocks-react",
-  "version": "2.3.3-beta.3",
+  "version": "2.3.3-beta.6",
   "main": "lib/index",
   "module": "lib/index",
   "types": "lib/index.d.ts",
@@ -34,6 +34,7 @@
     "@types/react-dom": "^18.0.6",
     "autoprefixer": "^10.4.12",
     "axios": "^1",
+    "concurrently": "^9.1.0",
     "css-loader": "^6.7.1",
     "graphql": "^16",
     "postcss": "^8.4.18",
@@ -73,7 +74,11 @@
     "npm-publish-local": "yarn build && npm publish --registry http://verdaccio:4873 --tag alpha",
     "generate": "graphql-codegen",
     "prestart": "yarn generate",
-    "predev": "yarn generate"
+    "predev": "yarn generate",
+    "build:dev": "concurrently --prefix \"[{name}]\" --names \"Babel,TypeScript,Tailwind\" \"npm run watch:babel\" \"npm run watch:tsc\" \"npm run watch:tailwind\"",
+    "watch:babel": "babel src --out-dir lib --extensions '.ts,.tsx' --watch",
+    "watch:tsc": "tsc -p ./tsconfig.build.json --watch",
+    "watch:tailwind": "tailwindcss -i ./src/index.css -o ./lib/index.css --watch"
   },
   "keywords": [
     "react",
