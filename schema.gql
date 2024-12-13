@@ -31,6 +31,22 @@ input CreateTenantInput {
   priceOffer: PriceOfferInput
 }
 
+type CustomParam {
+  label: String!
+  regex: String!
+  type: String!
+  userLabel: String!
+  value: String!
+}
+
+input CustomParamGraphqlInput {
+  label: String!
+  regex: String!
+  type: String!
+  userLabel: String!
+  value: String!
+}
+
 type CustomParamsConfigGraphql {
   params: [ParamConfigGraphql!]!
 }
@@ -65,7 +81,9 @@ type Mutation {
 
 type ParamConfigGraphql {
   label: String!
+  regex: String!
   type: String!
+  userLabel: String!
 }
 
 type PaymentOptionsGraphql {
@@ -160,6 +178,7 @@ input TenantInput {
 }
 
 input TenantOwnerInput {
+  customParams: [CustomParamGraphqlInput!]
   email: String!
   firstName: String
   lastName: String
@@ -187,6 +206,7 @@ type TenantPlanDetailsGraphql {
 type User {
   consentsToPrivacyPolicy: Boolean
   createdAt: String
+  customParams: [CustomParam!]
   email: String
   enabled: Boolean
   firstName: String

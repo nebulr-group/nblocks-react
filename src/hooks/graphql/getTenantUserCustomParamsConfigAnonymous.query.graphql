@@ -3,6 +3,8 @@ query GetTenantUserCustomParamsConfigAnonymous {
     params {
       label
       type
+      userLabel
+      regex
     }
   }
 }

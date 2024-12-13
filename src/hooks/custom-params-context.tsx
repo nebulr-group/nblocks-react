@@ -13,7 +13,7 @@ const initialContext: CustomParamsContextType = {
 const CustomParamsContext = React.createContext<CustomParamsContextType>(initialContext);
 const useCustomParams = () => useContext(CustomParamsContext);
 
-const CustomParamsContextProvider: FunctionComponent<{
+const NblocksCustomParamsContextProvider: FunctionComponent<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const { data, loading, error } = useQuery(GetTenantUserCustomParamsConfigAnonymousDocument);
@@ -29,4 +29,4 @@ const CustomParamsContextProvider: FunctionComponent<{
   );
 };
 
-export { CustomParamsContextProvider, useCustomParams };
+export { NblocksCustomParamsContextProvider, useCustomParams };

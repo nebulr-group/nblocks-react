@@ -6,7 +6,7 @@ import React, { ChangeEvent, FunctionComponent, ReactNode } from "react";
 /**
  * Defines current supported input types by InputComponent.
  */
-type InputType = "text" | "password" | "email" | "number" | "tel" | "username";
+type InputType = "text" | "password" | "email" | "number" | "tel" | "username" | "checkbox";
 
 /**
  * Defines the label type.

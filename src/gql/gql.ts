@@ -2,6 +2,16 @@
 import * as types from './graphql';
 import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 
+/**
+ * Map of all GraphQL operations in the project.
+ *
+ * This map has several performance disadvantages:
+ * 1. It is not tree-shakeable, so it will include all operations in the project.
+ * 2. It is not minifiable, so the string of a GraphQL query will be multiple times inside the bundle.
+ * 3. It does not support dead code elimination, so it will add unused operations.
+ *
+ * Therefore it is highly recommended to use the babel-plugin for production.
+ */
 const documents = {
     "mutation CreateTenantAnonymous($tenant: CreateTenantInput!) {\n  createTenantAnonymous(tenant: $tenant) {\n    id\n    name\n    locale\n    logo\n    plan\n    mfa\n    createdAt\n  }\n}": types.CreateTenantAnonymousDocument,
     "mutation CreateUsers($userNames: [String!]!) {\n  createUsers(userNames: $userNames) {\n    id\n    firstName\n    lastName\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n}": types.CreateUsersDocument,
@@ -19,28 +29,92 @@ const documents = {
     "query GetTenantPaymentDetails {\n  getTenantPaymentDetails {\n    status {\n      shouldSelectPlan\n      shouldSetupPayments\n      paymentsEnabled\n      provider\n    }\n    details {\n      plan {\n        id\n        name\n        key\n        description\n        trial\n        trialDays\n        prices {\n          amount\n          currency\n          recurrenceInterval\n        }\n      }\n      price {\n        amount\n        currency\n        recurrenceInterval\n      }\n      trial\n      trialDaysLeft\n    }\n  }\n}": types.GetTenantPaymentDetailsDocument,
     "mutation SetTenantPlanDetails($details: SetTenantPlanDetailsInput!) {\n  setTenantPlanDetails(details: $details) {\n    status {\n      shouldSelectPlan\n      shouldSetupPayments\n      paymentsEnabled\n      provider\n    }\n    details {\n      plan {\n        id\n        name\n        key\n        description\n        trial\n        trialDays\n        prices {\n          amount\n          currency\n          recurrenceInterval\n        }\n      }\n      price {\n        amount\n        currency\n        recurrenceInterval\n      }\n      trial\n      trialDaysLeft\n    }\n  }\n}": types.SetTenantPlanDetailsDocument,
     "query GetAppAnonymous {\n  getAppAnonymous {\n    name\n    logo\n    privacyPolicyUrl\n    termsOfServiceUrl\n    onboardingFlow\n    passkeysEnabled\n    azureAdSsoEnabled\n    googleSsoEnabled\n    linkedinSsoEnabled\n    facebookSsoEnabled\n    githubSsoEnabled\n    appleSsoEnabled\n    mfaEnabled\n    magicLinkEnabled\n    tenantSelfSignup\n  }\n}": types.GetAppAnonymousDocument,
-    "query GetTenantUserCustomParamsConfigAnonymous {\n  getTenantUserCustomParamsConfigAnonymous {\n    params {\n      label\n      type\n    }\n  }\n}": types.GetTenantUserCustomParamsConfigAnonymousDocument,
+    "query GetTenantUserCustomParamsConfigAnonymous {\n  getTenantUserCustomParamsConfigAnonymous {\n    params {\n      label\n      type\n      userLabel\n      regex\n    }\n  }\n}": types.GetTenantUserCustomParamsConfigAnonymousDocument,
 };
 
-export function graphql(source: "mutation CreateTenantAnonymous($tenant: CreateTenantInput!) {\n  createTenantAnonymous(tenant: $tenant) {\n    id\n    name\n    locale\n    logo\n    plan\n    mfa\n    createdAt\n  }\n}"): (typeof documents)["mutation CreateTenantAnonymous($tenant: CreateTenantInput!) {\n  createTenantAnonymous(tenant: $tenant) {\n    id\n    name\n    locale\n    logo\n    plan\n    mfa\n    createdAt\n  }\n}"];
-export function graphql(source: "mutation CreateUsers($userNames: [String!]!) {\n  createUsers(userNames: $userNames) {\n    id\n    firstName\n    lastName\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n}"): (typeof documents)["mutation CreateUsers($userNames: [String!]!) {\n  createUsers(userNames: $userNames) {\n    id\n    firstName\n    lastName\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n}"];
-export function graphql(source: "mutation DeleteUser($userId: String!) {\n  deleteUser(userId: $userId)\n}"): (typeof documents)["mutation DeleteUser($userId: String!) {\n  deleteUser(userId: $userId)\n}"];
-export function graphql(source: "query GetMe {\n  getMe {\n    id\n    firstName\n    lastName\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n}"): (typeof documents)["query GetMe {\n  getMe {\n    id\n    firstName\n    lastName\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n}"];
-export function graphql(source: "query GetTenant {\n  getTenant {\n    createdAt\n    id\n    logo\n    locale\n    mfa\n    name\n    onboarded\n    plan\n    paymentStatus {\n      shouldSelectPlan\n      shouldSetupPayments\n      paymentsEnabled\n      provider\n    }\n  }\n}"): (typeof documents)["query GetTenant {\n  getTenant {\n    createdAt\n    id\n    logo\n    locale\n    mfa\n    name\n    onboarded\n    plan\n    paymentStatus {\n      shouldSelectPlan\n      shouldSetupPayments\n      paymentsEnabled\n      provider\n    }\n  }\n}"];
-export function graphql(source: "query GetTenantAnonymous {\n  getTenantAnonymous {\n    id\n    locale\n    name\n  }\n}"): (typeof documents)["query GetTenantAnonymous {\n  getTenantAnonymous {\n    id\n    locale\n    name\n  }\n}"];
-export function graphql(source: "query ListUserRoles {\n  listUserRoles\n}"): (typeof documents)["query ListUserRoles {\n  listUserRoles\n}"];
-export function graphql(source: "query ListUsers {\n  listUsers {\n    id\n    firstName\n    lastName\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n  getTenant {\n    mfa\n  }\n}"): (typeof documents)["query ListUsers {\n  listUsers {\n    id\n    firstName\n    lastName\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n  getTenant {\n    mfa\n  }\n}"];
-export function graphql(source: "mutation SendPasswordResetLink($userId: String!) {\n  sendPasswordResetLink(userId: $userId)\n}"): (typeof documents)["mutation SendPasswordResetLink($userId: String!) {\n  sendPasswordResetLink(userId: $userId)\n}"];
-export function graphql(source: "mutation UpdateMe($user: MeInput!) {\n  updateMe(user: $user) {\n    id\n    firstName\n    lastName\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n}"): (typeof documents)["mutation UpdateMe($user: MeInput!) {\n  updateMe(user: $user) {\n    id\n    firstName\n    lastName\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n}"];
-export function graphql(source: "mutation UpdateTenant($tenant: TenantInput!) {\n  updateTenant(tenant: $tenant) {\n    createdAt\n    id\n    logo\n    locale\n    mfa\n    name\n    plan\n    paymentStatus {\n      shouldSelectPlan\n      shouldSetupPayments\n      paymentsEnabled\n      provider\n    }\n  }\n}"): (typeof documents)["mutation UpdateTenant($tenant: TenantInput!) {\n  updateTenant(tenant: $tenant) {\n    createdAt\n    id\n    logo\n    locale\n    mfa\n    name\n    plan\n    paymentStatus {\n      shouldSelectPlan\n      shouldSetupPayments\n      paymentsEnabled\n      provider\n    }\n  }\n}"];
-export function graphql(source: "mutation UpdateUser($user: UserInput!) {\n  updateUser(user: $user) {\n    id\n    firstName\n    lastName\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n}"): (typeof documents)["mutation UpdateUser($user: UserInput!) {\n  updateUser(user: $user) {\n    id\n    firstName\n    lastName\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n}"];
-export function graphql(source: "query GetPaymentOptionsAnonymous {\n  getPaymentOptionsAnonymous {\n    plans {\n      id\n      name\n      key\n      description\n      trial\n      trialDays\n      prices {\n        amount\n        currency\n        recurrenceInterval\n      }\n    }\n    taxes {\n      id\n      name\n      countryCode\n      percentage\n    }\n  }\n}"): (typeof documents)["query GetPaymentOptionsAnonymous {\n  getPaymentOptionsAnonymous {\n    plans {\n      id\n      name\n      key\n      description\n      trial\n      trialDays\n      prices {\n        amount\n        currency\n        recurrenceInterval\n      }\n    }\n    taxes {\n      id\n      name\n      countryCode\n      percentage\n    }\n  }\n}"];
-export function graphql(source: "query GetTenantPaymentDetails {\n  getTenantPaymentDetails {\n    status {\n      shouldSelectPlan\n      shouldSetupPayments\n      paymentsEnabled\n      provider\n    }\n    details {\n      plan {\n        id\n        name\n        key\n        description\n        trial\n        trialDays\n        prices {\n          amount\n          currency\n          recurrenceInterval\n        }\n      }\n      price {\n        amount\n        currency\n        recurrenceInterval\n      }\n      trial\n      trialDaysLeft\n    }\n  }\n}"): (typeof documents)["query GetTenantPaymentDetails {\n  getTenantPaymentDetails {\n    status {\n      shouldSelectPlan\n      shouldSetupPayments\n      paymentsEnabled\n      provider\n    }\n    details {\n      plan {\n        id\n        name\n        key\n        description\n        trial\n        trialDays\n        prices {\n          amount\n          currency\n          recurrenceInterval\n        }\n      }\n      price {\n        amount\n        currency\n        recurrenceInterval\n      }\n      trial\n      trialDaysLeft\n    }\n  }\n}"];
-export function graphql(source: "mutation SetTenantPlanDetails($details: SetTenantPlanDetailsInput!) {\n  setTenantPlanDetails(details: $details) {\n    status {\n      shouldSelectPlan\n      shouldSetupPayments\n      paymentsEnabled\n      provider\n    }\n    details {\n      plan {\n        id\n        name\n        key\n        description\n        trial\n        trialDays\n        prices {\n          amount\n          currency\n          recurrenceInterval\n        }\n      }\n      price {\n        amount\n        currency\n        recurrenceInterval\n      }\n      trial\n      trialDaysLeft\n    }\n  }\n}"): (typeof documents)["mutation SetTenantPlanDetails($details: SetTenantPlanDetailsInput!) {\n  setTenantPlanDetails(details: $details) {\n    status {\n      shouldSelectPlan\n      shouldSetupPayments\n      paymentsEnabled\n      provider\n    }\n    details {\n      plan {\n        id\n        name\n        key\n        description\n        trial\n        trialDays\n        prices {\n          amount\n          currency\n          recurrenceInterval\n        }\n      }\n      price {\n        amount\n        currency\n        recurrenceInterval\n      }\n      trial\n      trialDaysLeft\n    }\n  }\n}"];
-export function graphql(source: "query GetAppAnonymous {\n  getAppAnonymous {\n    name\n    logo\n    privacyPolicyUrl\n    termsOfServiceUrl\n    onboardingFlow\n    passkeysEnabled\n    azureAdSsoEnabled\n    googleSsoEnabled\n    linkedinSsoEnabled\n    facebookSsoEnabled\n    githubSsoEnabled\n    appleSsoEnabled\n    mfaEnabled\n    magicLinkEnabled\n    tenantSelfSignup\n  }\n}"): (typeof documents)["query GetAppAnonymous {\n  getAppAnonymous {\n    name\n    logo\n    privacyPolicyUrl\n    termsOfServiceUrl\n    onboardingFlow\n    passkeysEnabled\n    azureAdSsoEnabled\n    googleSsoEnabled\n    linkedinSsoEnabled\n    facebookSsoEnabled\n    githubSsoEnabled\n    appleSsoEnabled\n    mfaEnabled\n    magicLinkEnabled\n    tenantSelfSignup\n  }\n}"];
-export function graphql(source: "query GetTenantUserCustomParamsConfigAnonymous {\n  getTenantUserCustomParamsConfigAnonymous {\n    params {\n      label\n      type\n    }\n  }\n}"): (typeof documents)["query GetTenantUserCustomParamsConfigAnonymous {\n  getTenantUserCustomParamsConfigAnonymous {\n    params {\n      label\n      type\n    }\n  }\n}"];
-
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ *
+ *
+ * @example
+ * ```ts
+ * const query = gql(`query GetUser($id: ID!) { user(id: $id) { name } }`);
+ * ```
+ *
+ * The query argument is unknown!
+ * Please regenerate the types.
+ */
 export function graphql(source: string): unknown;
+
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation CreateTenantAnonymous($tenant: CreateTenantInput!) {\n  createTenantAnonymous(tenant: $tenant) {\n    id\n    name\n    locale\n    logo\n    plan\n    mfa\n    createdAt\n  }\n}"): (typeof documents)["mutation CreateTenantAnonymous($tenant: CreateTenantInput!) {\n  createTenantAnonymous(tenant: $tenant) {\n    id\n    name\n    locale\n    logo\n    plan\n    mfa\n    createdAt\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation CreateUsers($userNames: [String!]!) {\n  createUsers(userNames: $userNames) {\n    id\n    firstName\n    lastName\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n}"): (typeof documents)["mutation CreateUsers($userNames: [String!]!) {\n  createUsers(userNames: $userNames) {\n    id\n    firstName\n    lastName\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation DeleteUser($userId: String!) {\n  deleteUser(userId: $userId)\n}"): (typeof documents)["mutation DeleteUser($userId: String!) {\n  deleteUser(userId: $userId)\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query GetMe {\n  getMe {\n    id\n    firstName\n    lastName\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n}"): (typeof documents)["query GetMe {\n  getMe {\n    id\n    firstName\n    lastName\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query GetTenant {\n  getTenant {\n    createdAt\n    id\n    logo\n    locale\n    mfa\n    name\n    onboarded\n    plan\n    paymentStatus {\n      shouldSelectPlan\n      shouldSetupPayments\n      paymentsEnabled\n      provider\n    }\n  }\n}"): (typeof documents)["query GetTenant {\n  getTenant {\n    createdAt\n    id\n    logo\n    locale\n    mfa\n    name\n    onboarded\n    plan\n    paymentStatus {\n      shouldSelectPlan\n      shouldSetupPayments\n      paymentsEnabled\n      provider\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query GetTenantAnonymous {\n  getTenantAnonymous {\n    id\n    locale\n    name\n  }\n}"): (typeof documents)["query GetTenantAnonymous {\n  getTenantAnonymous {\n    id\n    locale\n    name\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query ListUserRoles {\n  listUserRoles\n}"): (typeof documents)["query ListUserRoles {\n  listUserRoles\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query ListUsers {\n  listUsers {\n    id\n    firstName\n    lastName\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n  getTenant {\n    mfa\n  }\n}"): (typeof documents)["query ListUsers {\n  listUsers {\n    id\n    firstName\n    lastName\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n  getTenant {\n    mfa\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation SendPasswordResetLink($userId: String!) {\n  sendPasswordResetLink(userId: $userId)\n}"): (typeof documents)["mutation SendPasswordResetLink($userId: String!) {\n  sendPasswordResetLink(userId: $userId)\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation UpdateMe($user: MeInput!) {\n  updateMe(user: $user) {\n    id\n    firstName\n    lastName\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n}"): (typeof documents)["mutation UpdateMe($user: MeInput!) {\n  updateMe(user: $user) {\n    id\n    firstName\n    lastName\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation UpdateTenant($tenant: TenantInput!) {\n  updateTenant(tenant: $tenant) {\n    createdAt\n    id\n    logo\n    locale\n    mfa\n    name\n    plan\n    paymentStatus {\n      shouldSelectPlan\n      shouldSetupPayments\n      paymentsEnabled\n      provider\n    }\n  }\n}"): (typeof documents)["mutation UpdateTenant($tenant: TenantInput!) {\n  updateTenant(tenant: $tenant) {\n    createdAt\n    id\n    logo\n    locale\n    mfa\n    name\n    plan\n    paymentStatus {\n      shouldSelectPlan\n      shouldSetupPayments\n      paymentsEnabled\n      provider\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation UpdateUser($user: UserInput!) {\n  updateUser(user: $user) {\n    id\n    firstName\n    lastName\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n}"): (typeof documents)["mutation UpdateUser($user: UserInput!) {\n  updateUser(user: $user) {\n    id\n    firstName\n    lastName\n    fullName\n    email\n    username\n    createdAt\n    onboarded\n    enabled\n    role\n    teams\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query GetPaymentOptionsAnonymous {\n  getPaymentOptionsAnonymous {\n    plans {\n      id\n      name\n      key\n      description\n      trial\n      trialDays\n      prices {\n        amount\n        currency\n        recurrenceInterval\n      }\n    }\n    taxes {\n      id\n      name\n      countryCode\n      percentage\n    }\n  }\n}"): (typeof documents)["query GetPaymentOptionsAnonymous {\n  getPaymentOptionsAnonymous {\n    plans {\n      id\n      name\n      key\n      description\n      trial\n      trialDays\n      prices {\n        amount\n        currency\n        recurrenceInterval\n      }\n    }\n    taxes {\n      id\n      name\n      countryCode\n      percentage\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query GetTenantPaymentDetails {\n  getTenantPaymentDetails {\n    status {\n      shouldSelectPlan\n      shouldSetupPayments\n      paymentsEnabled\n      provider\n    }\n    details {\n      plan {\n        id\n        name\n        key\n        description\n        trial\n        trialDays\n        prices {\n          amount\n          currency\n          recurrenceInterval\n        }\n      }\n      price {\n        amount\n        currency\n        recurrenceInterval\n      }\n      trial\n      trialDaysLeft\n    }\n  }\n}"): (typeof documents)["query GetTenantPaymentDetails {\n  getTenantPaymentDetails {\n    status {\n      shouldSelectPlan\n      shouldSetupPayments\n      paymentsEnabled\n      provider\n    }\n    details {\n      plan {\n        id\n        name\n        key\n        description\n        trial\n        trialDays\n        prices {\n          amount\n          currency\n          recurrenceInterval\n        }\n      }\n      price {\n        amount\n        currency\n        recurrenceInterval\n      }\n      trial\n      trialDaysLeft\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation SetTenantPlanDetails($details: SetTenantPlanDetailsInput!) {\n  setTenantPlanDetails(details: $details) {\n    status {\n      shouldSelectPlan\n      shouldSetupPayments\n      paymentsEnabled\n      provider\n    }\n    details {\n      plan {\n        id\n        name\n        key\n        description\n        trial\n        trialDays\n        prices {\n          amount\n          currency\n          recurrenceInterval\n        }\n      }\n      price {\n        amount\n        currency\n        recurrenceInterval\n      }\n      trial\n      trialDaysLeft\n    }\n  }\n}"): (typeof documents)["mutation SetTenantPlanDetails($details: SetTenantPlanDetailsInput!) {\n  setTenantPlanDetails(details: $details) {\n    status {\n      shouldSelectPlan\n      shouldSetupPayments\n      paymentsEnabled\n      provider\n    }\n    details {\n      plan {\n        id\n        name\n        key\n        description\n        trial\n        trialDays\n        prices {\n          amount\n          currency\n          recurrenceInterval\n        }\n      }\n      price {\n        amount\n        currency\n        recurrenceInterval\n      }\n      trial\n      trialDaysLeft\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query GetAppAnonymous {\n  getAppAnonymous {\n    name\n    logo\n    privacyPolicyUrl\n    termsOfServiceUrl\n    onboardingFlow\n    passkeysEnabled\n    azureAdSsoEnabled\n    googleSsoEnabled\n    linkedinSsoEnabled\n    facebookSsoEnabled\n    githubSsoEnabled\n    appleSsoEnabled\n    mfaEnabled\n    magicLinkEnabled\n    tenantSelfSignup\n  }\n}"): (typeof documents)["query GetAppAnonymous {\n  getAppAnonymous {\n    name\n    logo\n    privacyPolicyUrl\n    termsOfServiceUrl\n    onboardingFlow\n    passkeysEnabled\n    azureAdSsoEnabled\n    googleSsoEnabled\n    linkedinSsoEnabled\n    facebookSsoEnabled\n    githubSsoEnabled\n    appleSsoEnabled\n    mfaEnabled\n    magicLinkEnabled\n    tenantSelfSignup\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query GetTenantUserCustomParamsConfigAnonymous {\n  getTenantUserCustomParamsConfigAnonymous {\n    params {\n      label\n      type\n      userLabel\n      regex\n    }\n  }\n}"): (typeof documents)["query GetTenantUserCustomParamsConfigAnonymous {\n  getTenantUserCustomParamsConfigAnonymous {\n    params {\n      label\n      type\n      userLabel\n      regex\n    }\n  }\n}"];
+
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
 }

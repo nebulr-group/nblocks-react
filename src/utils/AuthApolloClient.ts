@@ -144,8 +144,7 @@ export class AuthApolloClient {
                   break;
 
                 default:
-                  this.errorCallback(error);
-                  // console.error("Unhandled GraphQL exception in AuthApolloClient. You should handle this with a callback", error);
+                  this.errorCallback(error as GraphQLError);
                   break;
               }
             }

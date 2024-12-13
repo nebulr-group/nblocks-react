@@ -44,6 +44,23 @@ export type CreateTenantInput = {
   priceOffer?: InputMaybe<PriceOfferInput>;
 };
 
+export type CustomParam = {
+  __typename?: 'CustomParam';
+  label: Scalars['String'];
+  regex: Scalars['String'];
+  type: Scalars['String'];
+  userLabel: Scalars['String'];
+  value: Scalars['String'];
+};
+
+export type CustomParamGraphqlInput = {
+  label: Scalars['String'];
+  regex: Scalars['String'];
+  type: Scalars['String'];
+  userLabel: Scalars['String'];
+  value: Scalars['String'];
+};
+
 export type CustomParamsConfigGraphql = {
   __typename?: 'CustomParamsConfigGraphql';
   params: Array<ParamConfigGraphql>;
@@ -115,7 +132,9 @@ export type MutationUpdateUserArgs = {
 export type ParamConfigGraphql = {
   __typename?: 'ParamConfigGraphql';
   label: Scalars['String'];
+  regex: Scalars['String'];
   type: Scalars['String'];
+  userLabel: Scalars['String'];
 };
 
 export type PaymentOptionsGraphql = {
@@ -212,6 +231,7 @@ export type TenantInput = {
 };
 
 export type TenantOwnerInput = {
+  customParams?: InputMaybe<Array<CustomParamGraphqlInput>>;
   email: Scalars['String'];
   firstName?: InputMaybe<Scalars['String']>;
   lastName?: InputMaybe<Scalars['String']>;
@@ -243,6 +263,7 @@ export type User = {
   __typename?: 'User';
   consentsToPrivacyPolicy?: Maybe<Scalars['Boolean']>;
   createdAt?: Maybe<Scalars['String']>;
+  customParams?: Maybe<Array<CustomParam>>;
   email?: Maybe<Scalars['String']>;
   enabled?: Maybe<Scalars['Boolean']>;
   firstName?: Maybe<Scalars['String']>;
@@ -361,7 +382,7 @@ export type GetAppAnonymousQuery = { __typename?: 'Query', getAppAnonymous: { __
 export type GetTenantUserCustomParamsConfigAnonymousQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTenantUserCustomParamsConfigAnonymousQuery = { __typename?: 'Query', getTenantUserCustomParamsConfigAnonymous: { __typename?: 'CustomParamsConfigGraphql', params: Array<{ __typename?: 'ParamConfigGraphql', label: string, type: string }> } };
+export type GetTenantUserCustomParamsConfigAnonymousQuery = { __typename?: 'Query', getTenantUserCustomParamsConfigAnonymous: { __typename?: 'CustomParamsConfigGraphql', params: Array<{ __typename?: 'ParamConfigGraphql', label: string, type: string, userLabel: string, regex: string }> } };
 
 
 export const CreateTenantAnonymousDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateTenantAnonymous"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tenant"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateTenantInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createTenantAnonymous"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"tenant"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tenant"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"locale"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"plan"}},{"kind":"Field","name":{"kind":"Name","value":"mfa"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<CreateTenantAnonymousMutation, CreateTenantAnonymousMutationVariables>;
@@ -380,4 +401,4 @@ export const GetPaymentOptionsAnonymousDocument = {"kind":"Document","definition
 export const GetTenantPaymentDetailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTenantPaymentDetails"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getTenantPaymentDetails"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"status"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"shouldSelectPlan"}},{"kind":"Field","name":{"kind":"Name","value":"shouldSetupPayments"}},{"kind":"Field","name":{"kind":"Name","value":"paymentsEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"provider"}}]}},{"kind":"Field","name":{"kind":"Name","value":"details"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"plan"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"trial"}},{"kind":"Field","name":{"kind":"Name","value":"trialDays"}},{"kind":"Field","name":{"kind":"Name","value":"prices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"currency"}},{"kind":"Field","name":{"kind":"Name","value":"recurrenceInterval"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"price"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"currency"}},{"kind":"Field","name":{"kind":"Name","value":"recurrenceInterval"}}]}},{"kind":"Field","name":{"kind":"Name","value":"trial"}},{"kind":"Field","name":{"kind":"Name","value":"trialDaysLeft"}}]}}]}}]}}]} as unknown as DocumentNode<GetTenantPaymentDetailsQuery, GetTenantPaymentDetailsQueryVariables>;
 export const SetTenantPlanDetailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetTenantPlanDetails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"details"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SetTenantPlanDetailsInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setTenantPlanDetails"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"details"},"value":{"kind":"Variable","name":{"kind":"Name","value":"details"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"status"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"shouldSelectPlan"}},{"kind":"Field","name":{"kind":"Name","value":"shouldSetupPayments"}},{"kind":"Field","name":{"kind":"Name","value":"paymentsEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"provider"}}]}},{"kind":"Field","name":{"kind":"Name","value":"details"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"plan"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"trial"}},{"kind":"Field","name":{"kind":"Name","value":"trialDays"}},{"kind":"Field","name":{"kind":"Name","value":"prices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"currency"}},{"kind":"Field","name":{"kind":"Name","value":"recurrenceInterval"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"price"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"currency"}},{"kind":"Field","name":{"kind":"Name","value":"recurrenceInterval"}}]}},{"kind":"Field","name":{"kind":"Name","value":"trial"}},{"kind":"Field","name":{"kind":"Name","value":"trialDaysLeft"}}]}}]}}]}}]} as unknown as DocumentNode<SetTenantPlanDetailsMutation, SetTenantPlanDetailsMutationVariables>;
 export const GetAppAnonymousDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAppAnonymous"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAppAnonymous"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"privacyPolicyUrl"}},{"kind":"Field","name":{"kind":"Name","value":"termsOfServiceUrl"}},{"kind":"Field","name":{"kind":"Name","value":"onboardingFlow"}},{"kind":"Field","name":{"kind":"Name","value":"passkeysEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"azureAdSsoEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"googleSsoEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"linkedinSsoEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"facebookSsoEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"githubSsoEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"appleSsoEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"mfaEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"magicLinkEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"tenantSelfSignup"}}]}}]}}]} as unknown as DocumentNode<GetAppAnonymousQuery, GetAppAnonymousQueryVariables>;
-export const GetTenantUserCustomParamsConfigAnonymousDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTenantUserCustomParamsConfigAnonymous"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getTenantUserCustomParamsConfigAnonymous"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"params"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]}}]} as unknown as DocumentNode<GetTenantUserCustomParamsConfigAnonymousQuery, GetTenantUserCustomParamsConfigAnonymousQueryVariables>;
+export const GetTenantUserCustomParamsConfigAnonymousDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTenantUserCustomParamsConfigAnonymous"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getTenantUserCustomParamsConfigAnonymous"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"params"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"userLabel"}},{"kind":"Field","name":{"kind":"Name","value":"regex"}}]}}]}}]}}]} as unknown as DocumentNode<GetTenantUserCustomParamsConfigAnonymousQuery, GetTenantUserCustomParamsConfigAnonymousQueryVariables>;
