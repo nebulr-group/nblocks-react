@@ -71,7 +71,7 @@
     "build": "yarn babel --config-file ./babel.config.js src --out-dir lib --copy-files --extensions '.ts,.tsx' && tsc -p ./tsconfig.build.json && tailwindcss build -i ./src/index.css -o ./lib/index.css",
     "publish": "yarn build && npm publish --access public",
     "publish-beta": "yarn build && npm publish --access public --tag beta",
-    "npm-publish-local": "yarn build && npm publish --registry http://verdaccio:4873 --tag alpha",
+    "npm-publish-local": "yarn build && npm publish --registry http://host.docker.internal:4873",
     "generate": "graphql-codegen",
     "prestart": "yarn generate",
     "predev": "yarn generate",

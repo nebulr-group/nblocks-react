@@ -58,6 +58,6 @@ Start example project
 
 ## Keeping the GraphQL interface in-sync nblocks-nestjs
 
-The project expect to keep the GraphQL interface in sync with `nblocks-nestjs` project.
+The project expect to keep the GraphQL schema in sync with `nblocks-nestjs` project.
 
 If the `generated/schema.gql` file has changed in `nblocks-nestjs`, copy the content and paste it into `schema.gql` in this project and run `yarn generate` to update the typings.
