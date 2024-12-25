@@ -17,7 +17,8 @@
       "extensions": [
 		"dbaeumer.vscode-eslint",
 		"esbenp.prettier-vscode",
-		"bradlc.vscode-tailwindcss"
+		"bradlc.vscode-tailwindcss",
+    "pkief.material-icon-theme"
 	]
     }
   },

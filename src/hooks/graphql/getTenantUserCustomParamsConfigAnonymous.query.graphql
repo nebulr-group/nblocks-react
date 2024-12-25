@@ -1,0 +1,10 @@
+query GetTenantUserCustomParamsConfigAnonymous {
+  getTenantUserCustomParamsConfigAnonymous {
+    params {
+      label
+      type
+      userLabel
+      regex
+    }
+  }
+}

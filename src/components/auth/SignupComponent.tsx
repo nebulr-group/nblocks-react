@@ -14,10 +14,30 @@ import { useTranslation } from "react-i18next";
 import { DividerComponent } from "../shared/DividerComponent";
 import { SsoButtonsComponent } from "./login/SsoButtonsComponent";
 import { Transition } from "@headlessui/react";
+import { useCustomParams } from "../../hooks/custom-params-context";
 
 type ComponentProps = {
   didSignup: (email: string) => void;
   didClickFederatedSignup: (type: FederationType) => void;
+};
+
+const getInputType = (paramType: string): 'email' | 'tel' | 'number' | 'text' | 'checkbox' => {
+  switch (paramType.toLowerCase()) {
+    case 'email':
+      return 'email';
+    case 'phone':
+      return 'tel';
+    case 'number':
+    case 'integer':
+      return 'number';
+    case 'text':
+    case 'regex':
+      return 'text';
+    case 'boolean':
+      return 'checkbox';
+    default:
+      return 'text';
+  }
 };
 
 const SignupComponent: FunctionComponent<ComponentProps> = ({
@@ -34,6 +54,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasSsoAlternatives, setHasSsoAlternatives] = useState(false);
+  const { customParams } = useCustomParams();
   const { t } = useTranslation();
 
   const [params] = useSearchParams();
@@ -43,6 +64,26 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
     params.get("recurrenceInterval"),
   ];
 
+  
+  const [customParamValues, setCustomParamValues] = useState<Array<{value: string, type: string, label: string,userLabel: string,regex: string}>>([]);
+
+  // intitialize custom param values
+  React.useEffect(() => {
+    if (customParams?.params) {
+      setCustomParamValues(
+        customParams.params.map(param => ({
+          value: '',
+          type: param.type,
+          label: param.label,
+          userLabel: param.userLabel,
+          regex: param.regex
+        }))
+      );
+    }
+  }, [customParams]);
+
+  
+
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
@@ -51,7 +92,7 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
       await createTenantAnonymous({
         variables: {
           tenant: {
-            owner: { email, firstName, lastName },
+            owner: { email, firstName, lastName,customParams: customParamValues },
             plan: plan ? plan : undefined,
             priceOffer:
               currency && recurrenceInterval
@@ -121,17 +162,19 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
         onSubmit={(event) => submit(event)}
         className="space-y-6 max-w-sm w-full"
       >
+      
         <InputComponent
-          type="email"
+          type="email"          
           label={t("Email address*")}
           placeholder={t("Enter your email")}
           name="username"
+          required={true}
           onChange={(event) => setEmail(event.target.value)}
           value={email}
-        />
+        />       
         <InputComponent
-          type="text"
-          label={t("First name")}
+          type="text"          
+          label={t("First name")}                    
           placeholder={t("Enter your first name")}
           name="firstName"
           onChange={(event) => setFirstName(event.target.value)}
@@ -144,7 +187,32 @@ const SignupComponent: FunctionComponent<ComponentProps> = ({
           name="lastName"
           onChange={(event) => setLastName(event.target.value)}
           value={lastName}
-        />
+        />    
+        {customParams?.params?.map((param, index) => (
+          <div key={index}>
+            <InputComponent
+              type={getInputType(param.type)}              
+              label={param.userLabel}
+              placeholder={t("Enter your " + param.userLabel.toLowerCase())}
+              name={param.label}              
+              onChange={(event) => {                
+                setCustomParamValues(prev => {
+                  const newValues = [...prev];
+                  newValues[index] = {
+                    value: event.target.value,
+                    type: param.type,
+                    label: param.label,
+                    userLabel: param.userLabel,
+                    regex: param.regex
+                  };
+                  return newValues;
+                });
+              }}
+              value={customParamValues[index]?.value || ""}
+            />
+          </div>
+        ))}
+        
         <div className="mt-8">
           <TextComponent size="sm">
             {t("By proceeding you agree to the Nblocks")}

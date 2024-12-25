@@ -14,6 +14,7 @@ import {
 import { LibConfig } from "../../models/lib-config";
 import { SpaRouter } from "../../routes/SpaRouter";
 import { doLog } from "../../hooks/use-log";
+import { NblocksCustomParamsContextProvider } from "../../hooks/custom-params-context";
 
 /**
  * Wrap your code into this Provider to get access to the Nblocks world
@@ -43,7 +44,9 @@ const NblocksProvider: FunctionComponent<{
               styleOverrides={styleOverrides}
               colorOverrides={colorOverrides}
             >
+              <NblocksCustomParamsContextProvider>
               <ChildrenWrapper>{children}</ChildrenWrapper>
+              </NblocksCustomParamsContextProvider>
             </NblocksThemeContextProvider>
           </NblocksAppContextProvider>
         </NblocksAuthContextProvider>

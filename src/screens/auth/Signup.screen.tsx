@@ -33,9 +33,12 @@ const SignupScreen: FunctionComponent<{}> = () => {
 
   const renderChild = () => {
     if (didSignup) {
+      console.log("didSignup", didSignup);
       return <SignupSuccessComponent />;
     } else if (paramError && federation) {
+      console.log("returning missing user component");
       return (
+           
         <SignupMissingUserComponent
           didSignup={(email) => onDidSignup(email)}
           didClickFederatedSignup={(type) => onDidClickFederatedSignup(type)}
@@ -43,7 +46,8 @@ const SignupScreen: FunctionComponent<{}> = () => {
         />
       );
     } else {
-      return (
+      console.log("returning signup component");
+      return (        
         <SignupComponent
           didSignup={(email) => onDidSignup(email)}
           didClickFederatedSignup={(type) => onDidClickFederatedSignup(type)}
