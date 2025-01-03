@@ -28,18 +28,18 @@ const NblocksSecureContextProvider: FunctionComponent<{
 }> = ({ children }) => {
   const config = useConfig();
   const { apiHost, graphqlPath, debug, appId } = config;
-  const { log } = useLog();
+  const { log, logError } = useLog();
 
   const [authenticated, setAuthenticated] = useState<boolean>(false);
   const [initialized, setInitialized] = useState<boolean>(false);
 
-  const [authHttpClient] = useState<AuthHttpClient>(
+  const [authHttpClient] = useState<AuthHttpClient>(() => 
     new AuthHttpClient(apiHost, debug, appId)
   );
-  const [authService] = useState<AuthService>(
+  const [authService] = useState<AuthService>(() => 
     new AuthService(authHttpClient.httpClient, config)
   );
-  const [authApolloClient] = useState<AuthApolloClient>(
+  const [authApolloClient] = useState<AuthApolloClient>(() => 
     new AuthApolloClient(`${apiHost}${graphqlPath}`, debug, appId)
   );
 
@@ -52,42 +52,54 @@ const NblocksSecureContextProvider: FunctionComponent<{
 
   useEffect(() => {
     log("Secure context entry");
-    authService.checkCurrentUserAuthenticated().then((value) => {
-      didAuthenticate(value);
+    let mounted = true;
 
-      if (!initialized) {
-        setInitialized(true);
-        log(
-          `Initialized. With authenticated:${value} Will render all children`
-        );
+    const initAuth = async () => {
+      try {
+        const value = await authService.checkCurrentUserAuthenticated();
+        if (mounted) {
+          didAuthenticate(value);
+          if (!initialized) {
+            setInitialized(true);
+            log(`Initialized. With authenticated:${value} Will render all children`);
+          }
+        }
+      } catch (error) {
+        logError('Auth check failed:', error);
+        if (mounted) {
+          setInitialized(true);
+          didAuthenticate(false);
+        }
       }
-    });
-  }, []);
+    };
 
-  const renderChildren = () => {
+    initAuth();
+
+    return () => {
+      mounted = false;
+    };
+  }, [authService, initialized, log]);
+
+  function renderChildren() {
     if (initialized) {
       return (
         <ApolloProvider client={authApolloClient.client}>
           {children}
         </ApolloProvider>
       );
-    } else {
-      return "";
     }
-  };
+    return null;
+  }
 
   return (
     <SecureContext.Provider
       value={{
-        ...initialSecurityContext,
-        ...{
-          authHttpClient,
-          authService,
-          authApolloClient,
-          authenticated,
-          didAuthenticate,
-          initialized,
-        },
+        authHttpClient,
+        authService,
+        authApolloClient,
+        authenticated,
+        didAuthenticate,
+        initialized,
       }}
     >
       {renderChildren()}

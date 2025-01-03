@@ -1,23 +1,109 @@
-import React, { FunctionComponent, ReactElement } from "react";
+import React, { FunctionComponent, ReactElement, useState } from "react";
+
 import {
   getCoreRowModel,
   useReactTable,
   flexRender,
   getPaginationRowModel,
   getFilteredRowModel,
+  getSortedRowModel,
+  SortingState,
+  FilterFn    
 } from "@tanstack/react-table";
 import type { ColumnDef } from "@tanstack/react-table";
 import { NblocksButton } from "./NblocksButton";
-import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/solid";
+import { ArrowLeftIcon, ArrowRightIcon, ChevronUpIcon, ChevronDownIcon, ChevronUpDownIcon } from "@heroicons/react/24/solid";
 import { SkeletonLoader } from "./SkeletonLoader";
+import { SelectComponent } from "./SelectComponent";
+import {
+  RankingInfo,
+  rankItem,
+  compareItems,
+} from '@tanstack/match-sorter-utils'
+import { StateManager } from '../../utils/StateManager';
+
 
 interface ReactTableProps<T extends object> {
   data: T[] | undefined;
   columns: ColumnDef<T>[];
   loading?: boolean;
   defaultPageSize?: number;
+  pageSizeOptions?: number[];
   emptyStateContent?: JSX.Element;
+  enableGlobalFilter?: boolean;
+  globalFilter?: string;
+  onGlobalFilterChange?: (value: string) => void;
+  tableId?: string;
+  tableRef?: React.RefObject<{
+    reset: () => void;
+  }>;
 }
+
+// Cache for processed cell values
+const searchCache = new Map<string, string>();
+
+// Helper function to process cell value once
+const getSearchableValue = (cellValue: any): string => {
+  // Create a cache key based on value and type
+  const cacheKey = `${cellValue}-${typeof cellValue}`;
+  
+  if (searchCache.has(cacheKey)) {
+    return searchCache.get(cacheKey)!;
+  }
+
+  let searchableValue: string;
+
+  // Handle different data types
+  if (cellValue instanceof Date || (typeof cellValue === 'string' && !isNaN(Date.parse(cellValue)))) {
+    const date = new Date(cellValue);
+    searchableValue = date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+    }).toLowerCase();
+  } else if (typeof cellValue === 'boolean') {
+    searchableValue = cellValue ? 'true' : 'false';
+  } else if (typeof cellValue === 'number') {
+    searchableValue = cellValue.toString();
+  } else if (typeof cellValue === 'object') {
+    searchableValue = JSON.stringify(cellValue).toLowerCase();
+  } else {
+    searchableValue = String(cellValue).toLowerCase();
+  }
+
+  // Store in cache
+  searchCache.set(cacheKey, searchableValue);
+  return searchableValue;
+};
+
+const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+  if (!value) return true;
+
+  // Pre-process search terms once
+  const searchTerms = value.toLowerCase().split(' ').filter(Boolean);
+  if (searchTerms.length === 0) return true;
+
+  // Get searchable cells once
+  const searchableCells = row.getAllCells().filter(cell => 
+    cell.column.getCanFilter() && cell.getValue()
+  );
+
+  // Early return if no searchable cells
+  if (searchableCells.length === 0) return false;
+
+  // Use every-some pattern for better performance
+  return searchTerms.every((term: string) => {
+    const normalizedTerm = term.replace(/\s+/g, ' ').trim();
+    
+    return searchableCells.some(cell => {
+      const searchableValue = getSearchableValue(cell.getValue());
+      return searchableValue.includes(normalizedTerm);
+    });
+  });
+};
 
 /**
  * Configurable Table component based on TanStack React Table.
@@ -67,21 +153,126 @@ export const TableComponent = <T extends object>({
   columns,
   loading,
   defaultPageSize = 5,
+  pageSizeOptions = [5, 10, 20, 30, 50, 100],
   emptyStateContent,
+  enableGlobalFilter = false,
+  globalFilter = '',
+  onGlobalFilterChange,
+  tableId,
+  tableRef,
 }: ReactTableProps<T>) => {
+  // Replace the saved state logic
+  const savedTableState = React.useMemo(() => {
+    return tableId ? StateManager.getTableState(tableId) : null;
+  }, [tableId]);
+
+  // Initialize states from saved state
+  const [sorting, setSorting] = useState<SortingState>(
+    savedTableState?.sorting ?? []
+  );
+  const [pagination, setPagination] = useState(() => {
+    const initialPagination = savedTableState?.pagination ?? {
+      pageIndex: 0,
+      pageSize: defaultPageSize,
+    };  
+    return initialPagination;
+  });
+
   const table = useReactTable({
     data: data ?? emptyArray,
-    columns: columns,
+    columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    debugTable: true,
+    getSortedRowModel: getSortedRowModel(),
+    filterFns: {
+      fuzzy: fuzzyFilter
+    },
+    state: {
+      sorting,      
+      pagination,
+      globalFilter,
+    },
+    onSortingChange: (updater) => {
+      const newSorting = typeof updater === 'function' 
+        ? updater(sorting)
+        : updater;
+      
+      setSorting(newSorting);
+
+      // Save complete table state using StateManager      
+      const completeState = {
+        ...table.getState(),
+        sorting: newSorting,
+      };
+      StateManager.saveTableState(completeState, tableId!);
+    },    
+    onPaginationChange: (updater) => {
+      if (tableId) {
+        const newPagination = typeof updater === 'function' 
+          ? updater(pagination)
+          : updater;
+            
+        setPagination(newPagination);
+
+        // Save complete table state using StateManager        
+        const completeState = {
+          ...table.getState(),
+          pagination: newPagination,
+        };   
+        StateManager.saveTableState(completeState, tableId);
+      }
+    },
+    globalFilterFn: fuzzyFilter,
+    debugTable: false,
+    enableGlobalFilter: true,
+    maxLeafRowFilterDepth: 2,
     initialState: {
-      pagination: {
+      pagination: savedTableState?.pagination ?? {
+        pageIndex: 0,
         pageSize: defaultPageSize,
       },
+      sorting: savedTableState?.sorting ?? [],
+      // globalFilter: savedTableState?.globalFilter ?? '',
     },
   });
+  
+  const [pageInputValue, setPageInputValue] = React.useState(
+    (table.getState().pagination.pageIndex + 1).toString()
+  );
+
+  React.useEffect(() => {    
+    setPageInputValue((table.getState().pagination.pageIndex + 1).toString()); 
+  }, [table.getState().pagination.pageIndex]);
+
+  // Implement reset function
+  const reset = React.useCallback(() => {    
+    setSorting([]);
+    setPagination({
+      pageIndex: 0,
+      pageSize: defaultPageSize,
+    });
+       
+  }, [defaultPageSize, tableId, table]);
+
+  // Expose reset function through ref
+  React.useImperativeHandle(
+    tableRef,
+    () => ({
+      reset,
+    }),
+    [reset]
+  );
+
+  // Log when page input changes
+  const handlePageInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10);
+    console.log('[Pagination] Page input changed to:', value);
+    if (!isNaN(value) && value >= 1 && value <= table.getPageCount()) {
+      console.log('[Pagination] Setting page index to:', value - 1);
+      table.setPageIndex(value - 1);
+    }
+  };
 
   /**
    * Uses template literals in classes to dynamically apply border radius to individual corner cells.
@@ -112,15 +303,30 @@ export const TableComponent = <T extends object>({
                       ? "rounded-tr-lg"
                       : ""
                   }
+                  ${header.column.getCanSort() ? 'cursor-pointer select-none' : ''}
                   
                 `}
+                    onClick={header.column.getToggleSortingHandler()}
                   >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                    <div className="flex items-center gap-2">
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                      {header.column.getCanSort() && (
+                        <div className="w-4 h-4">
+                          {header.column.getIsSorted() === "asc" ? (
+                            <ChevronUpIcon className="w-4 h-4" />
+                          ) : header.column.getIsSorted() === "desc" ? (
+                            <ChevronDownIcon className="w-4 h-4" />
+                          ) : (
+                            <ChevronUpDownIcon className="w-4 h-4 text-gray-400" />
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </th>
                 ))}
               </tr>
@@ -182,49 +388,118 @@ export const TableComponent = <T extends object>({
       </div>
       {table.getRowModel().rows.length !== 0 && (
         <div className="px-6 pb-4 pt-3.5 flex items-center justify-between">
-          <NblocksButton
-            size="lg"
-            type="tertiary"
-            className="hidden md:flex items-center justify-center"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <ArrowLeftIcon className="h-6 w-6 inline-block mr-2" />
-            {"Previous"}
-          </NblocksButton>
-          <NblocksButton
-            type="tertiary"
-            className="md:hidden items-center justify-center p-2"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <ArrowLeftIcon className="h-6 w-6 inline-block" />
-          </NblocksButton>
-          <span className="flex items+center gap-1">
-            <p>Page</p>
-            <strong>
-              {table.getState().pagination.pageIndex + 1} of{" "}
-              {table.getPageCount()}
-            </strong>
-          </span>
-          <NblocksButton
-            type="tertiary"
-            size={"lg"}
-            className="hidden md:flex items-center justify-center"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            {"Next"}
-            <ArrowRightIcon className="h-6 w-6 inline-block md:ml-2" />
-          </NblocksButton>
-          <NblocksButton
-            type="tertiary"
-            className="md:hidden items-center justify-center p-2"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            <ArrowRightIcon className="h-6 w-6 inline-block" />
-          </NblocksButton>
+          <div className="flex items-center gap-4">
+            <NblocksButton
+              size="lg"
+              type="tertiary"
+              className="hidden md:flex items-center justify-center"
+              onClick={() => {               
+                table.previousPage();
+              }}
+              disabled={!table.getCanPreviousPage()}
+            >
+              <ArrowLeftIcon className="h-6 w-6 inline-block mr-2" />
+              {"Previous"}
+            </NblocksButton>
+            <NblocksButton
+              type="tertiary"
+              className="md:hidden items-center justify-center p-2"
+              onClick={() => {               
+                table.previousPage();
+              }}
+              disabled={!table.getCanPreviousPage()}
+            >
+              <ArrowLeftIcon className="h-6 w-6 inline-block" />
+            </NblocksButton>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-2">
+              <p>Page</p>
+              <input
+                type="number"
+                min={1}
+                max={table.getPageCount()}
+                value={pageInputValue}
+                onChange={(e) => {
+                  setPageInputValue(e.target.value);
+                }}
+                onBlur={() => {
+                  const pageNumber = parseInt(pageInputValue, 10);
+                  if (
+                    !isNaN(pageNumber) &&
+                    pageNumber >= 1 &&
+                    pageNumber <= table.getPageCount()
+                  ) {
+                    table.setPageIndex(pageNumber - 1);
+                  } else {
+                    setPageInputValue((table.getState().pagination.pageIndex + 1).toString());
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    const pageNumber = parseInt(pageInputValue, 10);
+                    if (
+                      !isNaN(pageNumber) &&
+                      pageNumber >= 1 &&
+                      pageNumber <= table.getPageCount()
+                    ) {
+                      table.setPageIndex(pageNumber - 1);
+                    } else {
+                      setPageInputValue((table.getState().pagination.pageIndex + 1).toString());
+                    }
+                  }
+                }}
+                onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = parseInt(e.target.value, 10);
+                  if (!isNaN(value) && value >= 1 && value <= table.getPageCount()) {
+                    table.setPageIndex(value - 1);
+                  }
+                }}
+                step={1}
+                className="w-16 rounded-md border-0 py-1.5 pl-3 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-primary-500 sm:text-sm sm:leading-6"
+              />
+              <p>of {table.getPageCount()}</p>
+            </span>
+
+            <div className="w-32">
+              <SelectComponent
+                value={table.getState().pagination.pageSize.toString()}
+                onChange={(e) => {
+                  table.setPageSize(Number(e.target.value));
+                }}
+                options={pageSizeOptions.map((pageSize) => ({
+                  value: pageSize.toString(),
+                  label: `${pageSize} rows`,
+                }))}
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <NblocksButton
+              type="tertiary"
+              size={"lg"}
+              className="hidden md:flex items-center justify-center"
+              onClick={() => {             
+                table.nextPage();
+              }}
+              disabled={!table.getCanNextPage()}
+            >
+              {"Next"}
+              <ArrowRightIcon className="h-6 w-6 inline-block md:ml-2" />
+            </NblocksButton>
+            <NblocksButton
+              type="tertiary"
+              className="md:hidden items-center justify-center p-2"
+              onClick={() => {                
+                table.nextPage();
+              }}
+              disabled={!table.getCanNextPage()}
+            >
+              <ArrowRightIcon className="h-6 w-6 inline-block" />
+            </NblocksButton>
+          </div>
         </div>
       )}
     </>
